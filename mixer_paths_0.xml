@@ -1,0 +1,83 @@
+<mixer>
+  <!-- These are the initial mixer settings -->
+  <ctl name="ADC1 Capture Volume" value="63"/>
+  <ctl name="STO1 ADC Boost Volume" value="2"/>
+  <ctl name="Sidetone Volume" value="0"/>
+
+  <ctl name="OUT1 Playback Switch" value="1"/>
+  <ctl name="OUT2 Playback Switch" value="1"/>
+  <ctl name="DAC1 Playback Volume" value="175"/>
+  <ctl name="DAC2 Playback Volume" value="175"/>
+
+  <ctl name="DAC12 SRC Mux" value="STO1 DAC MIX"/>
+
+  <ctl name="Headphone Switch" value="0"/>
+  <ctl name="Headset Mic Switch" value="0"/>
+  <ctl name="Internal Mic 1 Switch" value="1"/>
+  <ctl name="Internal Mic 2 Switch" value="0"/>
+  <ctl name="Speaker Switch" value="1"/>
+
+  <ctl name="PDM1 L Mux" value="STO1 DAC MIX"/>
+  <ctl name="PDM2 L Mux" value="STO1 DAC MIX"/>
+
+  <ctl name="Stereo DAC MIXL ST L Switch" value="0"/>
+  <ctl name="Stereo DAC MIXL DAC2 L Switch" value="0"/>
+  <ctl name="Stereo DAC MIXL DAC1 R Switch" value="0"/>
+  <ctl name="Stereo DAC MIXL DAC1 L Switch" value="1"/>
+
+  <ctl name="Stereo DAC MIXR ST R Switch" value="0"/>
+  <ctl name="Stereo DAC MIXR DAC2 R Switch" value="0"/>
+  <ctl name="Stereo DAC MIXR DAC1 L Switch" value="0"/>
+  <ctl name="Stereo DAC MIXR DAC1 R Switch" value="1"/>
+
+  <ctl name="IF1 ADC1 Mux" value="STO1 ADC MIX"/>
+  <ctl name="IF1 ADC1 Swap Mux" value="L/R"/>
+
+  <ctl name="DAC1 MIXL Stereo ADC Switch" value="0"/>
+  <ctl name="DAC1 MIXL DAC1 Switch" value="1"/>
+
+  <ctl name="DAC1 Mux" value="IF1 DAC 01"/>
+
+  <ctl name="Stereo1 DMIC Mux" value="DMIC1"/>
+  <ctl name="Stereo1 ADC2 Mux" value="DMIC"/>
+  <ctl name="Stereo1 ADC1 Mux" value="ADC1/2"/>
+
+  <ctl name="Sto1 ADC MIXL ADC1 Switch" value="0"/>
+  <ctl name="Sto1 ADC MIXL ADC2 Switch" value="1"/>
+  <ctl name="Sto1 ADC MIXR ADC1 Switch" value="0"/>
+  <ctl name="Sto1 ADC MIXR ADC2 Switch" value="1"/>
+
+  <!-- TODO other defaults -->
+
+  <path name="speaker">
+  </path>
+
+  <path name="headphones">
+    <ctl name="Headphone Switch" value="1"/>
+  </path>
+
+  <path name="speaker-and-headphones">
+    <ctl name="Headphone Switch" value="1"/>
+  </path>
+
+  <path name="speaker-mic">
+    <ctl name="Headset Mic Switch" value="0"/>
+    <ctl name="IF1 ADC1 Swap Mux" value="L/R"/>
+    <ctl name="Sto1 ADC MIXL ADC1 Switch" value="0"/>
+    <ctl name="Sto1 ADC MIXR ADC1 Switch" value="0"/>
+    <ctl name="Sto1 ADC MIXL ADC2 Switch" value="1"/>
+    <ctl name="Sto1 ADC MIXR ADC2 Switch" value="1"/>
+    <ctl name="Internal Mic 1 Switch" value="1"/>
+  </path>
+
+  <path name="headset-mic">
+    <ctl name="Internal Mic 1 Switch" value="0"/>
+    <ctl name="IF1 ADC1 Swap Mux" value="L/L"/>
+    <ctl name="Sto1 ADC MIXL ADC2 Switch" value="0"/>
+    <ctl name="Sto1 ADC MIXR ADC2 Switch" value="0"/>
+    <ctl name="Sto1 ADC MIXL ADC1 Switch" value="1"/>
+    <ctl name="Sto1 ADC MIXR ADC1 Switch" value="1"/>
+    <ctl name="Headset Mic Switch" value="1"/>
+  </path>
+
+</mixer>

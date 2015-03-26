@@ -1,0 +1,12 @@
+#TODO(dgreid) add other devices.
+/dev/block/mmcblk0p3    0600   system     system
+/dev/ion                0666   system     system
+/dev/sw_sync            0666   system     system
+
+# BT
+/dev/ttyTHS2            0660   bluetooth  net_bt_stack
+/sys/devices/0.bt_bcm4354/rfkill/rfkill0  state  0660    bluetooth    net_bt_stack
+/sys/devices/0.bt_bcm4354/rfkill/rfkill0  type   0660    bluetooth    net_bt_stack
+
+# Backlight
+/sys/devices/7000d100.i2c/i2c-5/5-002c/backlight/lp8557-backlight    brightness    0660   system   system
