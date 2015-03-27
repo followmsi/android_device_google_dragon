@@ -130,8 +130,7 @@ $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4354
 ENABLE_LIBDRM := true
 BOARD_GPU_DRIVERS := tegra
 PRODUCT_PACKAGES += \
-	gralloc.drm \
 	hwcomposer.drm \
-	libdrm \
+	libdrm
 
 $(call inherit-product-if-exists, vendor/nvidia/dragon/dragon-vendor.mk)
