@@ -20,3 +20,5 @@
 /system/bin/crash_collector                     u:object_r:crash_collector_exec:s0
 /data/system/crash_reports(/.*)?                u:object_r:crash_reports_data_file:s0
 
+/dev/imx219                                     u:object_r:camera_device:s0
+/dev/imx208                                     u:object_r:camera_device:s0
