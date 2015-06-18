@@ -4,7 +4,7 @@
 /dev/sw_sync            0666   system     system
 
 # BT
-/dev/ttyTHS2            0660   bluetooth  net_bt_stack
+/dev/ttyTHS3            0660   bluetooth  net_bt_stack
 /sys/devices/0.bt_bcm4354/rfkill/rfkill0  state  0660    bluetooth    net_bt_stack
 /sys/devices/0.bt_bcm4354/rfkill/rfkill0  type   0660    bluetooth    net_bt_stack
 
