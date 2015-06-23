@@ -20,14 +20,6 @@ else
 LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
 endif
 
-BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := f2fs
-
-# This ensures the needed build tools are available.
-# TODO: make non-linux builds happy with external/f2fs-tool; system/extras/f2fs_utils
-ifeq ($(HOST_OS),linux)
-TARGET_USERIMAGES_USE_F2FS := true
-endif
-
 LOCAL_FSTAB := $(LOCAL_PATH)/fstab.dragon
 
 TARGET_RECOVERY_FSTAB = $(LOCAL_FSTAB)
@@ -90,10 +82,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     power.dragon \
     lights.dragon
-
-# Filesystem management tools
-PRODUCT_PACKAGES += \
-    fsck.f2fs mkfs.f2fs
 
 #TODO(dgreid) is this right?
 PRODUCT_PROPERTY_OVERRIDES := \
