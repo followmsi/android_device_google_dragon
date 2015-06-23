@@ -39,6 +39,20 @@ on post-fs-data
     mkdir /data/nfc 0770 nfc nfc
     mkdir /data/nfc/param 0770 nfc nfc
 
+    # for GPS files
+    mkdir /data/gps 0770 gps system
+    mkdir /data/gps/log 0770 gps system
+    mkdir /data/system/gps 770 gps system
+    chown gps system /system/bin/glgps
+    chown gps system /system/etc/gpsconfig.xml
+    chmod 0660 /system/etc/gpsconfig.xml
+    write /sys/class/gpio/export 66
+    write /sys/class/gpio/gpio66/direction out
+    chmod 0770 /sys/class/gpio/gpio66
+    chown gps system /sys/class/gpio/gpio66
+    chmod 0660 /sys/class/gpio/gpio66/value
+    chown gps system /sys/class/gpio/gpio66/value
+
     # secure os storage
     mkdir /data/ss 0700 system system
 
@@ -198,6 +212,13 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
     class main
     disabled
     oneshot
+
+service gpsd /system/bin/glgps -c /system/etc/gpsconfig.xml
+    class late_start
+    user gps
+    socket gps seqpacket 0660 gps system
+    group system inet net_raw sdcard_rw sdcard_r
+    ioprio be 0
 
 service kickstart /vendor/bin/qcks -i /vendor/firmware/mdm/image/ -r /data/qcks/mdm/
     class late_start
