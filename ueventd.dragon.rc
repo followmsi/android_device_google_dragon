@@ -3,6 +3,9 @@
 /dev/ion                0666   system     system
 /dev/sw_sync            0666   system     system
 
+# GPS
+/dev/ttyTHS2            0660   gps        system
+
 # BT
 /dev/ttyTHS3            0660   bluetooth  net_bt_stack
 /sys/devices/0.bt_bcm4354/rfkill/rfkill0  state  0660    bluetooth    net_bt_stack
