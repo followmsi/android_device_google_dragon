@@ -1,1 +1,1 @@
-board=dragon
+require board=dragon
