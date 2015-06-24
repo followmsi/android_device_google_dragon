@@ -64,16 +64,14 @@ on boot
     write /sys/kernel/debug/tracing/tracing_on 0
 
     write /sys/module/tegra3_emc/parameters/emc_enable 0
-    #write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 1000000
-    #write /sys/module/cpu_tegra/parameters/cpu_user_cap 700000
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 510000
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 510000
-    #write /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed 700000
-    #write /sys/devices/system/cpu/cpu1/cpufreq/scaling_setspeed 700000
-    #write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
-    #write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 80
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 204000
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 204000
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 204000
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 204000
     write /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/enable 0
 
     restorecon_recursive /sys/devices/system/cpu/cpufreq/interactive
@@ -104,6 +102,8 @@ on boot
     # Enable CC4
     write /sys/devices/system/cpu/cpu0/cpuidle/state1/disabled 0
     write /sys/devices/system/cpu/cpu1/cpuidle/state1/disabled 0
+    write /sys/devices/system/cpu/cpu2/cpuidle/state1/disabled 0
+    write /sys/devices/system/cpu/cpu3/cpuidle/state1/disabled 0
 
     # b/13568411: make lazy vfree flush thresholds match flush_tlb_range
     write /proc/sys/vm/lazy_vfree_tlb_flush_all_threshold 524288
