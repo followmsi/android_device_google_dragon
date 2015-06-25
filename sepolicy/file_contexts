@@ -8,3 +8,7 @@
 
 # /dev
 /dev/dri/renderD128                             u:object_r:gpu_device:s0
+
+# system executables
+/system/bin/glgps                               u:object_r:gpsd_exec:s0
+
