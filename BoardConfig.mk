@@ -39,7 +39,7 @@ TARGET_NO_BOOTLOADER := true
 TARGET_NO_RADIOIMAGE := true
 
 TARGET_BOARD_PLATFORM := tegra132_dragon
-TARGET_BOARD_INFO_FILE := device/google/dragon/board-info.txt
+TARGET_BOARD_INFO_FILE ?= device/google/dragon/board-info.txt
 
 TARGET_BOOTLOADER_BOARD_NAME := dragon
 
