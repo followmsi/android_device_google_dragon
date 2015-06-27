@@ -121,6 +121,12 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 # TODO(dgreid) - Add back verity dependencies like flounder has.
 
 $(call inherit-product, build/target/product/vboot.mk)
+$(call inherit-product, build/target/product/verity.mk)
+# including verity.mk automatically enabled boot signer which conflicts with
+# vboot
+PRODUCT_SUPPORTS_BOOT_SIGNER := false
+PRODUCT_SYSTEM_VERITY_PARTITION := /dev/block/platform/700b0600.sdhci/by-name/APP
+PRODUCT_VENDOR_VERITY_PARTITION := /dev/block/platform/700b0600.sdhci/by-name/VNR
 
 $(call inherit-product-if-exists, hardware/nvidia/tegra132/tegra132.mk)
 $(call inherit-product-if-exists, vendor/google_devices/dragon/device-vendor.mk)
