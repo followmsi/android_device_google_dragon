@@ -16,6 +16,7 @@ include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := fwtool
+LOCAL_MODULE_TAGS := debug
 LOCAL_CLANG := true
 LOCAL_SRC_FILES := flash_ec.c flash_mtd.c flash_file.c flash_device.c vboot_interface.c update_fw.c debug_ec.c fwtool.c
 LOCAL_SHARED_LIBRARIES := liblog
