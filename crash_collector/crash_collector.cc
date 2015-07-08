@@ -38,17 +38,18 @@ using android::String8;
 
 const char kOutputDirectory[] = "/data/system/crash_reports";
 const int kMaxNumReports = 16;
+const int kMaxCoredumpSize = 100*1024*1024;
 
 // Makes room for the new crash report by deleting old files when necessary.
 bool MakeRoomForNewReport() {
   // Enumerate reports.
-  DIR* dir = opendir(kOutputDirectory);
+  std::unique_ptr<DIR, int(*)(DIR*)> dir(opendir(kOutputDirectory), closedir);
   if (!dir)
     return false;
 
   std::vector<time_t> dump_mtimes;  // Modification time of dump files.
   std::vector<std::pair<time_t, String8>> all_files;
-  while (struct dirent* entry = readdir(dir)) {
+  while (struct dirent* entry = readdir(dir.get())) {
     String8 filename = String8(kOutputDirectory).appendPath(entry->d_name);
     struct stat attributes;
     if (stat(filename.string(), &attributes))
@@ -57,7 +58,7 @@ bool MakeRoomForNewReport() {
     if (filename.getPathExtension() == ".dmp")
       dump_mtimes.push_back(attributes.st_mtime);
   }
-  closedir(dir);
+  dir.reset();
 
   // Remove old files.
   if (dump_mtimes.size() >= kMaxNumReports) {
@@ -92,27 +93,25 @@ bool WriteMetadata(const std::string& exec_name,
   content += ",";
   content += "\"exec_name\":\"" + exec_name + "\"";
   content += "}";
-
-  int fd = TEMP_FAILURE_RETRY(open(
-      filename.c_str(), O_WRONLY | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR));
-  if (fd == -1) {
-    ALOGE("Failed to open: %s %d", filename.c_str(), errno);
-    return false;
-  }
-  bool success = android::base::WriteStringToFd(content, fd);
-  close(fd);
-  return success && chown(filename.c_str(), AID_SYSTEM, AID_SYSTEM) == 0;
+  return android::base::WriteStringToFile(
+      content, filename, S_IRUSR | S_IWUSR, AID_SYSTEM, AID_SYSTEM);
 }
 
 // Copies fd_src's contents to fd_dest.
 bool CopyFile(int fd_src, int fd_dest) {
   const size_t kBufSize = 32768;
   char buf[kBufSize];
+  size_t total = 0;
   while (true) {
     int rv = TEMP_FAILURE_RETRY(read(fd_src, buf, kBufSize));
     if (rv == 0)
       break;
     if (rv == -1 || !android::base::WriteFully(fd_dest, buf, rv))
+      return false;
+
+    // Limit the destination file size.
+    total += rv;
+    if (total > kMaxCoredumpSize)
       return false;
   }
   return true;
@@ -128,6 +127,8 @@ bool CopyStdinToFile(const std::string& dest) {
   }
   bool success = CopyFile(STDIN_FILENO, fd);
   close(fd);
+  if (!success)
+    unlink(dest.c_str());
   return success;
 }
 
@@ -139,10 +140,11 @@ bool ConvertCoredumpToMinidump(const std::string& coredump_filename,
   google_breakpad::AppMemoryList memory_list;
   google_breakpad::LinuxCoreDumper dumper(
       0, coredump_filename.c_str(), procfs_dir.c_str());
-  return google_breakpad::WriteMinidump(
+  bool success = google_breakpad::WriteMinidump(
       minidump_filename.c_str(), mappings, memory_list, &dumper) &&
-      chown(minidump_filename.c_str(), AID_SYSTEM, AID_SYSTEM) == 0 &&
-      unlink(coredump_filename.c_str()) == 0;
+      chown(minidump_filename.c_str(), AID_SYSTEM, AID_SYSTEM) == 0;
+  unlink(coredump_filename.c_str());
+  return success;
 }
 
 }  // namespace
