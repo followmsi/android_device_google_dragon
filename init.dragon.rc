@@ -61,9 +61,6 @@ on post-fs-data
     mkdir /data/efs 0771 system system
     mkdir /data/qcks/mdm 0770 system system
 
-    # crash_collector
-    mkdir /data/system/crash_reports 0700 system system
-
     setprop vold.post_fs_data_done 1
 
 on boot
@@ -129,10 +126,6 @@ on boot
 
     write /proc/sys/net/core/rmem_max 1048576
     write /proc/sys/net/core/wmem_max 1048576
-
-    # Execute crash_collector when a process is crashing.
-    write /proc/sys/kernel/core_pattern "|/system/bin/crash_collector %p %t %e"
-    write /proc/sys/kernel/core_pipe_limit 4
 
     # enable GPU dvfs
     write /sys/class/drm/card0/device/pstate auto
