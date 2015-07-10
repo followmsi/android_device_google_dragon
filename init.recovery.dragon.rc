@@ -1,7 +1,5 @@
 on init
     start watchdogd
-
-on init
     mkdir /config
     mount configfs none /config
     mkdir /config/usb_gadget/g1 0770 shell shell
