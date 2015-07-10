@@ -42,6 +42,13 @@ PRODUCT_PACKAGES += \
     fs_config_files \
     crash_collector
 
+ifeq ($(TARGET_BUILD_VARIANT),eng)
+PRODUCT_PACKAGES += \
+    tinyplay \
+    tinycap \
+    tinymix
+endif
+
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/dragon_features.xml:system/etc/permissions/dragon_features.xml \
     frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
