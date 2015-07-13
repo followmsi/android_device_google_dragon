@@ -1,1 +1,6 @@
 allow init tmpfs:lnk_file create_file_perms;
+
+# TODO: add to core policy. Determine why this is not required
+# on other devices.
+allow init { cache_file storage_file }:dir mounton;
+
