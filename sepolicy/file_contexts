@@ -8,6 +8,7 @@
 
 # /dev
 /dev/dri/.+                                     u:object_r:gpu_device:s0
+/dev/sw_sync                                    u:object_r:sw_sync_device:s0
 
 # system executables
 /system/bin/glgps                               u:object_r:gpsd_exec:s0
