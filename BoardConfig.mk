@@ -114,5 +114,3 @@ MALLOC_IMPL := dlmalloc
 
 BOARD_SEPOLICY_DIRS += \
        device/google/dragon/sepolicy
-BOARD_SEPOLICY_UNION := \
-	file_contexts
