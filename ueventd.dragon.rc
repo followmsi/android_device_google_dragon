@@ -13,3 +13,17 @@
 
 # Backlight
 /sys/devices/7000d100.i2c/i2c-5/5-002c/backlight/lp8557-backlight    brightness    0660   system   system
+
+
+# Sensors
+
+# Sensor ring.
+/dev/iio:device* 0660 system system
+/sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-ring.0/iio:device* buffer/length      0660 system system
+/sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-ring.0/iio:device* buffer/enable      0660 system system
+/sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-ring.0/iio:device* trigger/current_trigger      0660 system system
+
+# Sensors attributes:
+/sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-*/iio:device* flush      0660 system system
+/sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-*/iio:device* frequency  0660 system system
+/sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-*/iio:device* sampling_frequency  0660 system system

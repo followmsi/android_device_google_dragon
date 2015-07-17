@@ -52,7 +52,10 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.audio.low_latency.xml:system/etc/permissions/android.hardware.audio.low_latency.xml \
     frameworks/native/data/etc/android.hardware.bluetooth.xml:system/etc/permissions/android.hardware.bluetooth.xml \
     frameworks/native/data/etc/android.hardware.bluetooth_le.xml:system/etc/permissions/android.hardware.bluetooth_le.xml \
-    frameworks/native/data/etc/android.hardware.opengles.aep.xml:system/etc/permissions/android.hardware.opengles.aep.xml
+    frameworks/native/data/etc/android.hardware.opengles.aep.xml:system/etc/permissions/android.hardware.opengles.aep.xml \
+    frameworks/native/data/etc/android.hardware.sensor.accelerometer.xml:system/etc/permissions/android.hardware.sensor.accelerometer.xml \
+    frameworks/native/data/etc/android.hardware.sensor.compass.xml:system/etc/permissions/android.hardware.sensor.compass.xml \
+    frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio_policy.conf:system/etc/audio_policy.conf \
@@ -89,7 +92,8 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     power.dragon \
-    lights.dragon
+    lights.dragon \
+    sensors.dragon
 
 #TODO(dgreid) is this right?
 PRODUCT_PROPERTY_OVERRIDES := \
@@ -136,7 +140,7 @@ $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4354
 ENABLE_LIBDRM := true
 BOARD_GPU_DRIVERS := tegra
 PRODUCT_PACKAGES += \
-	hwcomposer.drm \
-	libdrm
+    hwcomposer.drm \
+    libdrm
 
 $(call inherit-product-if-exists, vendor/nvidia/dragon/dragon-vendor.mk)
