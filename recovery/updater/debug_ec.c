@@ -123,6 +123,53 @@ static int cmd_ec_battery(int argc, const char **argv)
 	return 0;
 }
 
+static int cmd_ec_chargecontrol(int argc, const char **argv)
+{
+	struct ec_params_charge_control p;
+	int rv;
+
+	if (argc != 2) {
+		fprintf(stderr, "Usage: %s <normal | idle | discharge>\n",
+			argv[0]);
+		return -EINVAL;
+	}
+
+	if (!strcasecmp(argv[1], "normal")) {
+		p.mode = CHARGE_CONTROL_NORMAL;
+	} else if (!strcasecmp(argv[1], "idle")) {
+		p.mode = CHARGE_CONTROL_IDLE;
+	} else if (!strcasecmp(argv[1], "discharge")) {
+		p.mode = CHARGE_CONTROL_DISCHARGE;
+	} else {
+		fprintf(stderr, "Bad value.\n");
+		return -EINVAL;
+	}
+
+	if (!get_ec())
+		return -ENODEV;
+
+	rv = flash_cmd(ec, EC_CMD_CHARGE_CONTROL, 1, &p, sizeof(p), NULL, 0);
+	if (rv < 0) {
+		fprintf(stderr, "Is AC connected?\n");
+		return rv;
+	}
+
+	switch (p.mode) {
+	case CHARGE_CONTROL_NORMAL:
+		printf("Charge state machine normal mode.\n");
+		break;
+	case CHARGE_CONTROL_IDLE:
+		printf("Charge state machine force idle.\n");
+		break;
+	case CHARGE_CONTROL_DISCHARGE:
+		printf("Charge state machine force discharge.\n");
+		break;
+	default:
+		break;
+	}
+	return 0;
+}
+
 static int cmd_ec_gpioget(int argc, const char **argv)
 {
 	struct ec_params_gpio_get_v1 p_v1;
@@ -614,6 +661,7 @@ static int cmd_ec_version(int argc, const char **argv)
 
 struct command subcmds_ec[] = {
 	CMD(ec_battery, "Show battery status"),
+	CMD(ec_chargecontrol, "Force the battery to stop charging/discharge"),
 	CMD(ec_gpioget, "Get the value of GPIO signal"),
 	CMD(ec_gpioset, "Set the value of GPIO signal"),
 	CMD(ec_lightbar, "Lightbar control commands"),
