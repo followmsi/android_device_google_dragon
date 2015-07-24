@@ -42,4 +42,8 @@
 
     <!-- HACK: Force landscape -->
     <bool name="config_forceDefaultOrientation">true</bool>
+
+    <!-- Setting this true forces the headset jack switches to use the/dev/input/event subsystem
+         rather than the uevent framework. -->
+    <bool name="config_useDevInputEventForAudioJack">true</bool>
 </resources>
