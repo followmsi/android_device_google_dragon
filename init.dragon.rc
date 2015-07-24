@@ -80,16 +80,10 @@ on boot
     chmod 0222 /sys/kernel/debug/tracing/trace_marker
     write /sys/kernel/debug/tracing/tracing_on 0
 
-    write /sys/module/tegra3_emc/parameters/emc_enable 0
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 204000
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 204000
-    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 204000
-    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 204000
-    write /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/enable 0
 
     restorecon_recursive /sys/devices/system/cpu/cpufreq/interactive
     chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_rate
