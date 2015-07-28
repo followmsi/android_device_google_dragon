@@ -106,7 +106,9 @@ $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-he
 # TODO(dgreid) - set secure back to 1
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     persist.sys.usb.config=mtp \
-    ro.adb.secure=0
+    ro.adb.secure=0 \
+    ro.sf.lcd_density=308 \
+    ro.opengles.version=196609
 
 # for audio
 #TODO(dgreid) do we need libnvvisualizer?
