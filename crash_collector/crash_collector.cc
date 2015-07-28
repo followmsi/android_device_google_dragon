@@ -86,10 +86,28 @@ std::string GetSystemProperty(const std::string& key) {
 }
 
 // Writes metadata as JSON file.
-bool WriteMetadata(const std::string& exec_name,
+bool WriteMetadata(ssize_t coredump_size,
+                   const std::string& pid,
+                   const std::string& uid,
+                   const std::string& gid,
+                   const std::string& signal,
+                   const std::string& username,
+                   const std::string& exec_name,
                    const std::string& filename) {
   std::string content = "{";
   content += "\"version\":\"" + GetSystemProperty("ro.build.id") + "\"";
+  content += ",";
+  content += "\"coredump_size\":" + std::to_string(coredump_size);
+  content += ",";
+  content += "\"pid\":" + pid;
+  content += ",";
+  content += "\"uid\":" + uid;
+  content += ",";
+  content += "\"gid\":" + gid;
+  content += ",";
+  content += "\"signal\":" + signal;
+  content += ",";
+  content += "\"username\":\"" + username + "\"";
   content += ",";
   content += "\"exec_name\":\"" + exec_name + "\"";
   content += "}";
@@ -97,8 +115,9 @@ bool WriteMetadata(const std::string& exec_name,
       content, filename, S_IRUSR | S_IWUSR, AID_SYSTEM, AID_SYSTEM);
 }
 
-// Copies fd_src's contents to fd_dest.
-bool CopyFile(int fd_src, int fd_dest) {
+// Copies fd_src's contents to fd_dest and returns the number of bytes written,
+// or -1 on errors.
+ssize_t CopyFile(int fd_src, int fd_dest) {
   const size_t kBufSize = 32768;
   char buf[kBufSize];
   size_t total = 0;
@@ -107,29 +126,30 @@ bool CopyFile(int fd_src, int fd_dest) {
     if (rv == 0)
       break;
     if (rv == -1 || !android::base::WriteFully(fd_dest, buf, rv))
-      return false;
+      return -1;
 
     // Limit the destination file size.
     total += rv;
     if (total > kMaxCoredumpSize)
-      return false;
+      return -1;
   }
-  return true;
+  return total;
 }
 
-// Copies STDIN to the specified file.
-bool CopyStdinToFile(const std::string& dest) {
+// Copies STDIN to the specified file and returns the number of bytes written,
+// or -1 on errors.
+ssize_t CopyStdinToFile(const std::string& dest) {
   int fd = TEMP_FAILURE_RETRY(open(
       dest.c_str(), O_WRONLY | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR));
   if (fd == -1) {
     ALOGE("Failed to open: %s %d", dest.c_str(), errno);
-    return false;
+    return -1;
   }
-  bool success = CopyFile(STDIN_FILENO, fd);
+  ssize_t result = CopyFile(STDIN_FILENO, fd);
   close(fd);
-  if (!success)
+  if (result == -1)
     unlink(dest.c_str());
-  return success;
+  return result;
 }
 
 // Converts the specified coredump file to a minidump.
@@ -150,38 +170,56 @@ bool ConvertCoredumpToMinidump(const std::string& coredump_filename,
 }  // namespace
 
 int main(int argc, char** argv) {
-  if (argc < 4) {
+  if (argc < 7) {
     ALOGE("Insufficient args.");
     return 1;
   }
   const std::string pid_string = argv[1];
-  const std::string crash_time = argv[2];
-  const std::string exec_name = argv[3];
+  const std::string uid_string = argv[2];
+  const std::string gid_string = argv[3];
+  const std::string signal_string = argv[4];
+  const std::string crash_time = argv[5];
+  const std::string exec_name = argv[6];
 
+  const uid_t uid = std::stoi(uid_string);
+  const uid_t appid = uid % AID_USER;
+  if (appid >= AID_APP) {  // Ignore non-system crashes.
+    return 0;
+  }
+
+  // Username lookup.
+  std::string username;
+  for (size_t i = 0; i < android_id_count; ++i) {
+    if (android_ids[i].aid == appid) {
+      username = android_ids[i].name;
+      break;
+    }
+  }
   // Delete old crash reports.
   if (!MakeRoomForNewReport()) {
     ALOGE("Failed to delete old crash reports.");
     return 1;
   }
-  // Write metadata.
+  // Read coredump from stdin.
   const std::string basename =
       std::string(kOutputDirectory) + "/" + crash_time + "." + pid_string;
-  const std::string metadata = basename + ".meta";
-  if (!WriteMetadata(exec_name, metadata)) {
-    ALOGE("Failed to write metadata.");
-    return 1;
-  }
-  // Read coredump from stdin.
   const std::string coredump = basename + ".core";
-  if (!CopyStdinToFile(coredump)) {
+  const ssize_t coredump_size = CopyStdinToFile(coredump);
+  if (coredump_size > 0) {
+    // Convert coredump to minidump.
+    const std::string procfs_dir = "/proc/" + pid_string;
+    const std::string minidump = basename + ".dmp";
+    if (!ConvertCoredumpToMinidump(coredump, procfs_dir, minidump)) {
+      ALOGE("Failed to convert coredump to minidump.");
+    }
+  } else {
     ALOGE("Failed to copy coredump from stdin.");
-    return 1;
   }
-  // Convert coredump to minidump.
-  const std::string procfs_dir = "/proc/" + pid_string;
-  const std::string minidump = basename + ".dmp";
-  if (!ConvertCoredumpToMinidump(coredump, procfs_dir, minidump)) {
-    ALOGE("Failed to convert coredump to minidump.");
+  // Write metadata.
+  const std::string metadata = basename + ".meta";
+  if (!WriteMetadata(coredump_size, pid_string, uid_string, gid_string,
+                     signal_string, username, exec_name, metadata)) {
+    ALOGE("Failed to write metadata.");
     return 1;
   }
   return 0;
