@@ -14,7 +14,14 @@ LOCAL_SRC_FILES := \
         dsp/drc_math.c \
         dsp/dsp_util.c \
         dsp/eq2.c \
-        dsp/eq.c
+        dsp/eq.c \
+	cras_dsp.c \
+	cras_dsp_ini.c \
+	cras_dsp_mod_builtin.c \
+	cras_dsp_pipeline.c \
+	cras_expr.c \
+	iniparser.c \
+	dictionary.c
 
 LOCAL_SHARED_LIBRARIES := \
 	liblog \
@@ -27,6 +34,7 @@ LOCAL_SHARED_LIBRARIES := \
 
 
 LOCAL_C_INCLUDES += \
+	device/google/dragon/audio/hal/dsp \
 	external/tinyalsa/include \
 	external/tinycompress/include \
 	$(call include-path-for, audio-utils) \
