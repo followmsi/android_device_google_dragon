@@ -50,6 +50,11 @@ bool MakeRoomForNewReport() {
   std::vector<time_t> dump_mtimes;  // Modification time of dump files.
   std::vector<std::pair<time_t, String8>> all_files;
   while (struct dirent* entry = readdir(dir.get())) {
+    // Skip uninteresting entries.
+    if (entry->d_name == std::string(".") ||
+        entry->d_name == std::string(".."))
+      continue;
+
     String8 filename = String8(kOutputDirectory).appendPath(entry->d_name);
     struct stat attributes;
     if (stat(filename.string(), &attributes))
