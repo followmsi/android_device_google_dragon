@@ -44,3 +44,4 @@
 #$(call add-clean-step, find $(OUT_DIR) -type f -name "IGTalkSession*" -print0 | xargs -0 rm -f)
 #$(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/tablet_core_hardware.xml)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/dragon_features.xml)
