@@ -137,6 +137,8 @@ enum {
 
 #define MAX_SUPPORTED_CHANNEL_MASKS 2
 
+struct cras_dsp_context;
+
 typedef int snd_device_t;
 
 /* These are the supported use cases by the hardware.
@@ -182,6 +184,7 @@ struct pcm_device_profile {
     int               id;
     usecase_type_t    type;
     audio_devices_t   devices;
+    const char*       dsp_name;
 };
 
 struct pcm_device {
@@ -193,6 +196,7 @@ struct pcm_device {
     struct resampler_itfe*     resampler;
     int16_t*                   res_buffer;
     size_t                     res_byte_count;
+    struct cras_dsp_context*   dsp_context;
 };
 
 struct stream_out {
