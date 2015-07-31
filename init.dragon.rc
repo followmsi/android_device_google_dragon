@@ -24,8 +24,6 @@ service watchdogd /sbin/watchdogd 10 20
     seclabel u:r:watchdogd:s0
 
 on post-fs
-    write /sys/power/gpu_power_on 1
-    write /sys/module/input_cfboost/parameters/gpu_wakeup 1
     # Turn on swap
     swapon_all /fstab.dragon
 
