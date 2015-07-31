@@ -40,7 +40,8 @@ PRODUCT_PACKAGES += \
     wpa_supplicant \
     wpa_supplicant.conf \
     fs_config_files \
-    crash_collector
+    crash_collector \
+    CrashReportProvider
 
 ifeq ($(TARGET_BUILD_VARIANT),eng)
 PRODUCT_PACKAGES += \
