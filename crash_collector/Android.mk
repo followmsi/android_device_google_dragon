@@ -42,3 +42,21 @@ LOCAL_STATIC_LIBRARIES := \
 LOCAL_MODULE := crash_collector
 
 include $(BUILD_EXECUTABLE)
+
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := crash-report-provider
+LOCAL_SRC_FILES := $(call all-java-files-under, src)
+
+include $(BUILD_STATIC_JAVA_LIBRARY)
+
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE_TAGS := optional
+LOCAL_STATIC_JAVA_LIBRARIES := crash-report-provider
+LOCAL_PACKAGE_NAME := CrashReportProvider
+LOCAL_CERTIFICATE := platform
+
+include $(BUILD_PACKAGE)
