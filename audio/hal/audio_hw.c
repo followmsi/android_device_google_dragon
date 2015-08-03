@@ -1733,13 +1733,19 @@ false_alarm:
             ALOGVV("%s: resampler output frames_= %d", __func__, frames_wr);
         }
         if (pcm_device->pcm) {
+            unsigned audio_bytes;
+            const void *audio_data;
+
             ALOGVV("%s: writing buffer (%d bytes) to pcm device", __func__, bytes);
-            if (pcm_device->resampler && pcm_device->res_buffer)
-                pcm_device->status =
-                    pcm_write(pcm_device->pcm, (void *)pcm_device->res_buffer,
-                        frames_wr * frame_size);
-            else
-                pcm_device->status = pcm_write(pcm_device->pcm, (void *)buffer, bytes);
+            if (pcm_device->resampler && pcm_device->res_buffer) {
+                audio_data = pcm_device->res_buffer;
+                audio_bytes = frames_wr * frame_size;
+            } else {
+                audio_data = buffer;
+                audio_bytes = bytes;
+            }
+
+            pcm_device->status = pcm_write(pcm_device->pcm, audio_data, audio_bytes);
             if (pcm_device->status != 0)
                 ret = pcm_device->status;
         }
