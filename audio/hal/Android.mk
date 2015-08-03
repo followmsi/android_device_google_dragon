@@ -5,7 +5,16 @@ include $(CLEAR_VARS)
 LOCAL_ARM_MODE := arm
 
 LOCAL_SRC_FILES := \
-	audio_hw.c
+	audio_hw.c \
+        dsp/biquad.c \
+        dsp/crossover.c \
+        dsp/crossover2.c \
+        dsp/drc.c \
+        dsp/drc_kernel.c \
+        dsp/drc_math.c \
+        dsp/dsp_util.c \
+        dsp/eq2.c \
+        dsp/eq.c
 
 LOCAL_SHARED_LIBRARIES := \
 	liblog \
