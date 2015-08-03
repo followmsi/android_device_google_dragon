@@ -44,6 +44,7 @@
 #include <audio_effects/effect_aec.h>
 #include <audio_effects/effect_ns.h>
 #include "audio_hw.h"
+#include "cras_dsp.h"
 
 /* TODO: the following PCM device profiles could be read from a config file */
 struct pcm_device_profile pcm_device_playback_hs = {
@@ -116,6 +117,7 @@ struct pcm_device_profile pcm_device_playback_spk = {
     .id = 0,
     .type = PCM_PLAYBACK,
     .devices = AUDIO_DEVICE_OUT_SPEAKER,
+    .dsp_name = "speaker_eq",
 };
 
 struct pcm_device_profile *pcm_devices[] = {
@@ -1248,6 +1250,16 @@ static int out_open_pcm_devices(struct stream_out *out)
         ALOGV("%s: Opening PCM device card_id(%d) device_id(%d)",
               __func__, pcm_device->pcm_profile->card, pcm_device->pcm_profile->id);
 
+        if (pcm_device->pcm_profile->dsp_name) {
+            pcm_device->dsp_context = cras_dsp_context_new(pcm_device->pcm_profile->config.rate,
+                                                           "playback");
+            if (pcm_device->dsp_context) {
+                cras_dsp_set_variable(pcm_device->dsp_context, "dsp_name",
+                                      pcm_device->pcm_profile->dsp_name);
+                cras_dsp_load_pipeline(pcm_device->dsp_context);
+            }
+        }
+
         pcm_device->pcm = pcm_open(pcm_device->pcm_profile->card, pcm_device->pcm_profile->id,
                                PCM_OUT | PCM_MONOTONIC, &pcm_device->pcm_profile->config);
 
@@ -1683,6 +1695,27 @@ static int out_set_volume(struct audio_stream_out *stream, float left,
     return -ENOSYS;
 }
 
+/* Applies the DSP to the samples for the iodev if applicable. */
+static void apply_dsp(struct pcm_device *iodev, uint8_t *buf, size_t frames)
+{
+	struct cras_dsp_context *ctx;
+	struct pipeline *pipeline;
+
+	ctx = iodev->dsp_context;
+	if (!ctx)
+		return;
+
+	pipeline = cras_dsp_get_pipeline(ctx);
+	if (!pipeline)
+		return;
+
+	cras_dsp_pipeline_apply(pipeline,
+				buf,
+				frames);
+
+	cras_dsp_put_pipeline(ctx);
+}
+
 static ssize_t out_write(struct audio_stream_out *stream, const void *buffer,
                          size_t bytes)
 {
@@ -1744,6 +1777,12 @@ false_alarm:
                 audio_data = buffer;
                 audio_bytes = bytes;
             }
+
+            /*
+             * This can only be S16_LE stereo because of the supported formats,
+             * 4 bytes per frame.
+             */
+            apply_dsp(pcm_device, audio_data, audio_bytes/4);
 
             pcm_device->status = pcm_write(pcm_device->pcm, audio_data, audio_bytes);
             if (pcm_device->status != 0)
@@ -2590,6 +2629,8 @@ static int adev_open(const hw_module_t *module, const char *name,
     }
 
     *device = &adev->device.common;
+
+    cras_dsp_init("/speakerdsp.ini");
 
     ALOGV("%s: exit", __func__);
     return 0;
