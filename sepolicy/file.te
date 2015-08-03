@@ -1,1 +1,4 @@
 type sysfs_gps_gpio, fs_type, sysfs_type;
+
+# /config
+type configfs, fs_type;
