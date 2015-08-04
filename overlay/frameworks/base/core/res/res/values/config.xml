@@ -43,6 +43,10 @@
     <!-- HACK: Force landscape -->
     <bool name="config_forceDefaultOrientation">true</bool>
 
+    <!-- Indicate whether closing the lid causes the device to go to sleep
+         and opening it causes the device to wake up. The default is false. -->
+    <bool name="config_lidControlsSleep">true</bool>
+
     <!-- Setting this true forces the headset jack switches to use the/dev/input/event subsystem
          rather than the uevent framework. -->
     <bool name="config_useDevInputEventForAudioJack">true</bool>
