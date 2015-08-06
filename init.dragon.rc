@@ -138,8 +138,6 @@ on boot
     # enable GPU dvfs
     write /sys/class/drm/card0/device/pstate auto
 
-    # HACK: prevent suspend, pending fixes
-    write /sys/power/wake_lock DragonHackPreventSuspend
 
 on fs
     mount_all /fstab.dragon
