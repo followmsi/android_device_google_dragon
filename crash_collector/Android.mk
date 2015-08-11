@@ -19,6 +19,7 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := \
     crash_collector.cc \
+    coredump_writer.cc \
 
 LOCAL_CPP_EXTENSION := cc
 
