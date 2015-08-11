@@ -116,6 +116,12 @@ on boot
     chown system system /sys/bus/i2c/devices/0-0020/0018:06CB:3370.0001/input/input0/inhibited
     chmod 0660 /sys/bus/i2c/devices/0-0020/0018:06CB:3370.0001/input/input0/inhibited
 
+    # for lightbar
+    chown system system /sys/class/chromeos/cros_ec/lightbar/userspace_control
+    chmod 0660 /sys/class/chromeos/cros_ec/lightbar/userspace_control
+    chown system system /sys/class/chromeos/cros_ec/lightbar/sequence
+    chmod 0660 /sys/class/chromeos/cros_ec/lightbar/sequence
+
     # Enable CC4
     write /sys/devices/system/cpu/cpu0/cpuidle/state1/disabled 0
     write /sys/devices/system/cpu/cpu1/cpuidle/state1/disabled 0
