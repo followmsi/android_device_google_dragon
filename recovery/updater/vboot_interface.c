@@ -256,36 +256,76 @@ static uint8_t crc8(const uint8_t *data, int len)
 	return (uint8_t)(crc >> 8);
 }
 
-int vbnv_readwrite(struct flash_device *ec, int off, uint8_t mask,
+#define VB2_NVDATA_SIZE	16
+
+int vbnv_readwrite(struct flash_device *spi, int off, uint8_t mask,
 		   uint8_t *value, int write)
 {
-	struct ec_params_vbnvcontext r;
 	int res;
-	memset(&r, 0, sizeof(r));
-	r.op = EC_VBNV_CONTEXT_OP_READ;
-	res = flash_cmd(ec, EC_CMD_VBNV_CONTEXT, EC_VER_VBNV_CONTEXT,
-			&r, sizeof(r.op), &r.block, EC_VBNV_BLOCK_SIZE);
-	if (res)
+	size_t size;
+	off_t offset;
+	uint8_t *block, *nvram, *end, *curr;
+	uint8_t dummy[VB2_NVDATA_SIZE];
+
+	if (off >= VB2_NVDATA_SIZE) {
+		ALOGW("ERROR: Incorrect offset %d for NvStorage\n", off);
 		return -EIO;
+	}
+
+	/* Read NVRAM. */
+	nvram = fmap_read_section(spi, "RW_NVRAM", &size, &offset);
+	/*
+	 * Ensure NVRAM is found, size is atleast 1 block and total size is
+	 * multiple of VB2_NVDATA_SIZE.
+	 */
+	if ((nvram == NULL) || (size < VB2_NVDATA_SIZE) ||
+	    (size % VB2_NVDATA_SIZE)) {
+		ALOGW("ERROR: NVRAM not found\n");
+		return -EIO;
+	}
+
+	/* Create an empty dummy block to compare. */
+	memset(dummy, 0xFF, sizeof(dummy));
+
+	/*
+	 * Loop until the last used block in NVRAM.
+	 * 1. All blocks will not be empty since we just booted up fine.
+	 * 2. If all blocks are used, select the last block.
+	 */
+	block = nvram;
+	end = block + size;
+	for (curr = block; curr < end; curr += VB2_NVDATA_SIZE) {
+		if (memcmp(curr, dummy, VB2_NVDATA_SIZE) == 0)
+			break;
+		block = curr;
+	}
 
 	if (write) {
-		r.op = EC_VBNV_CONTEXT_OP_WRITE;
-		r.block[off] = (r.block[off] & ~mask) | (*value & mask);
-		r.block[CRC_OFFSET] = crc8(r.block, CRC_OFFSET);
-		res = flash_cmd(ec, EC_CMD_VBNV_CONTEXT, EC_VER_VBNV_CONTEXT,
-				&r, sizeof(r), NULL, 0);
-		if (res)
+		block[off] = (block[off] & ~mask) | (*value & mask);
+		block[CRC_OFFSET] = crc8(block, CRC_OFFSET);
+
+		if (flash_erase(spi, offset, size)) {
+			ALOGW("ERROR: Cannot erase flash\n");
 			return -EIO;
+		}
+
+		if (flash_write(spi, offset, nvram, size)) {
+			ALOGW("ERROR: Cannot update NVRAM\n");
+			return -EIO;
+		}
+
+		ALOGD("NVRAM updated.\n");
 	} else {
-		*value = r.block[off] & mask;
+		*value = block[off] & mask;
 	}
+
 	return 0;
 }
 
-int vbnv_set_fw_try_next(struct flash_device *ec, int next)
+int vbnv_set_fw_try_next(struct flash_device *spi, int next)
 {
 	uint8_t value = next ? BOOT2_TRY_NEXT : 0;
-	return vbnv_readwrite(ec, BOOT2_OFFSET, BOOT2_TRY_NEXT,
+	return vbnv_readwrite(spi, BOOT2_OFFSET, BOOT2_TRY_NEXT,
 			      &value, 1);
 }
 
