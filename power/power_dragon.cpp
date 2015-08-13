@@ -32,6 +32,8 @@
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
+#include "timed_qos_manager.h"
+
 #define BOOSTPULSE_PATH "/sys/devices/system/cpu/cpufreq/interactive/boostpulse"
 #define CPU_MAX_FREQ_PATH "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq"
 #define TOUCH_SYNA_INTERACTIVE_PATH "/sys/bus/i2c/devices/0-0020/0018:06CB:3370.0001/input/input0/inhibited"
@@ -39,21 +41,27 @@
 #define LIGHTBAR_SEQUENCE_PATH "/sys/class/chromeos/cros_ec/lightbar/sequence"
 #define LOW_POWER_MAX_FREQ "1020000"
 #define NORMAL_MAX_FREQ "2901000"
+#define GPU_BOOST_PATH "/sys/devices/57000000.gpu/pstate"
+#define GPU_BOOST_ENTER_CMD "0A"    // use pstate 0x0A as boost state
+#define GPU_BOOST_EXIT_CMD "auto"
 #define GPU_FREQ_CONSTRAINT "852000 852000 -1 2000"
 
 struct dragon_power_module {
     struct power_module base;
-    pthread_mutex_t lock;
+    pthread_mutex_t boost_pulse_lock;
+    pthread_mutex_t low_power_lock;
     int boostpulse_fd;
     int boostpulse_warned;
+    TimedQosManager *gpu_qos_manager;
 };
 
 static bool low_power_mode = false;
 
-static char *max_cpu_freq = NORMAL_MAX_FREQ;
-static char *low_power_max_cpu_freq = LOW_POWER_MAX_FREQ;
+static const char *max_cpu_freq = NORMAL_MAX_FREQ;
+static const char *low_power_max_cpu_freq = LOW_POWER_MAX_FREQ;
 
-static void sysfs_write(const char *path, char *s)
+
+void sysfs_write(const char *path, const char *s)
 {
     char buf[80];
     int len;
@@ -76,6 +84,14 @@ static void sysfs_write(const char *path, char *s)
 
 static void power_init(struct power_module __unused *module)
 {
+    struct dragon_power_module *dragon =
+            (struct dragon_power_module *) module;
+
+    dragon->gpu_qos_manager = new TimedQosManager("GPU",
+        new SysfsQosObject(GPU_BOOST_PATH, GPU_BOOST_ENTER_CMD, GPU_BOOST_EXIT_CMD),
+        false);
+    dragon->gpu_qos_manager->run("GpuTimedQosManager", PRIORITY_FOREGROUND);
+
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/timer_rate",
                 "20000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/timer_slack",
@@ -116,7 +132,7 @@ static int boostpulse_open(struct dragon_power_module *dragon)
     char buf[80];
     int len;
 
-    pthread_mutex_lock(&dragon->lock);
+    pthread_mutex_lock(&dragon->boost_pulse_lock);
 
     if (dragon->boostpulse_fd < 0) {
         dragon->boostpulse_fd = open(BOOSTPULSE_PATH, O_WRONLY);
@@ -130,7 +146,7 @@ static int boostpulse_open(struct dragon_power_module *dragon)
         }
     }
 
-    pthread_mutex_unlock(&dragon->lock);
+    pthread_mutex_unlock(&dragon->boost_pulse_lock);
     return dragon->boostpulse_fd;
 }
 
@@ -143,7 +159,7 @@ static void dragon_power_hint(struct power_module *module, power_hint_t hint,
     int len;
 
     switch (hint) {
-     case POWER_HINT_INTERACTION:
+    case POWER_HINT_INTERACTION:
         if (boostpulse_open(dragon) >= 0) {
             len = write(dragon->boostpulse_fd, "1", 1);
 
@@ -152,21 +168,23 @@ static void dragon_power_hint(struct power_module *module, power_hint_t hint,
                 ALOGE("Error writing to %s: %s\n", BOOSTPULSE_PATH, buf);
             }
         }
+        if (dragon->gpu_qos_manager != NULL)
+            dragon->gpu_qos_manager->requestTimedQos(s2ns(1));
 
         break;
 
-   case POWER_HINT_VSYNC:
+    case POWER_HINT_VSYNC:
         break;
 
     case POWER_HINT_LOW_POWER:
-        pthread_mutex_lock(&dragon->lock);
+        pthread_mutex_lock(&dragon->low_power_lock);
         if (data) {
             sysfs_write(CPU_MAX_FREQ_PATH, low_power_max_cpu_freq);
         } else {
             sysfs_write(CPU_MAX_FREQ_PATH, max_cpu_freq);
         }
         low_power_mode = data;
-        pthread_mutex_unlock(&dragon->lock);
+        pthread_mutex_unlock(&dragon->low_power_lock);
         break;
 
     default:
@@ -174,8 +192,15 @@ static void dragon_power_hint(struct power_module *module, power_hint_t hint,
     }
 }
 
+static int dragon_power_open(const hw_module_t *module, const char *name,
+                            hw_device_t **device)
+{
+    return 0;
+}
+
+
 static struct hw_module_methods_t power_module_methods = {
-    .open = NULL,
+    .open = dragon_power_open,
 };
 
 struct dragon_power_module HAL_MODULE_INFO_SYM = {
@@ -188,6 +213,8 @@ struct dragon_power_module HAL_MODULE_INFO_SYM = {
             name: "Dragon Power HAL",
             author: "The Android Open Source Project",
             methods: &power_module_methods,
+            dso: NULL,
+            reserved: {0},
         },
 
         init: power_init,
@@ -195,8 +222,10 @@ struct dragon_power_module HAL_MODULE_INFO_SYM = {
         powerHint: dragon_power_hint,
     },
 
-    lock: PTHREAD_MUTEX_INITIALIZER,
+    boost_pulse_lock: PTHREAD_MUTEX_INITIALIZER,
+    low_power_lock: PTHREAD_MUTEX_INITIALIZER,
     boostpulse_fd: -1,
     boostpulse_warned: 0,
+    gpu_qos_manager: NULL,
 };
 

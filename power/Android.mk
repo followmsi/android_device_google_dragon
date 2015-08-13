@@ -20,8 +20,9 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE_RELATIVE_PATH := hw
-LOCAL_SHARED_LIBRARIES := liblog libcutils
-LOCAL_SRC_FILES := power_dragon.c
+LOCAL_SHARED_LIBRARIES := liblog libcutils libutils
+LOCAL_SRC_FILES := power_dragon.cpp \
+                   timed_qos_manager.cpp
 LOCAL_MODULE := power.dragon
 LOCAL_MODULE_TAGS := optional
 include $(BUILD_SHARED_LIBRARY)
