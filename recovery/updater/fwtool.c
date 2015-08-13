@@ -123,14 +123,14 @@ static int cmd_vboot(int argc, const char **argv)
 static int cmd_update(int argc, const char **argv)
 {
 	Value mainv, ecv;
-	if (argc < 2)
+	if (argc < 3)
 		return -EINVAL;
 
-	printf("Updating using images %s/%s ...\n", argv[0], argv[1]);
+	printf("Updating using images main:%s and ec:%s ...\n", argv[1], argv[2]);
 	mainv.type = VAL_STRING;
-	mainv.data = (void *)argv[0];
+	mainv.data = (void *)argv[1];
 	ecv.type = VAL_STRING;
-	ecv.data = (void *)argv[1];
+	ecv.data = (void *)argv[2];
 	update_fw(&mainv, &ecv, 1);
 	printf("Done.\n");
 
