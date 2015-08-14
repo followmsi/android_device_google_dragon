@@ -111,8 +111,8 @@ static int update_recovery_fw(struct flash_device *spi, struct flash_device *ec,
 	return res;
 }
 
-static int update_rw_fw(struct flash_device *spi, struct flash_device *ec,
-			struct flash_device *img, char cur_part)
+static int update_rw_fw(struct flash_device *spi, struct flash_device *img,
+			char cur_part)
 {
 	int res;
 	/* Update part A if we are running on B, write B in all other cases */
@@ -126,7 +126,7 @@ static int update_rw_fw(struct flash_device *spi, struct flash_device *ec,
 
 	res = update_partition(img, spi, rw_name);
 	if (!res) /* We have updated the SPI flash */
-		vbnv_set_fw_try_next(ec, try_next);
+		vbnv_set_fw_try_next(spi, try_next);
 
 	return res;
 }
@@ -174,7 +174,7 @@ int update_fw(Value *fw_file, Value *ec_file, int force)
 	if (cur_part == 'R') /* Recovery mode */
 		res = update_recovery_fw(spi, ec, img, ec_file);
 	 else /* Normal mode */
-		res = update_rw_fw(spi, ec, img, cur_part);
+		res = update_rw_fw(spi, img, cur_part);
 	if (!res) /* successful update : record it */
 		res = 1;
 
