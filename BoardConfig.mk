@@ -34,14 +34,11 @@ TARGET_2ND_CPU_VARIANT := cortex-a15
 # Disable emulator for "make dist" until there is a 64-bit qemu kernel
 BUILD_EMULATOR := false
 
-TARGET_NO_BOOTLOADER := true
-
-TARGET_NO_RADIOIMAGE := true
-
 TARGET_BOARD_PLATFORM := tegra132_dragon
 TARGET_BOARD_INFO_FILE ?= device/google/dragon/board-info.txt
 
 TARGET_BOOTLOADER_BOARD_NAME := dragon
+TARGET_RELEASETOOLS_EXTENSIONS := device/google/dragon
 
 USE_OPENGL_RENDERER := true
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 2
@@ -114,3 +111,7 @@ MALLOC_IMPL := dlmalloc
 
 BOARD_SEPOLICY_DIRS += \
        device/google/dragon/sepolicy
+
+# add firmware update to the updater binary
+TARGET_RECOVERY_UPDATER_LIBS += librecovery_updater_dragon
+TARGET_RECOVERY_UPDATER_EXTRA_LIBS +=
