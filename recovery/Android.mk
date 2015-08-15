@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-ifneq ($(filter dragon%, $(TARGET_DEVICE)),)
+ifneq ($(filter dragon, $(TARGET_DEVICE)),)
 
 LOCAL_PATH := $(call my-dir)
 
