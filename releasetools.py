@@ -50,9 +50,12 @@ def IncrementalOTA_InstallEnd(info):
   except KeyError:
     source_ec_img = None
 
-  if source_bootloader_img != target_bootloader_img or source_ec_img != target_ec_img:
+  if source_bootloader_img == target_bootloader_img and source_ec_img == target_ec_img:
       print "firmware unchanged; skipping"
       return
+
+  common.ZipWriteStr(info.output_zip, "bootloader.img", target_bootloader_img)
+  common.ZipWriteStr(info.output_zip, "ec.bin", target_ec_img)
 
   # emit the script code to trigger the firmware updater on the device
   info.script.AppendExtra(
