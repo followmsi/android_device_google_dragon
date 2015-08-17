@@ -61,7 +61,7 @@ struct flash_device *flash_open(const char *name, const void *params)
 	}
 	ALOGD("Using flash device '%s'\n", ops->name);
 
-	dev = calloc(1, sizeof(struct flash_device));
+	dev = reinterpret_cast<struct flash_device *>(calloc(1, sizeof(struct flash_device)));
 	if (!dev)
 		return NULL;
 
@@ -138,7 +138,7 @@ struct fmap *flash_get_fmap(struct flash_device *dev)
 uint8_t *flash_get_gbb(struct flash_device *dev, size_t *size)
 {
 	if (!dev->gbb)
-		dev->gbb = fmap_read_section(dev, "GBB", &dev->gbb_size, NULL);
+		dev->gbb = reinterpret_cast<uint8_t *>(fmap_read_section(dev, "GBB", &dev->gbb_size, NULL));
 
 	if (!dev->gbb)
 		ALOGW("No GBB found\n");

@@ -48,7 +48,7 @@ static int ec_readmem(int offset, int bytes, void *dest)
 
 	r_mem.offset = offset;
 	r_mem.size = bytes;
-	return flash_cmd(ec, EC_CMD_READ_MEMMAP, 0,
+	return flash_cmd(reinterpret_cast<struct flash_device *>(ec), EC_CMD_READ_MEMMAP, 0,
 			 &r_mem, sizeof(r_mem), dest, bytes);
 }
 
@@ -148,7 +148,7 @@ static int cmd_ec_chargecontrol(int argc, const char **argv)
 	if (!get_ec())
 		return -ENODEV;
 
-	rv = flash_cmd(ec, EC_CMD_CHARGE_CONTROL, 1, &p, sizeof(p), NULL, 0);
+	rv = flash_cmd(reinterpret_cast<struct flash_device *>(ec), EC_CMD_CHARGE_CONTROL, 1, &p, sizeof(p), NULL, 0);
 	if (rv < 0) {
 		fprintf(stderr, "Is AC connected?\n");
 		return rv;
@@ -205,7 +205,7 @@ static int cmd_ec_gpioget(int argc, const char **argv)
 		}
 		strcpy(p_v1.get_value_by_name.name, argv[1]);
 
-		rv = flash_cmd(ec, EC_CMD_GPIO_GET, 1, &p_v1,
+		rv = flash_cmd(reinterpret_cast<struct flash_device *>(ec), EC_CMD_GPIO_GET, 1, &p_v1,
 				sizeof(p_v1), &r_v1, sizeof(r_v1));
 
 		if (rv < 0)
@@ -218,7 +218,7 @@ static int cmd_ec_gpioget(int argc, const char **argv)
 
 	/* Need GPIO count for EC_GPIO_GET_COUNT or EC_GPIO_GET_INFO */
 	p_v1.subcmd = EC_GPIO_GET_COUNT;
-	rv = flash_cmd(ec, EC_CMD_GPIO_GET, 1, &p_v1,
+	rv = flash_cmd(reinterpret_cast<struct flash_device *>(ec), EC_CMD_GPIO_GET, 1, &p_v1,
 			sizeof(p_v1), &r_v1, sizeof(r_v1));
 	if (rv < 0)
 		return rv;
@@ -235,7 +235,7 @@ static int cmd_ec_gpioget(int argc, const char **argv)
 	for (i = 0; i < num_gpios; i++) {
 		p_v1.get_info.index = i;
 
-		rv = flash_cmd(ec, EC_CMD_GPIO_GET, 1, &p_v1,
+		rv = flash_cmd(reinterpret_cast<struct flash_device *>(ec), EC_CMD_GPIO_GET, 1, &p_v1,
 				sizeof(p_v1), &r_v1, sizeof(r_v1));
 		if (rv < 0)
 			return rv;
@@ -274,7 +274,7 @@ static int cmd_ec_gpioset(int argc, const char **argv)
 		return -1;
 	}
 
-	rv = flash_cmd(ec, EC_CMD_GPIO_SET, 0, &p, sizeof(p), NULL, 0);
+	rv = flash_cmd(reinterpret_cast<struct flash_device *>(ec), EC_CMD_GPIO_SET, 0, &p, sizeof(p), NULL, 0);
 	if (rv < 0)
 		return rv;
 
@@ -290,7 +290,7 @@ static int lb_do_cmd(enum lightbar_command cmd,
 {
 	int rv;
 	in->cmd = cmd;
-	rv = flash_cmd(ec, EC_CMD_LIGHTBAR_CMD, 0,
+	rv = flash_cmd(reinterpret_cast<struct flash_device *>(ec), EC_CMD_LIGHTBAR_CMD, 0,
 			in, 120,
 			out, 120);
 	return (rv < 0 ? rv : 0);
@@ -513,7 +513,7 @@ static int cmd_ec_usbpd(int argc, const char **argv)
 		}
 	}
 
-	rv = flash_cmd(ec, EC_CMD_USB_PD_CONTROL, 1, &p, sizeof(p),
+	rv = flash_cmd(reinterpret_cast<struct flash_device *>(ec), EC_CMD_USB_PD_CONTROL, 1, &p, sizeof(p),
 			&r, sizeof(r));
 
 	if (rv < 0 || argc != 2)
@@ -602,13 +602,13 @@ static int cmd_ec_usbpdpower(int argc, const char **argv)
 	if (!get_ec())
 		return -ENODEV;
 
-	rv = flash_cmd(ec, EC_CMD_USB_PD_PORTS, 0, NULL, 0, &rp, sizeof(rp));
+	rv = flash_cmd(reinterpret_cast<struct flash_device *>(ec), EC_CMD_USB_PD_PORTS, 0, NULL, 0, &rp, sizeof(rp));
 	if (rv)
 		return rv;
 
 	for (i = 0; i < rp.num_ports; i++) {
 		p.port = i;
-		rv = flash_cmd(ec, EC_CMD_USB_PD_POWER_INFO, 0,
+		rv = flash_cmd(reinterpret_cast<struct flash_device *>(ec), EC_CMD_USB_PD_POWER_INFO, 0,
 				&p, sizeof(p), &r, sizeof(r));
 		if (rv)
 			return rv;
@@ -630,12 +630,12 @@ static int cmd_ec_version(int argc, const char **argv)
 	if (!get_ec())
 		return -ENODEV;
 
-	rv = flash_cmd(ec, EC_CMD_GET_VERSION, 0, NULL, 0, &r, sizeof(r));
+	rv = flash_cmd(reinterpret_cast<struct flash_device *>(ec), EC_CMD_GET_VERSION, 0, NULL, 0, &r, sizeof(r));
 	if (rv < 0) {
 		fprintf(stderr, "ERROR: EC_CMD_GET_VERSION failed: %d\n", rv);
 		return rv;
 	}
-	rv = flash_cmd(ec, EC_CMD_GET_BUILD_INFO, 0,
+	rv = flash_cmd(reinterpret_cast<struct flash_device *>(ec), EC_CMD_GET_BUILD_INFO, 0,
 			NULL, 0, build_string, sizeof(build_string));
 	if (rv < 0) {
 		fprintf(stderr, "ERROR: EC_CMD_GET_BUILD_INFO failed: %d\n",
