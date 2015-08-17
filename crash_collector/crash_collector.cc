@@ -32,13 +32,15 @@
 #include "client/linux/minidump_writer/linux_core_dumper.h"
 #include "client/linux/minidump_writer/minidump_writer.h"
 
+#undef DISALLOW_COPY_AND_ASSIGN  // Defined in breakpad's header.
+#include "coredump_writer.h"
+
 namespace {
 
 using android::String8;
 
 const char kOutputDirectory[] = "/data/system/crash_reports";
 const int kMaxNumReports = 16;
-const int kMaxCoredumpSize = 100*1024*1024;
 
 // Makes room for the new crash report by deleting old files when necessary.
 bool MakeRoomForNewReport() {
@@ -120,43 +122,6 @@ bool WriteMetadata(ssize_t coredump_size,
       content, filename, S_IRUSR | S_IWUSR, AID_SYSTEM, AID_SYSTEM);
 }
 
-// Copies fd_src's contents to fd_dest and returns the number of bytes written,
-// or -1 on errors.
-ssize_t CopyFile(int fd_src, int fd_dest) {
-  const size_t kBufSize = 32768;
-  char buf[kBufSize];
-  size_t total = 0;
-  while (true) {
-    int rv = TEMP_FAILURE_RETRY(read(fd_src, buf, kBufSize));
-    if (rv == 0)
-      break;
-    if (rv == -1 || !android::base::WriteFully(fd_dest, buf, rv))
-      return -1;
-
-    // Limit the destination file size.
-    total += rv;
-    if (total > kMaxCoredumpSize)
-      return -1;
-  }
-  return total;
-}
-
-// Copies STDIN to the specified file and returns the number of bytes written,
-// or -1 on errors.
-ssize_t CopyStdinToFile(const std::string& dest) {
-  int fd = TEMP_FAILURE_RETRY(open(
-      dest.c_str(), O_WRONLY | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR));
-  if (fd == -1) {
-    ALOGE("Failed to open: %s %d", dest.c_str(), errno);
-    return -1;
-  }
-  ssize_t result = CopyFile(STDIN_FILENO, fd);
-  close(fd);
-  if (result == -1)
-    unlink(dest.c_str());
-  return result;
-}
-
 // Converts the specified coredump file to a minidump.
 bool ConvertCoredumpToMinidump(const std::string& coredump_filename,
                                const std::string& procfs_dir,
@@ -209,7 +174,9 @@ int main(int argc, char** argv) {
   const std::string basename =
       std::string(kOutputDirectory) + "/" + crash_time + "." + pid_string;
   const std::string coredump = basename + ".core";
-  const ssize_t coredump_size = CopyStdinToFile(coredump);
+  CoredumpWriter coredump_writer;
+  const ssize_t coredump_size =
+      coredump_writer.WriteCoredump(STDIN_FILENO, coredump);
   if (coredump_size > 0) {
     // Convert coredump to minidump.
     const std::string procfs_dir = "/proc/" + pid_string;
