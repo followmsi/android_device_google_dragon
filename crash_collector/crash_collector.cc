@@ -18,6 +18,7 @@
 
 #include <dirent.h>
 #include <errno.h>
+#include <sys/capability.h>
 #include <unistd.h>
 
 #include <string>
@@ -155,8 +156,7 @@ bool ConvertCoredumpToMinidump(const std::string& coredump_filename,
   google_breakpad::LinuxCoreDumper dumper(
       0, coredump_filename.c_str(), proc_files_dir.c_str());
   bool success = google_breakpad::WriteMinidump(
-      minidump_filename.c_str(), mappings, memory_list, &dumper) &&
-      chown(minidump_filename.c_str(), AID_SYSTEM, AID_SYSTEM) == 0;
+      minidump_filename.c_str(), mappings, memory_list, &dumper);
   unlink(coredump_filename.c_str());
   RemoveRecursively(proc_files_dir);
   return success;
@@ -180,6 +180,18 @@ int main(int argc, char** argv) {
   const uid_t appid = uid % AID_USER;
   if (appid >= AID_APP) {  // Ignore non-system crashes.
     return 0;
+  }
+
+  // Act as the system user and drop all capabilities.
+  struct __user_cap_header_struct capheader;
+  struct __user_cap_data_struct capdata[2];
+  memset(&capheader, 0, sizeof(capheader));
+  memset(&capdata, 0, sizeof(capdata));
+  capheader.version = _LINUX_CAPABILITY_VERSION_3;
+  if (setegid(AID_SYSTEM) != 0 || seteuid(AID_SYSTEM) != 0 ||
+      capset(&capheader, capdata) != 0) {
+    ALOGE("Failed to stop being root.");
+    return 1;
   }
 
   // Username lookup.
