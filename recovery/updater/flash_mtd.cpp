@@ -42,8 +42,8 @@ struct mtd_data {
 
 static void *mtd_open(const void *params)
 {
-	const char *path = params ? params : DEFAULT_MTD_FILE;
-	struct mtd_data *dev = calloc(1, sizeof(struct mtd_data));
+	const char *path = reinterpret_cast<const char *>(params ? params : DEFAULT_MTD_FILE);
+	struct mtd_data *dev = reinterpret_cast<struct mtd_data *>(calloc(1, sizeof(struct mtd_data)));
 	if (!dev)
 		return NULL;
 
@@ -79,7 +79,7 @@ out_free:
 
 static void mtd_close(void *hnd)
 {
-	struct mtd_data *dev = hnd;
+	struct mtd_data *dev = reinterpret_cast<struct mtd_data *>(hnd);
 
 	close(dev->fd);
 	free(dev);
@@ -87,9 +87,9 @@ static void mtd_close(void *hnd)
 
 static int mtd_read(void *hnd, off_t offset, void *buffer, size_t count)
 {
-	struct mtd_data *dev = hnd;
+	struct mtd_data *dev = reinterpret_cast<struct mtd_data *>(hnd);
 	ssize_t res;
-	uint8_t *ptr = buffer;
+	uint8_t *ptr = reinterpret_cast<uint8_t *>(buffer);
 
 	if (lseek(dev->fd, offset, SEEK_SET) != offset) {
 		ALOGW("Cannot seek to %ld\n", offset);
@@ -111,9 +111,9 @@ static int mtd_read(void *hnd, off_t offset, void *buffer, size_t count)
 
 static int mtd_write(void *hnd, off_t offset, void *buffer, size_t count)
 {
-	struct mtd_data *dev = hnd;
+	struct mtd_data *dev = reinterpret_cast<struct mtd_data *>(hnd);
 	ssize_t res;
-	uint8_t *ptr = buffer;
+	uint8_t *ptr = reinterpret_cast<uint8_t *>(buffer);
 
 	if (lseek(dev->fd, offset, SEEK_SET) != offset) {
 		ALOGW("Cannot seek to %ld\n", offset);
@@ -134,7 +134,7 @@ static int mtd_write(void *hnd, off_t offset, void *buffer, size_t count)
 
 static int mtd_erase(void *hnd, off_t offset, size_t count)
 {
-	struct mtd_data *dev = hnd;
+	struct mtd_data *dev = reinterpret_cast<struct mtd_data *>(hnd);
 	int res;
 	struct erase_info_user ei;
 
@@ -162,21 +162,21 @@ static int mtd_erase(void *hnd, off_t offset, size_t count)
 
 static size_t mtd_get_size(void *hnd)
 {
-	struct mtd_data *dev = hnd;
+	struct mtd_data *dev = reinterpret_cast<struct mtd_data *>(hnd);
 
 	return dev && dev->fd > 0 ? dev->info.size : 0;
 }
 
 static size_t mtd_get_write_size(void *hnd)
 {
-	struct mtd_data *dev = hnd;
+	struct mtd_data *dev = reinterpret_cast<struct mtd_data *>(hnd);
 
 	return dev && dev->fd > 0 ? dev->info.writesize : 0;
 }
 
 static size_t mtd_get_erase_size(void *hnd)
 {
-	struct mtd_data *dev = hnd;
+	struct mtd_data *dev = reinterpret_cast<struct mtd_data *>(hnd);
 
 	return dev && dev->fd > 0 ? dev->info.erasesize : 0;
 }

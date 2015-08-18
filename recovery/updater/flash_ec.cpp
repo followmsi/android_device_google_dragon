@@ -59,7 +59,7 @@ struct ec_data {
 static int ec_command(void *hnd, int command, int version,
 		const void *outdata, int outsize, void *indata, int insize)
 {
-	struct ec_data *ec = hnd;
+	struct ec_data *ec = reinterpret_cast<struct ec_data *>(hnd);
 	struct cros_ec_command s_cmd;
 	int r;
 
@@ -72,7 +72,7 @@ static int ec_command(void *hnd, int command, int version,
 	s_cmd.outsize = outsize;
 	s_cmd.outdata = (uint8_t *)outdata;
 	s_cmd.insize = insize;
-	s_cmd.indata = indata;
+	s_cmd.indata = reinterpret_cast<uint8_t *>(indata);
 
 	r = ioctl(ec->fd, CROS_EC_DEV_IOCXCMD, &s_cmd);
 	if (r < 0) {
@@ -90,8 +90,8 @@ static void *ec_open(const void *params)
 {
 	int res;
 	struct ec_params_flash_region_info region;
-	const char *path = params ? params : CROS_EC_DEV_NAME;
-	struct ec_data *dev = calloc(1, sizeof(struct ec_data));
+	const char *path = reinterpret_cast<const char *>(params ? params : CROS_EC_DEV_NAME);
+	struct ec_data *dev = reinterpret_cast<struct ec_data *>(calloc(1, sizeof(struct ec_data)));
 	if (!dev)
 		return NULL;
 
@@ -141,7 +141,7 @@ out_free:
 
 static void ec_close(void *hnd)
 {
-	struct ec_data *dev = hnd;
+	struct ec_data *dev = reinterpret_cast<struct ec_data *>(hnd);
 
 	close(dev->fd);
 	free(dev);
@@ -149,10 +149,10 @@ static void ec_close(void *hnd)
 
 static int ec_read(void *hnd, off_t offset, void *buffer, size_t count)
 {
-	struct ec_data *dev = hnd;
+	struct ec_data *dev = reinterpret_cast<struct ec_data *>(hnd);
 	ssize_t res;
 	struct ec_params_flash_read p;
-	uint8_t *ptr = buffer;
+	uint8_t *ptr = reinterpret_cast<uint8_t *>(buffer);
 	uint32_t read_size = dev->proto.max_response_packet_size
 				- sizeof(struct ec_host_response);
 
@@ -174,15 +174,15 @@ static int ec_read(void *hnd, off_t offset, void *buffer, size_t count)
 
 static int ec_write(void *hnd, off_t offset, void *buffer, size_t count)
 {
-	struct ec_data *dev = hnd;
+	struct ec_data *dev = reinterpret_cast<struct ec_data *>(hnd);
 	ssize_t res;
 	struct ec_params_flash_write *p;
 	uint8_t *packet_data;
-	uint8_t *ptr = buffer;
+	uint8_t *ptr = reinterpret_cast<uint8_t *>(buffer);
 	uint32_t write_size = dev->info.write_ideal_size;
 	uint32_t total_size = sizeof(*p) +  write_size;
 
-	p = malloc(total_size);
+	p = reinterpret_cast<struct ec_params_flash_write *>(malloc(total_size));
 	if (!p)
 		return -ENOMEM;
 	packet_data = (uint8_t *)p + sizeof(*p);
@@ -206,7 +206,7 @@ static int ec_write(void *hnd, off_t offset, void *buffer, size_t count)
 
 static int ec_erase(void *hnd, off_t offset, size_t count)
 {
-	struct ec_data *dev = hnd;
+	struct ec_data *dev = reinterpret_cast<struct ec_data *>(hnd);
 	int res;
 	struct ec_params_flash_erase erase;
 
@@ -224,28 +224,28 @@ static int ec_erase(void *hnd, off_t offset, size_t count)
 
 static size_t ec_get_size(void *hnd)
 {
-	struct ec_data *dev = hnd;
+	struct ec_data *dev = reinterpret_cast<struct ec_data *>(hnd);
 
 	return dev && dev->fd > 0 ? dev->info.flash_size : 0;
 }
 
 static size_t ec_get_write_size(void *hnd)
 {
-	struct ec_data *dev = hnd;
+	struct ec_data *dev = reinterpret_cast<struct ec_data *>(hnd);
 
 	return dev && dev->fd > 0 ? dev->info.write_ideal_size : 0;
 }
 
 static size_t ec_get_erase_size(void *hnd)
 {
-	struct ec_data *dev = hnd;
+	struct ec_data *dev = reinterpret_cast<struct ec_data *>(hnd);
 
 	return dev && dev->fd > 0 ? dev->info.erase_block_size : 0;
 }
 
 static off_t ec_get_fmap_offset(void *hnd)
 {
-	struct ec_data *dev = hnd;
+	struct ec_data *dev = reinterpret_cast<struct ec_data *>(hnd);
 
 	if (!hnd)
 		return 0;

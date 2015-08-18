@@ -79,7 +79,7 @@ static void dump_section(struct flash_device *dev, const char *name)
 	off_t offset;
 	char *content;
 
-	content = fmap_read_section(dev, name, &size, &offset);
+	content = reinterpret_cast<char *>(fmap_read_section(dev, name, &size, &offset));
 	if (content) {
 		content[size - 1] = '\0';
 		printf("[%s]@%lx={%s}\n", name, offset, content);
@@ -91,10 +91,10 @@ static int cmd_flash_fmap(int argc, const char **argv)
 	if (!get_spi())
 		return -ENODEV;
 
-	dump_fmap(spi);
-	dump_section(spi, "RO_FRID");
-	dump_section(spi, "RW_FWID_A");
-	dump_section(spi, "RW_FWID_B");
+	dump_fmap(reinterpret_cast<struct flash_device *>(spi));
+	dump_section(reinterpret_cast<struct flash_device *>(spi), "RO_FRID");
+	dump_section(reinterpret_cast<struct flash_device *>(spi), "RW_FWID_A");
+	dump_section(reinterpret_cast<struct flash_device *>(spi), "RW_FWID_B");
 	return 0;
 }
 
@@ -122,15 +122,15 @@ static int cmd_vboot(int argc, const char **argv)
 
 static int cmd_update(int argc, const char **argv)
 {
-	Value mainv, ecv;
+	Value mainv = {0}, ecv = {0};
 	if (argc < 3)
 		return -EINVAL;
 
 	printf("Updating using images main:%s and ec:%s ...\n", argv[1], argv[2]);
 	mainv.type = VAL_STRING;
-	mainv.data = (void *)argv[1];
+	mainv.data = const_cast<char *>(argv[1]);
 	ecv.type = VAL_STRING;
-	ecv.data = (void *)argv[2];
+	ecv.data = const_cast<char *>(argv[2]);
 	update_fw(&mainv, &ecv, 1);
 	printf("Done.\n");
 
@@ -203,9 +203,9 @@ int main(int argc, const char **argv)
 
 	/* Clean up our flash handlers */
 	if (spi)
-		flash_close(spi);
+		flash_close(reinterpret_cast<struct flash_device *>(spi));
 	if (ec)
-		flash_close(ec);
+		flash_close(reinterpret_cast<struct flash_device *>(ec));
 
 	return res;
 }
