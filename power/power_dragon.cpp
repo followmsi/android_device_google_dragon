@@ -40,7 +40,7 @@
 #define IO_IS_BUSY_PATH "/sys/devices/system/cpu/cpufreq/interactive/io_is_busy"
 #define LIGHTBAR_SEQUENCE_PATH "/sys/class/chromeos/cros_ec/lightbar/sequence"
 #define LOW_POWER_MAX_FREQ "1020000"
-#define NORMAL_MAX_FREQ "2901000"
+#define NORMAL_MAX_FREQ "1912500"
 #define GPU_BOOST_PATH "/sys/devices/57000000.gpu/pstate"
 #define GPU_BOOST_ENTER_CMD "0A"    // use pstate 0x0A as boost state
 #define GPU_BOOST_EXIT_CMD "auto"
