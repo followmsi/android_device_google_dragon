@@ -17,7 +17,7 @@
 #ifndef COREDUMP_WRITER_H_
 #define COREDUMP_WRITER_H_
 
-#include <set>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -33,7 +33,9 @@ class CoredumpWriter {
 
   // Reads coredump from |fd_src|, writes it to |coredump_filename|, and
   // returns the number of bytes written, or -1 on errors.
-  ssize_t WriteCoredump(int fd_src, const std::string& coredump_filename);
+  ssize_t WriteCoredump(int fd_src,
+                        const std::string& coredump_filename,
+                        const std::string& proc_files_dir);
 
  private:
   using Ehdr = ElfW(Ehdr);
@@ -41,11 +43,17 @@ class CoredumpWriter {
 
   // Virtual address occupied by a mapped file.
   using FileRange = std::pair<long, long>;
-  using FileRangeSet = std::set<FileRange>;
+  struct FileInfo {
+    long offset;
+    std::string path;
+  };
+  using FileMappings = std::map<FileRange, FileInfo>;
 
   class FdReader;
 
-  ssize_t WriteCoredumpToFD(int fd_src, int fd_dest);
+  ssize_t WriteCoredumpToFD(int fd_src,
+                            int fd_dest,
+                            const std::string& proc_files_dir);
 
   // Reads ELF header, all program headers, and NOTE segment from fd_src.
   bool ReadUntilNote(FdReader* reader,
@@ -54,13 +62,23 @@ class CoredumpWriter {
                      std::vector<char>* note_buf);
 
   // Extracts a set of address ranges occupied by mapped files from NOTE segment.
-  bool GetFileRangeSet(const std::vector<char>& note_buf,
-                       FileRangeSet* file_range_set);
+  bool GetFileMappings(const std::vector<char>& note_buf,
+                       FileMappings* file_mappings);
 
   // Filters out unneeded segments.
   void FilterSegments(const std::vector<Phdr>& program_headers,
-                      const FileRangeSet& file_range_set,
+                      const FileMappings& file_mappings,
                       std::vector<Phdr>* program_headers_filtered);
+
+  // Writes the contents of NT_AUXV note to a file.
+  bool WriteAuxv(const std::vector<char>& note_buf,
+                 const std::string& output_path);
+
+  // Writes mapping info to a file in the same format as /proc/PID/maps.
+  // (cf. "man proc")
+  bool WriteMaps(const std::vector<Phdr>& program_headers,
+                 const FileMappings& file_mappings,
+                 const std::string& output_path);
 
   DISALLOW_COPY_AND_ASSIGN(CoredumpWriter);
 };

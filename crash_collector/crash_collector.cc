@@ -42,22 +42,47 @@ using android::String8;
 const char kOutputDirectory[] = "/data/system/crash_reports";
 const int kMaxNumReports = 16;
 
+// Gets a list of entries under the specified directory.
+bool ReadDirectory(const std::string& path, std::vector<dirent>* entries) {
+  std::unique_ptr<DIR, int(*)(DIR*)> dir(opendir(path.c_str()), closedir);
+  if (!dir)
+    return false;
+  while (struct dirent* entry = readdir(dir.get())) {
+    if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
+      entries->push_back(*entry);
+  }
+  return true;
+}
+
+// Removes a file or a directory recursively.
+bool RemoveRecursively(const std::string& path) {
+  if (unlink(path.c_str()) == 0)
+    return true;
+  if (errno != EISDIR) {
+    ALOGE("Failed to unlink: %s, errno = %d", path.c_str(), errno);
+    return false;
+  }
+  std::vector<dirent> entries;
+  if (!ReadDirectory(path, &entries))
+    return false;
+  for (const auto& entry : entries) {
+    if (!RemoveRecursively(path + "/" + entry.d_name))
+      return false;
+  }
+  return rmdir(path.c_str()) == 0;
+}
+
 // Makes room for the new crash report by deleting old files when necessary.
 bool MakeRoomForNewReport() {
   // Enumerate reports.
-  std::unique_ptr<DIR, int(*)(DIR*)> dir(opendir(kOutputDirectory), closedir);
-  if (!dir)
+  std::vector<dirent> entries;
+  if (!ReadDirectory(kOutputDirectory, &entries))
     return false;
 
   std::vector<time_t> dump_mtimes;  // Modification time of dump files.
   std::vector<std::pair<time_t, String8>> all_files;
-  while (struct dirent* entry = readdir(dir.get())) {
-    // Skip uninteresting entries.
-    if (entry->d_name == std::string(".") ||
-        entry->d_name == std::string(".."))
-      continue;
-
-    String8 filename = String8(kOutputDirectory).appendPath(entry->d_name);
+  for (const auto& entry : entries) {
+    String8 filename = String8(kOutputDirectory).appendPath(entry.d_name);
     struct stat attributes;
     if (stat(filename.string(), &attributes))
       return false;
@@ -65,7 +90,6 @@ bool MakeRoomForNewReport() {
     if (filename.getPathExtension() == ".dmp")
       dump_mtimes.push_back(attributes.st_mtime);
   }
-  dir.reset();
 
   // Remove old files.
   if (dump_mtimes.size() >= kMaxNumReports) {
@@ -77,7 +101,7 @@ bool MakeRoomForNewReport() {
       const time_t mtime = file.first;
       const String8& filename = file.second;
       if (mtime <= threshold) {
-        if (unlink(filename))
+        if (!RemoveRecursively(filename.string()))
           return false;
       }
     }
@@ -124,16 +148,17 @@ bool WriteMetadata(ssize_t coredump_size,
 
 // Converts the specified coredump file to a minidump.
 bool ConvertCoredumpToMinidump(const std::string& coredump_filename,
-                               const std::string& procfs_dir,
+                               const std::string& proc_files_dir,
                                const std::string& minidump_filename) {
   google_breakpad::MappingList mappings;
   google_breakpad::AppMemoryList memory_list;
   google_breakpad::LinuxCoreDumper dumper(
-      0, coredump_filename.c_str(), procfs_dir.c_str());
+      0, coredump_filename.c_str(), proc_files_dir.c_str());
   bool success = google_breakpad::WriteMinidump(
       minidump_filename.c_str(), mappings, memory_list, &dumper) &&
       chown(minidump_filename.c_str(), AID_SYSTEM, AID_SYSTEM) == 0;
   unlink(coredump_filename.c_str());
+  RemoveRecursively(proc_files_dir);
   return success;
 }
 
@@ -174,14 +199,18 @@ int main(int argc, char** argv) {
   const std::string basename =
       std::string(kOutputDirectory) + "/" + crash_time + "." + pid_string;
   const std::string coredump = basename + ".core";
+  const std::string proc_files_dir = basename + ".proc";
+  if (mkdir(proc_files_dir.c_str(), S_IRUSR | S_IWUSR | S_IXUSR) == -1) {
+    ALOGE("Failed to create proc directory. errno = %d", errno);
+    return 1;
+  }
   CoredumpWriter coredump_writer;
   const ssize_t coredump_size =
-      coredump_writer.WriteCoredump(STDIN_FILENO, coredump);
+      coredump_writer.WriteCoredump(STDIN_FILENO, coredump, proc_files_dir);
   if (coredump_size > 0) {
     // Convert coredump to minidump.
-    const std::string procfs_dir = "/proc/" + pid_string;
     const std::string minidump = basename + ".dmp";
-    if (!ConvertCoredumpToMinidump(coredump, procfs_dir, minidump)) {
+    if (!ConvertCoredumpToMinidump(coredump, proc_files_dir, minidump)) {
       ALOGE("Failed to convert coredump to minidump.");
     }
   } else {
