@@ -27,6 +27,9 @@
 
 #define IIO_DIR  "/sys/bus/iio/devices/"
 #define IIO_MAX_NAME_LENGTH 30
+#define IIO_MAX_BUFF_SIZE 512
+#define INT32_CHAR_LEN 12
+
 #define IIO_MAX_DEVICE_NAME_LENGTH (strlen(IIO_DIR) + IIO_MAX_NAME_LENGTH)
 
 enum {X, Y, Z, MAX_AXIS};
@@ -54,6 +57,7 @@ struct cros_ec_sensor_info {
 class CrosECSensor {
     struct cros_ec_sensor_info *mSensorInfo;
     char mRingPath[IIO_MAX_DEVICE_NAME_LENGTH];
+    cros_ec_event mEvents[IIO_MAX_BUFF_SIZE];
     int mDataFd;
 
     int sysfs_set_input_attr(const char *path, const char *attr, const char *value, size_t len);
