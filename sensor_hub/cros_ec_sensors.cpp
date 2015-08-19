@@ -34,9 +34,6 @@
 #include "cros_ec_sensors.h"
 
 /*****************************************************************************/
-#define IIO_MAX_BUFF_SIZE 512
-#define INT32_CHAR_LEN 12
-
 static int min(int a, int b) {
     return (a < b) ? a : b;
 }
@@ -233,22 +230,25 @@ int CrosECSensor::readEvents(sensors_event_t* data, int count)
         return -EINVAL;
     }
 
-    cros_ec_event event;
-    int nb_events = 0;
-    do {
-        rc = read(mDataFd, &event, sizeof(event));
-        if (rc < 0 || (rc != 0 && rc != sizeof(event))) {
-            ALOGE("rc %d while reading ring\n");
-            break;
-        }
-        if (rc == 0)
-            break;
+    /*
+     * Do a single read to collects all pending events.
+     * up to what poll caller can handle.
+     */
+    rc = read(mDataFd, mEvents, sizeof(cros_ec_event) * count);
+    if (rc < 0) {
+        ALOGE("rc %d while reading ring\n", rc);
+        return rc;
+    }
+    if (rc % sizeof(cros_ec_event) != 0) {
+        ALOGE("Incomplete event while reading ring: %d\n", rc);
+        return -EINVAL;
+    }
 
-        processEvent(data, &event);
+    int nb_events = rc / sizeof(cros_ec_event);
+    for (int i = 0; i < nb_events; i++) {
+        processEvent(data, &mEvents[i]);
         data++;
-        count--;
-        nb_events++;
-    } while (count > 0);
+    }
 
     return nb_events;
 }
