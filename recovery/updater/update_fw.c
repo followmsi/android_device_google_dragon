@@ -131,6 +131,29 @@ static int update_rw_fw(struct flash_device *spi, struct flash_device *img,
 	return res;
 }
 
+/*
+ * Provide RO and RW updates until RO FW is changing in dogfood.
+ * TODO (Change this to only RW update and call update_rw_fw instead.)
+ */
+static int update_ap_fw(struct flash_device *spi, struct flash_device *img)
+{
+	int res = -EINVAL;
+
+	if (!check_compatible_keys(img, spi))
+		return -EINVAL;
+
+	res = update_partition(img, spi, "RO_SECTION");
+	if (res)
+		return res;
+
+	res = update_partition(img, spi, "RW_SECTION_A");
+	if (res)
+		return res;
+
+	res = update_partition(img, spi, "RW_SECTION_B");
+	return res;
+}
+
 int update_fw(Value *fw_file, Value *ec_file, int force)
 {
 	int res = -EINVAL;
@@ -171,10 +194,16 @@ int update_fw(Value *fw_file, Value *ec_file, int force)
 	if (!spi)
 		goto out_close_ec;
 
-	if (cur_part == 'R') /* Recovery mode */
-		res = update_recovery_fw(spi, ec, img, ec_file);
-	 else /* Normal mode */
-		res = update_rw_fw(spi, img, cur_part);
+	/* Currently, we will be performing RO+RW updates for AP firmware. */
+	res = update_ap_fw(spi, img);
+
+	if (0) {
+		if (cur_part == 'R') /* Recovery mode */
+			res = update_recovery_fw(spi, ec, img, ec_file);
+		else /* Normal mode */
+			res = update_rw_fw(spi, img, cur_part);
+	}
+
 	if (!res) /* successful update : record it */
 		res = 1;
 
