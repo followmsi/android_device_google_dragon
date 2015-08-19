@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #ifndef _RECOVERY_VBOOT_INTERFACE_H_
 #define _RECOVERY_VBOOT_INTERFACE_H_
 
@@ -31,3 +36,7 @@ uint8_t *gbb_get_rootkey(struct flash_device *dev, size_t *size);
 int vbnv_set_fw_try_next(struct flash_device *ec, int next);
 
 #endif /* _RECOVERY_VBOOT_INTERFACE_H_ */
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */

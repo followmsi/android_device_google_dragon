@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #ifndef _RECOVERY_UPDATE_FW_H_
 #define _RECOVERY_UPDATE_FW_H_
 
@@ -21,3 +26,7 @@
 int update_fw(Value *fw_file, Value *ec_file, int force);
 
 #endif /* _RECOVERY_UPDATE_FW_H_ */
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */
