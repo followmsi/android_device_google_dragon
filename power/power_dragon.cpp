@@ -48,6 +48,7 @@
 #define NORMAL_MAX_FREQ "1912500"
 #define GPU_BOOST_PATH "/sys/devices/57000000.gpu/pstate"
 #define GPU_BOOST_ENTER_CMD "03,0C"    // boost GPU to work at least on 03 - 230MHz
+#define GPU_BOOST_DURATION_MS 40
 #define GPU_BOOST_EXIT_CMD "auto"
 #define GPU_FREQ_CONSTRAINT "852000 852000 -1 2000"
 
@@ -199,7 +200,7 @@ static void dragon_power_hint(struct power_module *module, power_hint_t hint,
             }
         }
         if (dragon->gpu_qos_manager != NULL)
-            dragon->gpu_qos_manager->requestTimedQos(s2ns(1));
+            dragon->gpu_qos_manager->requestTimedQos(ms2ns(GPU_BOOST_DURATION_MS));
 
         break;
 
