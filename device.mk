@@ -31,7 +31,7 @@ PRODUCT_COPY_FILES := \
     $(LOCAL_PATH)/init.recovery.dragon.rc:root/init.recovery.dragon.rc \
     $(LOCAL_FSTAB):root/fstab.dragon \
     $(LOCAL_PATH)/ueventd.dragon.rc:root/ueventd.dragon.rc \
-    $(LOCAL_PATH)/speakerdsp.ini:root/speakerdsp.ini \
+    $(LOCAL_PATH)/speakerdsp.ini:system/etc/cras/speakerdsp.ini \
     $(LOCAL_PATH)/bcmdhd.cal:system/etc/wifi/bcmdhd.cal
 
 PRODUCT_PACKAGES += \
