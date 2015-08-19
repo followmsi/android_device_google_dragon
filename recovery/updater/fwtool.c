@@ -137,9 +137,52 @@ static int cmd_update(int argc, const char **argv)
 	return -ENOENT;
 }
 
+static int cmd_vbnv_read(int argc, const char **argv)
+{
+	if (argc != 2) {
+		printf("Usage: fwtool vbnv read <flag>\n");
+		printf("where <flag> is one of the following:\n");
+		vbnv_usage(0);
+		return -EINVAL;
+	}
+
+	if (!get_spi())
+		return -ENODEV;
+
+	uint8_t val;
+
+	if (vbnv_get_flag(spi, argv[1], &val) == 0)
+		printf("%s = %d\n", argv[1], val);
+
+	return 0;
+}
+
+static int cmd_vbnv_write(int argc, const char **argv)
+{
+	if (argc != 3) {
+		printf("Usage: fwtool vbnv write <flag> <val>\n");
+		printf("where <flag> is one of the following:\n");
+		vbnv_usage(1);
+		return -EINVAL;
+	}
+
+	if (!get_spi())
+		return -ENODEV;
+
+	uint8_t val = atoi(argv[2]);
+	vbnv_set_flag(spi, argv[1], val);
+	return 0;
+}
+
 static struct command subcmds_flash[] = {
 	CMD(flash_fmap, "Dump FMAP information"),
 	CMD_GUARD_LAST
+};
+
+static struct command subcmds_vbnv[] = {
+	CMD(vbnv_read, "Read flag from NvStorage"),
+	CMD(vbnv_write, "Write flag from NvStorage"),
+	CMD_GUARD_LAST,
 };
 
 static struct command cmds[] = {
@@ -147,6 +190,7 @@ static struct command cmds[] = {
 	SUBCMDS(flash, "Read/Write/Dump flash"),
 	CMD(update,    "Update the firmwares"),
 	CMD(vboot,     "dump VBoot information"),
+	SUBCMDS(vbnv,      "Vboot NvStorage"),
 	CMD_GUARD_LAST
 };
 
