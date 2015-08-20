@@ -141,7 +141,7 @@ PRODUCT_PACKAGES += \
     audio.r_submix.default
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.audio.monitorRotation=true
+    ro.audio.monitorRotation=true \
     ro.frp.pst=/dev/block/platform/700b0600.sdhci/by-name/PST
 
 # Allows healthd to boot directly from charger mode rather than initiating a reboot.
