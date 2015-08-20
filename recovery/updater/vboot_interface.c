@@ -52,7 +52,7 @@ char *fdt_read_string(const char *prop)
 	}
 	fseek(file, 0, SEEK_END);
 	size = ftell(file);
-	data = reinterpret_cast<char *>(malloc(size + 1));
+	data = malloc(size + 1);
 	if (!data)
 		return NULL;
 	data[size] = '\0';
@@ -90,7 +90,7 @@ uint32_t fdt_read_u32(const char *prop)
 
 char vboot_get_mainfw_act(void)
 {
-	VbSharedDataHeader *shd = reinterpret_cast<VbSharedDataHeader *>(fdt_read_string("vboot-shared-data"));
+	VbSharedDataHeader *shd = (void *)fdt_read_string("vboot-shared-data");
 	char v;
 
 	if (!shd || shd->magic != VB_SHARED_DATA_MAGIC) {
@@ -163,7 +163,7 @@ struct fmap *fmap_load(struct flash_device *dev, off_t offset)
 	}
 
 	size = sizeof(struct fmap) + hdr.nareas * sizeof(struct fmap_area);
-	fmap = reinterpret_cast<struct fmap *>(malloc(size));
+	fmap = malloc(size);
 
 	res = flash_read(dev, offset, fmap, size);
 	if (res) {
@@ -215,7 +215,7 @@ uint8_t *gbb_get_rootkey(struct flash_device *dev, size_t *size)
 {
 	size_t gbb_size;
 	uint8_t *gbb = flash_get_gbb(dev, &gbb_size);
-	GoogleBinaryBlockHeader *hdr = reinterpret_cast<GoogleBinaryBlockHeader *>(gbb);
+	GoogleBinaryBlockHeader *hdr = (void *)gbb;
 
 	if (!gbb || memcmp(hdr->signature, GBB_SIGNATURE, GBB_SIGNATURE_SIZE) ||
 	    gbb_size < sizeof(*hdr))
@@ -381,7 +381,7 @@ int vbnv_readwrite(struct flash_device *spi, const vbnv_param_t *param,
 	}
 
 	/* Read NVRAM. */
-	nvram = reinterpret_cast<uint8_t *>(fmap_read_section(spi, "RW_NVRAM", &size, &offset));
+	nvram = fmap_read_section(spi, "RW_NVRAM", &size, &offset);
 	/*
 	 * Ensure NVRAM is found, size is at least 1 block and total size is
 	 * multiple of VB_NVDATA_SIZE.
