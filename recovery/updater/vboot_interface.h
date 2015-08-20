@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #ifndef _RECOVERY_VBOOT_INTERFACE_H_
 #define _RECOVERY_VBOOT_INTERFACE_H_
 
@@ -28,6 +33,14 @@ void *fmap_read_section(struct flash_device *dev,
 
 uint8_t *gbb_get_rootkey(struct flash_device *dev, size_t *size);
 
+int vbnv_set_flag(struct flash_device *spi, const char *param, uint8_t value);
+int vbnv_get_flag(struct flash_device *spi, const char *param, uint8_t *value);
+
 int vbnv_set_fw_try_next(struct flash_device *ec, int next);
 
+void vbnv_usage(int write);
 #endif /* _RECOVERY_VBOOT_INTERFACE_H_ */
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */

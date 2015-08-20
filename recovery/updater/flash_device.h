@@ -13,6 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #ifndef _RECOVERY_FLASH_DEVICE_H_
 #define _RECOVERY_FLASH_DEVICE_H_
 
@@ -52,3 +56,7 @@ extern const struct flash_device_ops flash_ec_ops;
 extern const struct flash_device_ops flash_file_ops;
 
 #endif /* _RECOVERY_FLASH_DEVICE_H_ */
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */

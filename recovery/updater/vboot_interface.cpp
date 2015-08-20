@@ -230,14 +230,121 @@ uint8_t *gbb_get_rootkey(struct flash_device *dev, size_t *size)
 	return gbb + hdr->rootkey_offset;
 }
 
-/* ---- VBoot NVRAM (stored by cros_ec) ---- */
+/* ---- VBoot NVRAM (stored in SPI flash) ---- */
 
 /* bits definition in NVRAM */
-#define BOOT2_OFFSET                       7
-#define BOOT2_RESULT_MASK               0x03
-#define BOOT2_TRIED                     0x04
-#define BOOT2_TRY_NEXT                  0x08
-#define CRC_OFFSET                        15
+
+enum {
+	VB_HEADER_OFFSET			= 0,
+	VB_BOOT_OFFSET				= 1,
+	VB_RECOVERY_OFFSET			= 2,
+	VB_LOCALIZATION_OFFSET			= 3,
+	VB_DEV_OFFSET				= 4,
+	VB_TPM_OFFSET				= 5,
+	VB_RECVOERY_SUBCODE_OFFSET		= 6,
+	VB_BOOT2_OFFSET			= 7,
+	VB_MISC_OFFSET				= 8,
+	VB_KERNEL_OFFSET			= 11,
+	VB_CRC_OFFSET				= 15,
+	VB_NVDATA_SIZE				= 16
+};
+
+#define VB_DEFAULT_MASK			0x01
+
+/* HEADER_OFFSET */
+#define VB_HEADER_WIPEOUT_SHIFT		3
+#define VB_HEADER_KERNEL_SETTINGS_RESET_SHIFT	4
+#define VB_HEADER_FW_SETTINGS_RESET_SHIFT	5
+#define VB_HEADER_SIGNATURE_SHIFT		6
+
+/* BOOT_OFFSET */
+#define VB_BOOT_TRY_COUNT_MASK			0xf
+#define VB_BOOT_TRY_COUNT_SHIFT		0
+#define VB_BOOT_BACKUP_NVRAM_SHIFT		4
+#define VB_BOOT_OPROM_NEEDED_SHIFT		5
+#define VB_BOOT_DISABLE_DEV_SHIFT		6
+#define VB_BOOT_DEBUG_RESET_SHIFT		7
+
+/* RECOVERY_OFFSET */
+#define VB_RECOVERY_REASON_SHIFT		0
+#define VB_RECOVERY_REASON_MASK		0xff
+
+/* BOOT2_OFFSET */
+#define VB_BOOT2_RESULT_MASK			0x3
+#define VB_BOOT2_RESULT_SHIFT			0
+#define VB_BOOT2_TRIED_SHIFT			2
+#define VB_BOOT2_TRY_NEXT_SHIFT		3
+#define VB_BOOT2_PREV_RESULT_MASK		0x3
+#define VB_BOOT2_PREV_RESULT_SHIFT		4
+#define VB_BOOT2_PREV_TRIED_SHIFT		6
+
+/* DEV_OFFSET */
+#define VB_DEV_FLAG_USB_SHIFT			0
+#define VB_DEV_FLAG_SIGNED_ONLY_SHIFT		1
+#define VB_DEV_FLAG_LEGACY_SHIFT		2
+#define VB_DEV_FLAG_FASTBOOT_FULL_CAP_SHIFT	3
+
+/* TPM_OFFSET */
+#define VB_TPM_CLEAR_OWNER_REQUEST_SHIFT	0
+#define VB_TPM_CLEAR_OWNER_DONE_SHIFT		1
+
+/* MISC_OFFSET */
+#define VB_MISC_UNLOCK_FASTBOOT_SHIFT		0
+#define VB_MISC_BOOT_ON_AC_DETECT_SHIFT	1
+
+typedef enum {
+	VBNV_DEFAULT_FLAG = 0x00,
+	VBNV_WRITABLE = 0x01,
+} vbnv_param_flags_t;
+
+typedef struct vbnv_param {
+	char *name;
+	vbnv_param_flags_t flags;
+	int offset;
+	int shift;
+	int mask;
+} vbnv_param_t;
+
+static const vbnv_param_t param_table[] = {
+	{"try_count", VBNV_WRITABLE, VB_BOOT_OFFSET, VB_BOOT_TRY_COUNT_SHIFT,
+	 VB_BOOT_TRY_COUNT_MASK},
+	{"backup_nvram", VBNV_WRITABLE, VB_BOOT_OFFSET,
+	 VB_BOOT_BACKUP_NVRAM_SHIFT, VB_DEFAULT_MASK},
+	{"oprom_needed", VBNV_WRITABLE, VB_BOOT_OFFSET,
+	 VB_BOOT_OPROM_NEEDED_SHIFT, VB_DEFAULT_MASK},
+	{"disable_dev", VBNV_WRITABLE, VB_BOOT_OFFSET,
+	 VB_BOOT_DISABLE_DEV_SHIFT, VB_DEFAULT_MASK},
+	{"debug_reset", VBNV_WRITABLE, VB_BOOT_OFFSET,
+	 VB_BOOT_DEBUG_RESET_SHIFT, VB_DEFAULT_MASK},
+	{"boot_result", VBNV_WRITABLE, VB_BOOT2_OFFSET, VB_BOOT2_RESULT_SHIFT,
+	 VB_BOOT2_RESULT_MASK},
+	{"fw_tried", VBNV_DEFAULT_FLAG, VB_BOOT2_OFFSET, VB_BOOT2_TRIED_SHIFT,
+	 VB_DEFAULT_MASK},
+	{"fw_try_next", VBNV_WRITABLE, VB_BOOT2_OFFSET, VB_BOOT2_TRY_NEXT_SHIFT,
+	 VB_DEFAULT_MASK},
+	{"fw_prev_result", VBNV_DEFAULT_FLAG, VB_BOOT2_OFFSET,
+	 VB_BOOT2_PREV_RESULT_SHIFT, VB_BOOT2_PREV_RESULT_MASK},
+	{"prev_tried", VBNV_DEFAULT_FLAG, VB_BOOT2_OFFSET,
+	 VB_BOOT2_PREV_TRIED_SHIFT, VB_DEFAULT_MASK},
+	{"dev_boot_usb", VBNV_WRITABLE, VB_DEV_OFFSET, VB_DEV_FLAG_USB_SHIFT,
+	 VB_DEFAULT_MASK},
+	{"dev_boot_signed_only", VBNV_WRITABLE, VB_DEV_OFFSET,
+	 VB_DEV_FLAG_SIGNED_ONLY_SHIFT, VB_DEFAULT_MASK},
+	{"dev_boot_legacy", VBNV_WRITABLE, VB_DEV_OFFSET,
+	 VB_DEV_FLAG_LEGACY_SHIFT, VB_DEFAULT_MASK},
+	{"dev_boot_fastboot_full_cap", VBNV_WRITABLE, VB_DEV_OFFSET,
+	 VB_DEV_FLAG_FASTBOOT_FULL_CAP_SHIFT, VB_DEFAULT_MASK},
+	{"tpm_clear_owner_request", VBNV_WRITABLE, VB_TPM_OFFSET,
+	 VB_TPM_CLEAR_OWNER_REQUEST_SHIFT, VB_DEFAULT_MASK},
+	{"tpm_clear_owner_done", VBNV_WRITABLE, VB_TPM_OFFSET,
+	 VB_TPM_CLEAR_OWNER_DONE_SHIFT, VB_DEFAULT_MASK},
+	{"unlock_fastboot", VBNV_WRITABLE, VB_MISC_OFFSET,
+	 VB_MISC_UNLOCK_FASTBOOT_SHIFT, VB_DEFAULT_MASK},
+	{"boot_on_ac_detect", VBNV_WRITABLE, VB_MISC_OFFSET,
+	 VB_MISC_BOOT_ON_AC_DETECT_SHIFT, VB_DEFAULT_MASK},
+	{"recovery_reason", VBNV_WRITABLE, VB_RECOVERY_OFFSET,
+	 VB_RECOVERY_REASON_SHIFT, VB_RECOVERY_REASON_MASK},
+};
 
 static uint8_t crc8(const uint8_t *data, int len)
 {
@@ -256,18 +363,19 @@ static uint8_t crc8(const uint8_t *data, int len)
 	return (uint8_t)(crc >> 8);
 }
 
-#define VB2_NVDATA_SIZE	16
-
-int vbnv_readwrite(struct flash_device *spi, int off, uint8_t mask,
+int vbnv_readwrite(struct flash_device *spi, const vbnv_param_t *param,
 		   uint8_t *value, int write)
 {
 	int res;
 	size_t size;
 	off_t offset;
 	uint8_t *block, *nvram, *end, *curr;
-	uint8_t dummy[VB2_NVDATA_SIZE];
+	uint8_t dummy[VB_NVDATA_SIZE];
 
-	if (off >= VB2_NVDATA_SIZE) {
+	int off = param->offset;
+	uint8_t mask = param->mask << param->shift;
+
+	if (off >= VB_NVDATA_SIZE) {
 		ALOGW("ERROR: Incorrect offset %d for NvStorage\n", off);
 		return -EIO;
 	}
@@ -275,11 +383,11 @@ int vbnv_readwrite(struct flash_device *spi, int off, uint8_t mask,
 	/* Read NVRAM. */
 	nvram = reinterpret_cast<uint8_t *>(fmap_read_section(spi, "RW_NVRAM", &size, &offset));
 	/*
-	 * Ensure NVRAM is found, size is atleast 1 block and total size is
-	 * multiple of VB2_NVDATA_SIZE.
+	 * Ensure NVRAM is found, size is at least 1 block and total size is
+	 * multiple of VB_NVDATA_SIZE.
 	 */
-	if ((nvram == NULL) || (size < VB2_NVDATA_SIZE) ||
-	    (size % VB2_NVDATA_SIZE)) {
+	if ((nvram == NULL) || (size < VB_NVDATA_SIZE) ||
+	    (size % VB_NVDATA_SIZE)) {
 		ALOGW("ERROR: NVRAM not found\n");
 		return -EIO;
 	}
@@ -294,15 +402,16 @@ int vbnv_readwrite(struct flash_device *spi, int off, uint8_t mask,
 	 */
 	block = nvram;
 	end = block + size;
-	for (curr = block; curr < end; curr += VB2_NVDATA_SIZE) {
-		if (memcmp(curr, dummy, VB2_NVDATA_SIZE) == 0)
+	for (curr = block; curr < end; curr += VB_NVDATA_SIZE) {
+		if (memcmp(curr, dummy, VB_NVDATA_SIZE) == 0)
 			break;
 		block = curr;
 	}
 
 	if (write) {
-		block[off] = (block[off] & ~mask) | (*value & mask);
-		block[CRC_OFFSET] = crc8(block, CRC_OFFSET);
+		uint8_t flag_value = (*value & param->mask) << param->shift;
+		block[off] = (block[off] & ~mask) | (flag_value & mask);
+		block[VB_CRC_OFFSET] = crc8(block, VB_CRC_OFFSET);
 
 		if (flash_erase(spi, offset, size)) {
 			ALOGW("ERROR: Cannot erase flash\n");
@@ -316,17 +425,53 @@ int vbnv_readwrite(struct flash_device *spi, int off, uint8_t mask,
 
 		ALOGD("NVRAM updated.\n");
 	} else {
-		*value = block[off] & mask;
+		*value = (block[off] & mask) >> param->shift;
 	}
 
 	return 0;
 }
 
+#define ARRAY_SIZE(arr)		(sizeof(arr)/sizeof(arr[0]))
+int vbnv_set_flag(struct flash_device *spi, const char *param, uint8_t value)
+{
+	size_t i;
+	for (i = 0; i < ARRAY_SIZE(param_table); i++) {
+		if (!strcmp(param, param_table[i].name)) {
+			if (param_table[i].flags & VBNV_WRITABLE)
+				return vbnv_readwrite(spi, &param_table[i],
+						      &value, 1);
+
+			fprintf(stderr, "ERROR: Cannot write this flag.\n");
+			return -EIO;
+		}
+	}
+	fprintf(stderr, "Error: Unknown param\n");
+	return -EIO;
+}
+
+int vbnv_get_flag(struct flash_device *spi, const char *param, uint8_t *value)
+{
+	size_t i;
+	for (i = 0; i < ARRAY_SIZE(param_table); i++) {
+		if (!strcmp(param, param_table[i].name))
+			return vbnv_readwrite(spi, &param_table[i], value, 0);
+	}
+	fprintf(stderr, "Error: Unknown param\n");
+	return -EIO;
+}
+
+void vbnv_usage(int write)
+{
+	size_t i;
+	for (i = 0; i < ARRAY_SIZE(param_table); i++)
+		if ((write == 0) || (write &&
+				     (param_table[i].flags & VBNV_WRITABLE)))
+		    printf("   %s\n", param_table[i].name);
+}
+
 int vbnv_set_fw_try_next(struct flash_device *spi, int next)
 {
-	uint8_t value = next ? BOOT2_TRY_NEXT : 0;
-	return vbnv_readwrite(spi, BOOT2_OFFSET, BOOT2_TRY_NEXT,
-			      &value, 1);
+	return vbnv_set_flag(spi, "fw_try_next", next);
 }
 
 /* ---- Vital Product Data handling ---- */
