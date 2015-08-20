@@ -62,7 +62,7 @@ class CrosECSensor {
 
     int sysfs_set_input_attr(const char *path, const char *attr, const char *value, size_t len);
     int sysfs_set_input_attr_by_int(const char *path, const char *attr, int value);
-    void processEvent(sensors_event_t* data, const cros_ec_event *event);
+    int processEvent(sensors_event_t* data, const cros_ec_event *event);
 public:
     CrosECSensor(struct cros_ec_sensor_info *sensor_info,
         const char *ring_device_name,

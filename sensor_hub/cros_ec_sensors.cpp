@@ -246,8 +246,10 @@ int CrosECSensor::readEvents(sensors_event_t* data, int count)
 
     int nb_events = rc / sizeof(cros_ec_event);
     for (int i = 0; i < nb_events; i++) {
-        processEvent(data, &mEvents[i]);
-        data++;
+        rc = processEvent(data, &mEvents[i]);
+        if (rc == 0) {
+            data++;
+        }
     }
 
     return nb_events;
@@ -261,8 +263,10 @@ int CrosECSensor::readEvents(sensors_event_t* data, int count)
  *
  * Support flush meta event and regular events.
  */
-void CrosECSensor::processEvent(sensors_event_t* data, const cros_ec_event *event)
+int CrosECSensor::processEvent(sensors_event_t* data, const cros_ec_event *event)
 {
+    struct cros_ec_sensor_info *info = &mSensorInfo[event->sensor_id];
+
     if (event->flags & CROS_EC_EVENT_FLUSH_FLAG) {
         data->version = META_DATA_VERSION;
         data->sensor = 0;
@@ -271,19 +275,28 @@ void CrosECSensor::processEvent(sensors_event_t* data, const cros_ec_event *even
         data->timestamp = 0;
         data->meta_data.what = META_DATA_FLUSH_COMPLETE;
         data->meta_data.sensor = event->sensor_id;
-        return;
+        return 0;
     }
+
+    /*
+     * The sensor hub can send data even if the sensor is not set up.
+     * workaround it unitl b/23238991 is fixed.
+     */
+    if (!info->enabled)
+        return -ENOKEY;
 
     data->version = sizeof(sensors_event_t);
     data->sensor = event->sensor_id;
-    data->type = mSensorInfo[event->sensor_id].sensor_data.type;
+    data->type = info->sensor_data.type;
     data->timestamp = event->timestamp;
     data->acceleration.status = SENSOR_STATUS_ACCURACY_LOW;
+
     /*
-     * The default orientation of the tablet is portrait,
-     * no need to swap X and Y.
+     * Even for sensor with one axis (light, proxmity), be sure to write
+     * the other vectros. EC 0s them out.
      */
     for (int i = X ; i < MAX_AXIS; i++)
         data->acceleration.v[i] = (float)event->vector[i] *
             mSensorInfo[event->sensor_id].sensor_data.resolution;
+    return 0;
 }
