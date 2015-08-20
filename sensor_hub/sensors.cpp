@@ -42,6 +42,8 @@ enum cros_ec_sensor_device {
     CROS_EC_ACCEL,
     CROS_EC_GYRO,
     CROS_EC_MAG,
+    CROS_EC_PROX,
+    CROS_EC_LIGHT,
     CROS_EC_RING,
     CROS_EC_MAX_DEVICE,
 };
@@ -51,6 +53,8 @@ const char *cros_ec_sensor_names[] = {
     [CROS_EC_ACCEL] = "cros-ec-accel",
     [CROS_EC_GYRO] = "cros-ec-gyro",
     [CROS_EC_MAG] = "cros-ec-mag",
+    [CROS_EC_PROX] = "cros-ec-prox",
+    [CROS_EC_LIGHT] = "cros-ec-light",
     [CROS_EC_RING] = "cros-ec-ring",
 };
 
@@ -73,7 +77,7 @@ static const struct sensor_t sSensorListTemplate[] = {
         maxRange:           UNSET_FIELD,
         resolution:         UNSET_FIELD,
         power:              0.18f,    /* Based on BMI160 */
-        minDelay:           3000,
+        minDelay:           5000,
         fifoReservedEventCount: 0,
         fifoMaxEventCount:  2048,
         stringType:         SENSOR_STRING_TYPE_ACCELEROMETER,
@@ -95,12 +99,12 @@ static const struct sensor_t sSensorListTemplate[] = {
         maxRange:           UNSET_FIELD,
         resolution:         UNSET_FIELD,
         power:              0.85f,
-        minDelay:           3000,
+        minDelay:           5000,
         fifoReservedEventCount: 0,
         fifoMaxEventCount:  2048,
         stringType:         SENSOR_STRING_TYPE_GYROSCOPE,
         requiredPermission: 0,
-        maxDelay:           31250,
+        maxDelay:           80000,
         flags:              SENSOR_FLAG_CONTINUOUS_MODE,
         reserved:           { 0 }
     },
@@ -113,13 +117,55 @@ static const struct sensor_t sSensorListTemplate[] = {
         maxRange:           UNSET_FIELD,
         resolution:         UNSET_FIELD,
         power:              0.5f,  /* Based on BMM150 */
-        minDelay:           10000,
+        /*
+         * BMI150 uses repetition to reduce output noise.
+         * Set ODR at no more than 50Hz.
+         */
+        minDelay:           20000,
         fifoReservedEventCount: 0,
         fifoMaxEventCount:  2048,
         stringType:         SENSOR_STRING_TYPE_MAGNETIC_FIELD,
         requiredPermission: 0,
         maxDelay:           200000,
         flags:              SENSOR_FLAG_CONTINUOUS_MODE,
+        reserved:           { 0 }
+    },
+    [CROS_EC_PROX] = {
+        name:               "CrosEC Proximity",
+        vendor:             "Google",
+        version:            1,
+        handle:             UNSET_FIELD,
+        type:               SENSOR_TYPE_PROXIMITY,
+        maxRange:           UNSET_FIELD,
+        resolution:         UNSET_FIELD,
+        power:              0.12f,  /* Based on Si1141 */
+        minDelay:           20000,
+        fifoReservedEventCount: 0,
+        fifoMaxEventCount:  2048,
+        stringType:         SENSOR_STRING_TYPE_PROXIMITY,
+        requiredPermission: 0,
+        /* Forced mode, can be long: 10s */
+        maxDelay:           10000000,
+        flags:              SENSOR_FLAG_ON_CHANGE_MODE,
+        reserved:           { 0 }
+    },
+    [CROS_EC_LIGHT] = {
+        name:               "CrosEC Light",
+        vendor:             "Google",
+        version:            1,
+        handle:             UNSET_FIELD,
+        type:               SENSOR_TYPE_LIGHT,
+        maxRange:           UNSET_FIELD,
+        resolution:         UNSET_FIELD,
+        power:              0.12f,  /* Based on Si1141 */
+        minDelay:           20000,
+        fifoReservedEventCount: 0,
+        fifoMaxEventCount:  2048,
+        stringType:         SENSOR_STRING_TYPE_LIGHT,
+        requiredPermission: 0,
+        /* Forced mode, can be long: 10s */
+        maxDelay:           10000000,
+        flags:              SENSOR_FLAG_ON_CHANGE_MODE,
         reserved:           { 0 }
     },
 };
