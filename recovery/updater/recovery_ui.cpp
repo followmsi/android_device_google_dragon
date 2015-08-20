@@ -39,8 +39,6 @@
 #include "update_fw.h"
 #include "vboot_interface.h"
 
-static void *spi;
-
 extern char *reason;
 
 class DragonDevice : public Device {
