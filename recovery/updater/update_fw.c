@@ -200,7 +200,6 @@ int update_fw(Value *fw_file, Value *ec_file, int force)
 	 * updates only is done.
 	 */
 	res = update_ap_fw(spi, img);
-
 	if (0) {
 		if (cur_part == 'R') /* Recovery mode */
 			res = update_recovery_fw(spi, ec, img, ec_file);
