@@ -168,7 +168,21 @@ int CrosECSensor::activate(int handle, int enabled)
      */
     long frequency = enabled ? 1e12 / info->sampling_period_ns : 0;
 
-    err = sysfs_set_input_attr_by_int(info->device_name, "frequency", frequency);
+    err = sysfs_set_input_attr_by_int(info->device_name,
+            "frequency", frequency);
+    if (err)
+        return err;
+
+    long ec_period = nanoseconds_to_milliseconds(info->max_report_latency_ns);
+
+    if (enabled)
+        ec_period = min(CROS_EC_MAX_SAMPLING_PERIOD, ec_period);
+    else
+        ec_period = CROS_EC_MAX_SAMPLING_PERIOD;
+
+    /* Sampling is encoded on a 16bit so, so the maximal period is ~65s. */
+    err = sysfs_set_input_attr_by_int(
+            info->device_name, "sampling_frequency", ec_period);
 
     if (!err)
         info->enabled = enabled;
@@ -209,9 +223,9 @@ int CrosECSensor::batch(int handle,
          */
         info->max_report_latency_ns = info->sampling_period_ns;
     }
-    /* Sampling is encoded on a 16bit so, so the maximal pertiod is ~65s. */
-    return sysfs_set_input_attr_by_int(info->device_name, "sampling_frequency",
-            min((1 << 16) - 2, nanoseconds_to_milliseconds(info->max_report_latency_ns)));
+
+    /* Call activate to change the paramters if necessary */
+    return activate(handle, info->enabled);
 }
 
 /*
