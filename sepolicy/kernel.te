@@ -1,4 +1,5 @@
-# kdevtmpfs accesses dm-0 before ueventd has labeled it
-allow kernel device:blk_file { create setattr };
-allow kernel device:dir { write add_name };
+# kdevtmpfs accesses devices before ueventd restorecon
+allow kernel device: { blk_file chr_file } { create setattr };
+allow kernel device:dir { create write add_name };
 allow kernel self:capability mknod;
+
