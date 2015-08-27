@@ -142,15 +142,37 @@ static int update_ap_fw(struct flash_device *spi, struct flash_device *img)
 	if (!check_compatible_keys(img, spi))
 		return -EINVAL;
 
+	/*
+	 * Save serial number. VPD changed in fmap. Dogfooders need serial
+	 * number for future OTAs.
+	 */
+	size_t rovpd_sz, new_rovpd_sz;
+	off_t rovpd_off, new_rovpd_off;
+	void *rovpd = fmap_read_section(spi, "RO_VPD", &rovpd_sz, &rovpd_off);
+
 	res = update_partition(img, spi, "RO_SECTION");
 	if (res)
 		return res;
+
+	void *newvpd = fmap_read_section(img, "RO_VPD", &rovpd_sz,
+					 &new_rovpd_off);
+
+	if (new_rovpd_off != rovpd_off) {
+		res = flash_erase(spi, new_rovpd_off, new_rovpd_sz);
+		if (res)
+			return res;
+
+		res = flash_write(spi, new_rovpd_off, rovpd, new_rovpd_sz);
+		if (res)
+			return res;
+	}
 
 	res = update_partition(img, spi, "RW_SECTION_A");
 	if (res)
 		return res;
 
 	res = update_partition(img, spi, "RW_SECTION_B");
+
 	return res;
 }
 
