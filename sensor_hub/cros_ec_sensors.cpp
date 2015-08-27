@@ -259,14 +259,16 @@ int CrosECSensor::readEvents(sensors_event_t* data, int count)
     }
 
     int nb_events = rc / sizeof(cros_ec_event);
+    int data_events = 0;
     for (int i = 0; i < nb_events; i++) {
         rc = processEvent(data, &mEvents[i]);
         if (rc == 0) {
             data++;
+            data_events++;
         }
     }
 
-    return nb_events;
+    return data_events;
 }
 
 /*
