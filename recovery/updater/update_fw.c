@@ -154,7 +154,7 @@ static int update_ap_fw(struct flash_device *spi, struct flash_device *img)
 	if (res)
 		return res;
 
-	void *newvpd = fmap_read_section(img, "RO_VPD", &rovpd_sz,
+	void *newvpd = fmap_read_section(img, "RO_VPD", &new_rovpd_sz,
 					 &new_rovpd_off);
 
 	if (new_rovpd_off != rovpd_off) {
