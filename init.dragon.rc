@@ -122,6 +122,10 @@ on boot
     chmod 0660 /sys/bus/i2c/devices/0-0020/0018:06CB:3370.0001/input/input0/inhibited
     chown system system /sys/devices/57000000.gpu/pstate
 
+    # for cpuquiet nr_min_cpus
+    chown system system /sys/devices/system/cpu/cpuquiet/nr_min_cpus
+    chmod 0660 /sys/devices/system/cpu/cpuquiet/nr_min_cpus
+
     # for lightbar
     chown system system /sys/class/chromeos/cros_ec/lightbar/userspace_control
     chmod 0660 /sys/class/chromeos/cros_ec/lightbar/userspace_control
