@@ -37,6 +37,13 @@
   <ctl name="DACR Mux" value="DACR"/>
 
   <!--
+    Needed for DSP-based hotwording
+  -->
+  <ctl name="Mono ADC MIXL ADC2 Switch" value="1"/>
+  <ctl name="VAD ADC Mux" value="MONO ADC MIX L"/>
+  <ctl name="IB01 Mux" value="VAD ADC/DAC1 FS"/>
+
+  <!--
     Stereo1 and Stereo2 rt5677 datapaths are used for capture
     stream. Capture can be up to 4 channels (4 DMICs) and we need
     2 stereo datapaths.
