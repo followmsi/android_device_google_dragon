@@ -2,3 +2,6 @@ type sysfs_gps_gpio, fs_type, sysfs_type;
 
 # /config
 type configfs, fs_type;
+
+# /sys/class/rfkill/rfkill0/state
+type sysfs_bluetooth, fs_type, sysfs_type;
