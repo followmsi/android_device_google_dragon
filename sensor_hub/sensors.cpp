@@ -349,11 +349,19 @@ static int cros_ec_get_sensors_names(char **ring_device_name,
                 memcpy(sensor_data, &sSensorListTemplate[i], sizeof(sensor_t));
                 sensor_data->handle = sensor_id;
 
-                /* iio units are in Gauss, not micro Telsa */
                 if (sensor_data->type == SENSOR_TYPE_MAGNETIC_FIELD)
+                    /* iio units are in Gauss, not micro Telsa */
                     scale *= 100;
-                sensor_data->resolution = scale;
-                sensor_data->maxRange = scale * (1 << 15);
+                if (sensor_data->type == SENSOR_TYPE_PROXIMITY) {
+                    /*
+                     * Proximity does not detect anything beyond 3m.
+                     */
+                    sensor_data->resolution = 1;
+                    sensor_data->maxRange = 300;
+                } else {
+                    sensor_data->resolution = scale;
+                    sensor_data->maxRange = scale * (1 << 15);
+                }
 
                 ALOGD("new dev '%s' handle: %d\n",
                       Ssensor_info_[sensor_id].device_name, sensor_id);
