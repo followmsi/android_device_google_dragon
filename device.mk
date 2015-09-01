@@ -14,6 +14,13 @@
 # limitations under the License.
 #
 
+# By default build TLK from source if it is available, otherwise use
+# prebuilts.  To force using the prebuilt while having the source, set:
+# SECURE_OS_BUILD=false
+ifeq ($(wildcard vendor/nvidia/dragon-tlk/tlk),vendor/nvidia/dragon-tlk/tlk)
+    SECURE_OS_BUILD ?= tlk
+endif
+
 ifeq ($(TARGET_PREBUILT_KERNEL),)
 LOCAL_KERNEL := device/google/dragon-kernel/Image.fit
 else

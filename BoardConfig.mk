@@ -115,3 +115,8 @@ BOARD_SEPOLICY_DIRS += \
 # add firmware update to the updater binary
 TARGET_RECOVERY_UPDATER_LIBS += librecovery_updater_dragon
 TARGET_RECOVERY_UPDATER_EXTRA_LIBS +=
+TARGET_RECOVERY_UI_LIB := librecovery_ui_dragon
+
+ifeq ($(SECURE_OS_BUILD),tlk)
+  BOARD_SUPPORT_ROLLBACK_PROTECTION := true
+endif
