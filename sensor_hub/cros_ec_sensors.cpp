@@ -178,7 +178,7 @@ int CrosECSensor::activate(int handle, int enabled)
     if (enabled)
         ec_period = min(CROS_EC_MAX_SAMPLING_PERIOD, ec_period);
     else
-        ec_period = CROS_EC_MAX_SAMPLING_PERIOD;
+        ec_period = 0;
 
     /* Sampling is encoded on a 16bit so, so the maximal period is ~65s. */
     err = sysfs_set_input_attr_by_int(
@@ -237,7 +237,6 @@ int CrosECSensor::batch(int handle,
  */
 int CrosECSensor::readEvents(sensors_event_t* data, int count)
 {
-    uint64_t mtimestamp;
     int rc;
 
     if (count < 1) {
