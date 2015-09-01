@@ -308,10 +308,24 @@ int CrosECSensor::processEvent(sensors_event_t* data, const cros_ec_event *event
 
     /*
      * Even for sensor with one axis (light, proxmity), be sure to write
-     * the other vectros. EC 0s them out.
+     * the other vectors. EC 0s them out.
      */
-    for (int i = X ; i < MAX_AXIS; i++)
-        data->acceleration.v[i] = (float)event->vector[i] *
-            mSensorInfo[event->sensor_id].sensor_data.resolution;
+    float d;
+    for (int i = X ; i < MAX_AXIS; i++) {
+        switch (info->sensor_data.type) {
+        case SENSOR_TYPE_ACCELEROMETER:
+        case SENSOR_TYPE_GYROSCOPE:
+        case SENSOR_TYPE_MAGNETIC_FIELD:
+            d = event->vector[i];
+            break;
+        case SENSOR_TYPE_LIGHT:
+        case SENSOR_TYPE_PROXIMITY:
+            d = (uint16_t)event->vector[i];
+            break;
+        default:
+            return -EINVAL;
+        }
+        data->acceleration.v[i] = d * mSensorInfo[event->sensor_id].sensor_data.resolution;
+    }
     return 0;
 }
