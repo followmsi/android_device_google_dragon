@@ -171,6 +171,7 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 #TODO(dgreid) do we need libnvvisualizer?
 PRODUCT_PACKAGES += \
     audio.primary.dragon \
+    sound_trigger.primary.dragon \
     audio.a2dp.default \
     audio.usb.default \
     audio.r_submix.default
