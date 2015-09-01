@@ -5,9 +5,15 @@
   <ctl name="Int Mic Switch" value="0"/>
 
   <ctl name="Sidetone Volume" value="0"/>
-  <ctl name="DAC1 Playback Volume" value="100"/>
-  <ctl name="STO1 ADC Boost Volume" value="2"/>
-  <ctl name="STO2 ADC Boost Volume" value="2"/>
+  <ctl name="DAC1 Playback Volume" value="87"/>
+  <ctl name="STO1 ADC Boost Volume" value="1"/>
+  <ctl name="STO2 ADC Boost Volume" value="1"/>
+  <ctl name="STO3 ADC Boost Volume" value="0"/>
+  <ctl name="ADC1 Capture Volume" value="23"/>
+  <ctl name="ADC2 Capture Volume" value="23"/>
+  <ctl name="ADC3 Capture Volume" value="23"/>
+  <ctl name="MIC Volume" value="207"/>
+  <ctl name="Frontend PGA Gain" value="1"/>
 
   <ctl name="I2S1 Mux" value="ADMAIF1"/>
   <ctl name="ADMAIF1 Mux" value="I2S1"/>
@@ -61,6 +67,7 @@
 
   <path name="speaker">
     <ctl name="Headphone Jack Switch" value="0"/>
+    <ctl name="ADC3 Capture Volume" value="28"/>
     <ctl name="IF2 ADC3 Mux" value="STO3 ADC MIX"/>
     <ctl name="IF3 ADC Mux" value="OB01"/>
     <ctl name="Int Spk Switch" value="1"/>
@@ -68,6 +75,7 @@
 
   <path name="headphones">
     <ctl name="Int Spk Switch" value="0"/>
+    <ctl name="ADC3 Capture Volume" value="23"/>
     <ctl name="IF2 ADC3 Mux" value="OB45"/>
     <ctl name="IF3 ADC Mux" value="STO3 ADC MIX"/>
     <ctl name="Headphone Jack Switch" value="1"/>
