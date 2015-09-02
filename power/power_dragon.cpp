@@ -36,6 +36,7 @@
 
 #define BOOSTPULSE_PATH "/sys/devices/system/cpu/cpufreq/interactive/boostpulse"
 #define CPU_MAX_FREQ_PATH "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq"
+#define CPU_QUIET_NR_MIN_CPUS_PATH "/sys/devices/system/cpu/cpuquiet/nr_min_cpus"
 #define TOUCH_SYNA_INTERACTIVE_PATH "/sys/bus/i2c/devices/0-0020/0018:06CB:3370.0001/input/input0/inhibited"
 #define IO_IS_BUSY_PATH "/sys/devices/system/cpu/cpufreq/interactive/io_is_busy"
 #define LIGHTBAR_SEQUENCE_PATH "/sys/class/chromeos/cros_ec/lightbar/sequence"
@@ -124,6 +125,7 @@ static void power_set_interactive(struct power_module __unused *module, int on)
     sysfs_write(IO_IS_BUSY_PATH, on ? "1" : "0");
     sysfs_write(TOUCH_SYNA_INTERACTIVE_PATH, on ? "0" : "1");
     sysfs_write(LIGHTBAR_SEQUENCE_PATH, on ? "s3s0" : "s0s3");
+    sysfs_write(CPU_QUIET_NR_MIN_CPUS_PATH, on ? "2" : "1");
     ALOGV("power_set_interactive: %d done\n", on);
 }
 
