@@ -1,4 +1,5 @@
 wakelock_use(gpsd)
 
-# search /sys/devices/virtual/gpio/gpio66
+# /sys/devices/virtual/gpio/gpio66
 allow gpsd sysfs_gps_gpio:dir search;
+allow gpsd sysfs_gps_gpio:file rw_file_perms;
