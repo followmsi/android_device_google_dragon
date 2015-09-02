@@ -11,7 +11,7 @@ allow crash_collector self:capability dac_override;
 r_dir_file(crash_collector, domain)
 
 # To write crash reports.
-allow crash_collector crash_reports_data_file:dir rw_dir_perms;
+allow crash_collector crash_reports_data_file:dir create_dir_perms;
 allow crash_collector crash_reports_data_file:file create_file_perms;
 allow crash_collector self:capability chown;
 
