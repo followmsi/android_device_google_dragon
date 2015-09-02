@@ -118,7 +118,9 @@ std::string GetSystemProperty(const std::string& key) {
 }
 
 // Writes metadata as JSON file.
-bool WriteMetadata(ssize_t coredump_size,
+bool WriteMetadata(ssize_t result_coredump_size,
+                   size_t coredump_size_limit,
+                   size_t expected_coredump_size,
                    const std::string& pid,
                    const std::string& uid,
                    const std::string& gid,
@@ -129,7 +131,12 @@ bool WriteMetadata(ssize_t coredump_size,
   std::string content = "{";
   content += "\"version\":\"" + GetSystemProperty("ro.build.id") + "\"";
   content += ",";
-  content += "\"coredump_size\":" + std::to_string(coredump_size);
+  content += "\"result_coredump_size\":" + std::to_string(result_coredump_size);
+  content += ",";
+  content += "\"coredump_size_limit\":" + std::to_string(coredump_size_limit);
+  content += ",";
+  content += "\"expected_coredump_size\":" +
+      std::to_string(expected_coredump_size);
   content += ",";
   content += "\"pid\":" + pid;
   content += ",";
@@ -216,10 +223,9 @@ int main(int argc, char** argv) {
     ALOGE("Failed to create proc directory. errno = %d", errno);
     return 1;
   }
-  CoredumpWriter coredump_writer;
-  const ssize_t coredump_size =
-      coredump_writer.WriteCoredump(STDIN_FILENO, coredump, proc_files_dir);
-  if (coredump_size > 0) {
+  CoredumpWriter coredump_writer(STDIN_FILENO, coredump, proc_files_dir);
+  const ssize_t result_coredump_size = coredump_writer.WriteCoredump();
+  if (result_coredump_size > 0) {
     // Convert coredump to minidump.
     const std::string minidump = basename + ".dmp";
     if (!ConvertCoredumpToMinidump(coredump, proc_files_dir, minidump)) {
@@ -230,8 +236,10 @@ int main(int argc, char** argv) {
   }
   // Write metadata.
   const std::string metadata = basename + ".meta";
-  if (!WriteMetadata(coredump_size, pid_string, uid_string, gid_string,
-                     signal_string, username, exec_name, metadata)) {
+  if (!WriteMetadata(result_coredump_size, coredump_writer.coredump_size_limit(),
+                     coredump_writer.expected_coredump_size(), pid_string,
+                     uid_string, gid_string, signal_string, username, exec_name,
+                     metadata)) {
     ALOGE("Failed to write metadata.");
     return 1;
   }
