@@ -282,6 +282,133 @@ static int cmd_ec_gpioset(int argc, const char **argv)
 	return 0;
 }
 
+static int ec_hash_print(const struct ec_response_vboot_hash *r)
+{
+	int i;
+
+	if (r->status == EC_VBOOT_HASH_STATUS_BUSY) {
+		printf("status:  busy\n");
+		return 0;
+	} else if (r->status == EC_VBOOT_HASH_STATUS_NONE) {
+		printf("status:  unavailable\n");
+		return 0;
+	} else if (r->status != EC_VBOOT_HASH_STATUS_DONE) {
+		printf("status:  %d\n", r->status);
+		return 0;
+	}
+
+	printf("status:  done\n");
+	if (r->hash_type == EC_VBOOT_HASH_TYPE_SHA256)
+		printf("type:    SHA-256\n");
+	else
+		printf("type:    %d\n", r->hash_type);
+
+	printf("offset:  0x%08x\n", r->offset);
+	printf("size:    0x%08x\n", r->size);
+
+	printf("hash:    ");
+	for (i = 0; i < r->digest_size; i++)
+		printf("%02x", r->hash_digest[i]);
+	printf("\n");
+	return 0;
+}
+
+static int cmd_ec_echash(int argc, const char **argv)
+{
+	struct ec_params_vboot_hash p;
+	struct ec_response_vboot_hash r;
+	char *e;
+	int rv;
+
+	if (!get_ec())
+		return -ENODEV;
+
+	if (argc < 2) {
+		/* Get hash status */
+		p.cmd = EC_VBOOT_HASH_GET;
+		rv = flash_cmd(ec, EC_CMD_VBOOT_HASH, 0,
+				&p, sizeof(p), &r, sizeof(r));
+		if (rv < 0)
+			return rv;
+
+		return ec_hash_print(&r);
+	}
+
+	if (argc == 2 && !strcasecmp(argv[1], "abort")) {
+		/* Abort hash calculation */
+		p.cmd = EC_VBOOT_HASH_ABORT;
+		rv = flash_cmd(ec, EC_CMD_VBOOT_HASH, 0,
+				&p, sizeof(p), &r, sizeof(r));
+		return (rv < 0 ? rv : 0);
+	}
+
+	/* The only other commands are start and recalc */
+	if (!strcasecmp(argv[1], "start"))
+		p.cmd = EC_VBOOT_HASH_START;
+	else if (!strcasecmp(argv[1], "recalc"))
+		p.cmd = EC_VBOOT_HASH_RECALC;
+	else
+		return -EINVAL;
+
+	p.hash_type = EC_VBOOT_HASH_TYPE_SHA256;
+
+	if (argc < 3) {
+		fprintf(stderr, "Must specify offset\n");
+		return -1;
+	}
+
+	if (!strcasecmp(argv[2], "ro")) {
+		p.offset = EC_VBOOT_HASH_OFFSET_RO;
+		p.size = 0;
+		printf("Hashing EC-RO...\n");
+	} else if (!strcasecmp(argv[2], "rw")) {
+		p.offset = EC_VBOOT_HASH_OFFSET_RW;
+		p.size = 0;
+		printf("Hashing EC-RW...\n");
+	} else if (argc < 4) {
+		fprintf(stderr, "Must specify size\n");
+		return -1;
+	} else {
+		p.offset = strtol(argv[2], &e, 0);
+		if (e && *e) {
+			fprintf(stderr, "Bad offset.\n");
+			return -1;
+		}
+		p.size = strtol(argv[3], &e, 0);
+		if (e && *e) {
+			fprintf(stderr, "Bad size.\n");
+			return -1;
+		}
+		printf("Hashing %d bytes at offset %d...\n", p.size, p.offset);
+	}
+
+	if (argc == 5) {
+		/*
+		 * Technically nonce can be any binary data up to 64 bytes,
+		 * but this command only supports a 32-bit value.
+		 */
+		uint32_t nonce = strtol(argv[4], &e, 0);
+		if (e && *e) {
+			fprintf(stderr, "Bad nonce integer.\n");
+			return -1;
+		}
+		memcpy(p.nonce_data, &nonce, sizeof(nonce));
+		p.nonce_size = sizeof(nonce);
+	} else
+		p.nonce_size = 0;
+
+	rv = flash_cmd(ec, EC_CMD_VBOOT_HASH, 0, &p, sizeof(p), &r, sizeof(r));
+	if (rv < 0)
+		return rv;
+
+	/* Start command doesn't wait for hashing to finish */
+	if (p.cmd == EC_VBOOT_HASH_START)
+		return 0;
+
+	/* Recalc command does wait around, so a result is ready now */
+	return ec_hash_print(&r);
+}
+
 #define LIGHTBAR_NUM_SEQUENCES 13
 
 static int lb_do_cmd(enum lightbar_command cmd,
@@ -664,6 +791,7 @@ struct command subcmds_ec[] = {
 	CMD(ec_chargecontrol, "Force the battery to stop charging/discharge"),
 	CMD(ec_gpioget, "Get the value of GPIO signal"),
 	CMD(ec_gpioset, "Set the value of GPIO signal"),
+	CMD(ec_echash, "Various EC hash commands"),
 	CMD(ec_lightbar, "Lightbar control commands"),
 	CMD(ec_usbpd, "Control USB PD/type-C"),
 	CMD(ec_usbpdpower, "Power information about USB PD ports"),
