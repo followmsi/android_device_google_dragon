@@ -5,15 +5,16 @@ type crash_reports_data_file, file_type, data_file_type;
 # To start crash_collector via /proc/sys/core_pattern.
 domain_auto_trans(kernel, crash_collector_exec, crash_collector)
 allow crash_collector kernel:fifo_file read;
-allow crash_collector self:capability dac_override;
 
-# To read /proc/<pid>
-r_dir_file(crash_collector, domain)
+# To stop being root.
+allow crash_collector self:capability { setuid setgid };
+
+# To read exec files.
+allow crash_collector exec_type:file r_file_perms;
 
 # To write crash reports.
-allow crash_collector crash_reports_data_file:dir rw_dir_perms;
+allow crash_collector crash_reports_data_file:dir create_dir_perms;
 allow crash_collector crash_reports_data_file:file create_file_perms;
-allow crash_collector self:capability chown;
 
 # Allow CrashReportProvider to open crash report files.
 allow system_server crash_reports_data_file:dir r_dir_perms;
