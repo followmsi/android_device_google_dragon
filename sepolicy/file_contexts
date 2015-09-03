@@ -6,6 +6,7 @@
 /dev/block/platform/700b0600\.sdhci/by-name/SOS u:object_r:recovery_block_device:s0
 /dev/block/platform/700b0600\.sdhci/by-name/PST u:object_r:frp_block_device:s0
 /dev/block/zram0                                u:object_r:swap_block_device:s0
+/dev/block/mmcblk0rpmb                          u:object_r:rpmb_block_device:s0
 
 # /dev
 /dev/dri(/.*)?                                  u:object_r:gpu_device:s0
@@ -24,6 +25,7 @@
 /system/bin/crash_collector                     u:object_r:crash_collector_exec:s0
 /data/system/crash_reports(/.*)?                u:object_r:crash_reports_data_file:s0
 
+# camera
 /dev/imx219                                     u:object_r:camera_device:s0
 /dev/imx208                                     u:object_r:camera_device:s0
 
@@ -32,3 +34,12 @@
 
 # /data
 /data/nvcam(/.*)?                               u:object_r:media_data_file:s0
+
+# TEE
+/dev/tlk_device                                 u:object_r:tee_device:s0
+
+# secure os storage
+/data/ss(/.*)?                                  u:object_r:tee_data_file:s0
+
+# tlk_daemon
+/vendor/bin/tlk_daemon                          u:object_r:tee_exec:s0

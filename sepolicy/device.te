@@ -1,2 +1,3 @@
 type sw_sync_device, dev_type;
 type persist_block_device, dev_type;
+type rpmb_block_device, dev_type;

@@ -1,4 +1,5 @@
 #TODO(dgreid) add other devices.
+/dev/block/mmcblk0rpmb 0600 system drmrpc
 /dev/block/platform/700b0600.sdhci/by-name/recovery 0600 system system
 /dev/block/platform/700b0600.sdhci/by-name/PST 0600 system system
 
@@ -34,3 +35,6 @@
 /dev/focuser    0660    media   camera
 /dev/imx219     0660    media   camera
 /dev/imx208     0660    media   camera
+
+# TLK
+/dev/tlk_device 0660    system  drmrpc
