@@ -134,10 +134,9 @@ PRODUCT_PROPERTY_OVERRIDES := \
 $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
 
 # set default USB configuration
-# TODO(dgreid) - set secure back to 1
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     persist.sys.usb.config=mtp \
-    ro.adb.secure=0 \
+    ro.adb.secure=1 \
     ro.sf.lcd_density=320 \
     ro.opengles.version=196609
 
