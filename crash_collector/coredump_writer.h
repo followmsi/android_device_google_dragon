@@ -28,14 +28,19 @@
 
 class CoredumpWriter {
  public:
-  CoredumpWriter();
+  // Coredump will be read from |fd_src|, and will be written to
+  // |coredump_filename|. Additional files which are necessary to generate
+  // minidump will be generated under |proc_files_dir|.
+  CoredumpWriter(int fd_src,
+                 const std::string& coredump_filename,
+                 const std::string& proc_files_dir);
   ~CoredumpWriter();
 
-  // Reads coredump from |fd_src|, writes it to |coredump_filename|, and
-  // returns the number of bytes written, or -1 on errors.
-  ssize_t WriteCoredump(int fd_src,
-                        const std::string& coredump_filename,
-                        const std::string& proc_files_dir);
+  // Writes coredump and returns the number of bytes written, or -1 on errors.
+  ssize_t WriteCoredump();
+
+  size_t coredump_size_limit() const { return coredump_size_limit_; }
+  size_t expected_coredump_size() const { return expected_coredump_size_; }
 
  private:
   using Ehdr = ElfW(Ehdr);
@@ -51,9 +56,7 @@ class CoredumpWriter {
 
   class FdReader;
 
-  ssize_t WriteCoredumpToFD(int fd_src,
-                            int fd_dest,
-                            const std::string& proc_files_dir);
+  ssize_t WriteCoredumpToFD(int fd_dest);
 
   // Reads ELF header, all program headers, and NOTE segment from fd_src.
   bool ReadUntilNote(FdReader* reader,
@@ -79,6 +82,12 @@ class CoredumpWriter {
   bool WriteMaps(const std::vector<Phdr>& program_headers,
                  const FileMappings& file_mappings,
                  const std::string& output_path);
+
+  const int fd_src_;
+  const std::string coredump_filename_;
+  const std::string proc_files_dir_;
+  size_t coredump_size_limit_ = 0;
+  size_t expected_coredump_size_ = 0;
 
   DISALLOW_COPY_AND_ASSIGN(CoredumpWriter);
 };
