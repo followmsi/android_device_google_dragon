@@ -38,26 +38,74 @@ enum {X, Y, Z, MAX_AXIS};
 
 extern const char *cros_ec_sensor_names[];
 
+#define CROS_EC_EVENT_FLUSH_FLAG 0x1
+#define CROS_EC_EVENT_WAKEUP_FLAG 0x2
+
+#define CROS_EC_MAX_PHYSICAL_SENSOR 256
+
+enum cros_ec_gesture {
+    CROS_EC_SIGMO,
+    CROS_EC_MAX_GESTURE,
+};
+
+
+/*****************************************************************************/
+/* from ec_commands.h */
 struct cros_ec_event {
     uint8_t sensor_id;
     uint8_t flags;
-    int16_t vector[MAX_AXIS];
+    union {
+        int16_t vector[MAX_AXIS];
+        struct {
+            uint8_t activity;
+            uint8_t state;
+            uint16_t add_info[2];
+        };
+    };
     uint64_t timestamp;
 } __packed;
 
-#define CROS_EC_EVENT_FLUSH_FLAG 0x1
+enum motionsensor_activity {
+    MOTIONSENSE_ACTIVITY_RESERVED = 0,
+    MOTIONSENSE_ACTIVITY_SIG_MOTION = 1,
+    MOTIONSENSE_MAX_ACTIVITY,
+};
+
+
+/*****************************************************************************/
+
+enum cros_ec_sensor_device {
+    CROS_EC_ACCEL,
+    CROS_EC_GYRO,
+    CROS_EC_MAG,
+    CROS_EC_PROX,
+    CROS_EC_LIGHT,
+    CROS_EC_ACTIVITY,
+    CROS_EC_RING, /* should be the last device */
+    CROS_EC_MAX_DEVICE,
+};
 
 struct cros_ec_sensor_info {
     /* description of the sensor, as reported to sensorservice. */
     sensor_t sensor_data;
+    enum cros_ec_sensor_device type;
     const char *device_name;
     int64_t sampling_period_ns;
     int64_t max_report_latency_ns;
     bool enabled;
 };
 
+struct cros_ec_gesture_info {
+    /* For activities managed by the sensor interface */
+    sensor_t sensor_data;
+    const char *device_name;
+    const char *enable_entry;
+    bool enabled;
+};
+
 class CrosECSensor {
     struct cros_ec_sensor_info *mSensorInfo;
+    struct cros_ec_gesture_info *mGestureInfo;
     char mRingPath[IIO_MAX_DEVICE_NAME_LENGTH];
     cros_ec_event mEvents[IIO_MAX_BUFF_SIZE];
     int mDataFd;
@@ -66,7 +114,9 @@ class CrosECSensor {
     int sysfs_set_input_attr_by_int(const char *path, const char *attr, int value);
     int processEvent(sensors_event_t* data, const cros_ec_event *event);
 public:
-    CrosECSensor(struct cros_ec_sensor_info *sensor_info,
+    CrosECSensor(
+        struct cros_ec_sensor_info *sensor_info,
+        struct cros_ec_gesture_info *gesture_info,
         const char *ring_device_name,
         const char *trigger_name);
     virtual ~CrosECSensor();

@@ -30,6 +30,8 @@
 /sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-*/iio:device* flush      0660 system system
 /sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-*/iio:device* frequency  0660 system system
 /sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-*/iio:device* sampling_frequency  0660 system system
+/sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-*/iio:device* events/in_activity_still_change_falling_en  0660 system system
+/sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-*/iio:device* events/in_activity_double_tap_change_falling_en  0660 system system
 
 # Camera
 /dev/focuser    0660    media   camera
