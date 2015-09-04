@@ -77,6 +77,9 @@ on post-fs-data
     # crash_collector
     mkdir /data/system/crash_reports 0700 system system
 
+    # initialize region info
+    exec -- /system/bin/init_regions.sh
+
     setprop vold.post_fs_data_done 1
 
 on boot
