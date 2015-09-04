@@ -43,7 +43,7 @@
 #define LOW_POWER_MAX_FREQ "1020000"
 #define NORMAL_MAX_FREQ "1912500"
 #define GPU_BOOST_PATH "/sys/devices/57000000.gpu/pstate"
-#define GPU_BOOST_ENTER_CMD "0A"    // use pstate 0x0A as boost state
+#define GPU_BOOST_ENTER_CMD "08,0C"    // boost GPU to work at least on 08 - 614MHz
 #define GPU_BOOST_EXIT_CMD "auto"
 #define GPU_FREQ_CONSTRAINT "852000 852000 -1 2000"
 
