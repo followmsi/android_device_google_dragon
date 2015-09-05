@@ -130,6 +130,10 @@ PRODUCT_PROPERTY_OVERRIDES := \
     ro.hwui.text_large_cache_height=1024 \
     ro.hwui.disable_scissor_opt=true
 
+# The default locale should be determined from VPD, not from build.prop.
+PRODUCT_SYSTEM_PROPERTY_BLACKLIST := \
+    ro.product.locale
+
 # setup dalvik vm configs.
 $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
 
