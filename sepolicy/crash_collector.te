@@ -15,10 +15,3 @@ allow crash_collector exec_type:file r_file_perms;
 # To write crash reports.
 allow crash_collector crash_reports_data_file:dir create_dir_perms;
 allow crash_collector crash_reports_data_file:file create_file_perms;
-
-# Allow CrashReportProvider to open crash report files.
-allow system_server crash_reports_data_file:dir r_dir_perms;
-allow system_server crash_reports_data_file:file r_file_perms;
-
-# Allow other apps to read crash report files already opened by CrashReportProvider.
-allow domain crash_reports_data_file:file { getattr read };
