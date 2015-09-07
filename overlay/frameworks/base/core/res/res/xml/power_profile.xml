@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+**
+** Copyright 2015, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License")
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+<device name="Android">
+    <!-- All values are in mAh except as noted -->
+    <item name="none">3.5</item>
+    <item name="screen.on">-544.44</item>
+    <item name="screen.full">769.5</item>
+    <item name="bluetooth.active">25.2</item> <!-- dummy -->
+    <item name="bluetooth.on">3.6</item>
+    <item name="wifi.on">2.16</item>
+    <item name="wifi.active">189.9</item>
+    <item name="wifi.scan">105.35</item>
+    <item name="dsp.audio">23.44</item>
+    <item name="dsp.video">37.51</item>
+    <item name="gps.on">30</item> <!-- dummy -->
+
+    <!-- Different CPU speeds as reported in
+         /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state -->
+    <array name="cpu.speeds">
+        <value>51000</value>
+        <value>102000</value>
+        <value>204000</value>
+        <value>306000</value>
+        <value>408000</value>
+        <value>510000</value>
+        <value>612000</value>
+        <value>714000</value>
+        <value>816000</value>
+        <value>918000</value>
+        <value>1020000</value>
+        <value>1122000</value>
+        <value>1224000</value>
+        <value>1326000</value>
+        <value>1428000</value>
+        <value>1530000</value>
+        <value>1632000</value>
+        <value>1734000</value>
+        <value>1836000</value>
+        <value>1912500</value>
+    </array>
+    <!-- Power consumption when CPU is idle -->
+    <item name="cpu.idle">38.85</item>  <!-- suspend power 168.93 mW -->
+    <item name="cpu.awake">90.35</item> <!-- idle screen off 541.24 mW -->
+    <!-- Power consumption at different speeds -->
+        <value>60.96</value> <!-- 51000 -->
+        <value>109.97</value> <!-- 102000 -->
+        <value>172.13</value> <!-- 204000 -->
+        <value>234.29</value> <!-- 306000 -->
+        <value>292.56</value> <!-- 408000 -->
+        <value>354.42</value> <!-- 510000 -->
+        <value>411.50</value> <!-- 612000 -->
+        <value>467.38</value> <!-- 714000 -->
+        <value>525.65</value> <!-- 816000 -->
+        <value>584.82</value> <!-- 918000 -->
+        <!-- Don't know why but power stop raising here. Tested multiple times  -->
+        <value>573.17</value> <!-- 1020000 -->
+        <value>581.54</value> <!-- 1122000 -->
+        <value>657.44</value> <!-- 1224000 -->
+        <value>773.39</value> <!-- 1326000 -->
+        <value>896.81</value> <!-- 1428000 -->
+        <value>1048.62</value> <!-- 1530000 -->
+        <value>1235.10</value> <!-- 1632000 -->
+        <value>1359.41</value> <!-- 1734000 -->
+        <value>1375.25</value> <!-- 1836000 -->
+        <value>1426.05</value> <!-- 1912500 -->
+    <!-- This is the battery capacity in mAh -->
+    <item name="battery.capacity">9000</item>
+
+    <array name="wifi.batchedscan"> <!-- mA. Dummy -->
+        <value>.0003</value> <!-- 1-8/hr -->
+        <value>.003</value>  <!-- 9-64/hr -->
+        <value>.03</value>   <!-- 65-512/hr -->
+        <value>.3</value>    <!-- 513-4,096/hr -->
+        <value>3</value>    <!-- 4097-/hr -->
+    </array>
+</device>
