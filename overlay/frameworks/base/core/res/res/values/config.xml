@@ -131,4 +131,5 @@
         <item>241</item>   <!-- 500 nit -->
     </integer-array>
 
+    <string translatable="false" name="config_packagedKeyboardName">Pixel C Keyboard</string>
 </resources>
