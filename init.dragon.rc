@@ -153,7 +153,7 @@ on boot
     write /proc/sys/net/core/wmem_max 1048576
 
     # Execute crash_collector when a process is crashing.
-    write /proc/sys/kernel/core_pattern "|/system/bin/crash_collector %p %u %g %s %t %e"
+    write /proc/sys/kernel/core_pattern "|/system/bin/crash_dispatcher %p %u %g %s %t %e"
     write /proc/sys/kernel/core_pipe_limit 4
     write /proc/self/coredump_filter 0x1
 
