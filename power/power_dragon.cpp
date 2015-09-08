@@ -40,6 +40,8 @@
 #define TOUCH_SYNA_INTERACTIVE_PATH "/sys/bus/i2c/devices/0-0020/0018:06CB:3370.0001/input/input0/inhibited"
 #define IO_IS_BUSY_PATH "/sys/devices/system/cpu/cpufreq/interactive/io_is_busy"
 #define LIGHTBAR_SEQUENCE_PATH "/sys/class/chromeos/cros_ec/lightbar/sequence"
+#define EXT_VOLTAGE_LIM_PATH "/sys/class/chromeos/cros_ec/usb-pd-charger/ext_voltage_lim"
+#define EC_POWER_LIMIT_NONE "0xffff"
 #define LOW_POWER_MAX_FREQ "1020000"
 #define NORMAL_MAX_FREQ "1912500"
 #define GPU_BOOST_PATH "/sys/devices/57000000.gpu/pstate"
@@ -125,6 +127,8 @@ static void power_set_interactive(struct power_module __unused *module, int on)
     sysfs_write(IO_IS_BUSY_PATH, on ? "1" : "0");
     sysfs_write(TOUCH_SYNA_INTERACTIVE_PATH, on ? "0" : "1");
     sysfs_write(LIGHTBAR_SEQUENCE_PATH, on ? "s3s0" : "s0s3");
+    /* limit charging voltage to 5V when interactive otherwise no limit */
+    sysfs_write(EXT_VOLTAGE_LIM_PATH, on ? "5000" : EC_POWER_LIMIT_NONE);
     sysfs_write(CPU_QUIET_NR_MIN_CPUS_PATH, on ? "2" : "1");
     ALOGV("power_set_interactive: %d done\n", on);
 }

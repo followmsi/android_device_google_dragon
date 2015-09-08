@@ -136,6 +136,10 @@ on boot
     chown system system /sys/class/chromeos/cros_ec/lightbar/sequence
     chmod 0660 /sys/class/chromeos/cros_ec/lightbar/sequence
 
+    # for external power limits
+    chown system system /sys/class/chromeos/cros_ec/usb-pd-charger/ext_voltage_lim
+    chmod 0660 /sys/class/chromeos/cros_ec/usb-pd-charger/ext_voltage_lim
+
     # Enable CC4
     write /sys/devices/system/cpu/cpu0/cpuidle/state1/disabled 0
     write /sys/devices/system/cpu/cpu1/cpuidle/state1/disabled 0
