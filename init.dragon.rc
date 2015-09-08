@@ -135,8 +135,6 @@ on boot
     chmod 0660 /sys/class/chromeos/cros_ec/lightbar/userspace_control
     chown system system /sys/class/chromeos/cros_ec/lightbar/sequence
     chmod 0660 /sys/class/chromeos/cros_ec/lightbar/sequence
-    chown system system /sys/class/chromeos/cros_ec/lightbar/program
-    chmod 0660 /sys/class/chromeos/cros_ec/lightbar/program
 
     # Enable CC4
     write /sys/devices/system/cpu/cpu0/cpuidle/state1/disabled 0
