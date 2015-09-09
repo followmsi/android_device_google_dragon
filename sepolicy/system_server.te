@@ -2,6 +2,9 @@
 # /data/gps/.gps.interface.pipe.to_gpsd file
 allow system_server gps_data_file:fifo_file rw_file_perms;
 
-# Allow CrashReportProvider to open crash report files.
+# Allow system_server to open crash report files.
 allow system_server crash_reports_data_file:dir r_dir_perms;
 allow system_server crash_reports_data_file:file r_file_perms;
+
+allow system_server gps_data_file:dir w_dir_perms;
+allow system_server gps_data_file:fifo_file create_file_perms;
