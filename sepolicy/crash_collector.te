@@ -12,6 +12,6 @@ allow crash_collector self:capability { setuid setgid };
 # To read exec files.
 allow crash_collector exec_type:file r_file_perms;
 
-# To write crash reports.
+# To write crash reports in /data/system/crash_reports/
 allow crash_collector crash_reports_data_file:dir create_dir_perms;
 allow crash_collector crash_reports_data_file:file create_file_perms;
