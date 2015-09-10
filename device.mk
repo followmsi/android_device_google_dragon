@@ -36,6 +36,7 @@ PRODUCT_COPY_FILES := \
     $(LOCAL_PATH)/init.dragon.rc:root/init.dragon.rc \
     $(LOCAL_PATH)/init.dragon.usb.rc:root/init.dragon.usb.rc \
     $(LOCAL_PATH)/init.recovery.dragon.rc:root/init.recovery.dragon.rc \
+    $(LOCAL_PATH)/init_regions.sh:system/bin/init_regions.sh \
     $(LOCAL_FSTAB):root/fstab.dragon \
     $(LOCAL_PATH)/ueventd.dragon.rc:root/ueventd.dragon.rc \
     $(LOCAL_PATH)/speakerdsp.ini:system/etc/cras/speakerdsp.ini \
