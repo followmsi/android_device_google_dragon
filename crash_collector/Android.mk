@@ -15,6 +15,31 @@
 #
 
 LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES := \
+    crash_dispatcher.cc \
+
+LOCAL_CPP_EXTENSION := cc
+
+LOCAL_CPPFLAGS := \
+    -W \
+    -Wall \
+    -Wextra \
+    -Wunused \
+    -Werror \
+    -Wno-unused-parameter \
+
+LOCAL_SHARED_LIBRARIES := \
+    libbase \
+    liblog \
+
+LOCAL_MODULE := crash_dispatcher
+
+include $(BUILD_EXECUTABLE)
+
+
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := \
@@ -41,6 +66,9 @@ LOCAL_STATIC_LIBRARIES := \
     breakpad_client \
 
 LOCAL_MODULE := crash_collector
+LOCAL_MODULE_STEM_32 := crash_collector32
+LOCAL_MODULE_STEM_64 := crash_collector64
+LOCAL_MULTILIB := both
 
 include $(BUILD_EXECUTABLE)
 

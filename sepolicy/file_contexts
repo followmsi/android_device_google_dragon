@@ -24,7 +24,9 @@
 /sys/devices/virtual/gpio/gpio66(/.*)?          u:object_r:sysfs_gps_gpio:s0
 
 # crash_collector
-/system/bin/crash_collector                     u:object_r:crash_collector_exec:s0
+/system/bin/crash_dispatcher                    u:object_r:crash_collector_exec:s0
+/system/bin/crash_collector32                   u:object_r:crash_collector_exec:s0
+/system/bin/crash_collector64                   u:object_r:crash_collector_exec:s0
 /data/system/crash_reports(/.*)?                u:object_r:crash_reports_data_file:s0
 
 # camera
