@@ -1,0 +1,7 @@
+type crash_collector_app, domain;
+
+# com.google.android.crashuploader runs in the crash_collector_app domain
+app_domain(crash_collector_app)
+net_domain(crash_collector_app)
+
+allow crash_collector_app crash_reports_data_file:file { read getattr };
