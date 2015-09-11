@@ -57,19 +57,21 @@ static int update_partition(struct flash_device *src, struct flash_device *dst,
 	void *content;
 	size_t size;
 	off_t offset;
+	const char *display_name = name ? name : "<flash>";
 
 	content = fmap_read_section(src, name, &size, &offset);
 	if (!content) {
-		ALOGW("Cannot read firmware image partition %s\n", name);
+		ALOGW("Cannot read firmware image partition %s\n",
+		      display_name);
 		return -EIO;
 	}
-	ALOGD("Erasing partition '%s' ...\n", name);
+	ALOGD("Erasing partition '%s' ...\n", display_name);
 	res = flash_erase(dst, offset, size);
 	if (res) {
 		ALOGW("Cannot erase flash\n");
 		goto out_free;
 	}
-	ALOGD("Writing partition '%s' ...\n", name);
+	ALOGD("Writing partition '%s' ...\n", display_name);
 	res = flash_write(dst, offset, content, size);
 	if (res)
 		ALOGW("Cannot write flash\n");
@@ -149,29 +151,18 @@ static int update_ap_fw(struct flash_device *spi, struct flash_device *img)
 	size_t rovpd_sz, new_rovpd_sz;
 	off_t rovpd_off, new_rovpd_off;
 	void *rovpd = fmap_read_section(spi, "RO_VPD", &rovpd_sz, &rovpd_off);
-
-	res = update_partition(img, spi, "RO_SECTION");
-	if (res)
-		return res;
-
 	void *newvpd = fmap_read_section(img, "RO_VPD", &new_rovpd_sz,
 					 &new_rovpd_off);
 
-	if (new_rovpd_off != rovpd_off) {
-		res = flash_erase(spi, new_rovpd_off, new_rovpd_sz);
-		if (res)
-			return res;
+	res = update_partition(img, spi, NULL);
 
-		res = flash_write(spi, new_rovpd_off, rovpd, new_rovpd_sz);
-		if (res)
-			return res;
-	}
-
-	res = update_partition(img, spi, "RW_SECTION_A");
+	res = flash_erase(spi, new_rovpd_off, new_rovpd_sz);
 	if (res)
 		return res;
 
-	res = update_partition(img, spi, "RW_SECTION_B");
+	res = flash_write(spi, new_rovpd_off, rovpd, new_rovpd_sz);
+	if (res)
+		return res;
 
 	return res;
 }
