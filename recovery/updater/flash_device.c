@@ -121,6 +121,11 @@ int flash_erase(struct flash_device *dev, off_t off, size_t len)
 	return dev->ops->erase(dev->priv_data, off, len);
 }
 
+size_t flash_get_size(struct flash_device *dev)
+{
+	return dev->ops->get_size(dev->priv_data);
+}
+
 struct fmap *flash_get_fmap(struct flash_device *dev)
 {
 	if (!dev->fmap) {
