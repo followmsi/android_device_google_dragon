@@ -57,19 +57,21 @@ static int update_partition(struct flash_device *src, struct flash_device *dst,
 	void *content;
 	size_t size;
 	off_t offset;
+	const char *display_name = name ? name : "<flash>";
 
 	content = fmap_read_section(src, name, &size, &offset);
 	if (!content) {
-		ALOGW("Cannot read firmware image partition %s\n", name);
+		ALOGW("Cannot read firmware image partition %s\n",
+		      display_name);
 		return -EIO;
 	}
-	ALOGD("Erasing partition '%s' ...\n", name);
+	ALOGD("Erasing partition '%s' ...\n", display_name);
 	res = flash_erase(dst, offset, size);
 	if (res) {
 		ALOGW("Cannot erase flash\n");
 		goto out_free;
 	}
-	ALOGD("Writing partition '%s' ...\n", name);
+	ALOGD("Writing partition '%s' ...\n", display_name);
 	res = flash_write(dst, offset, content, size);
 	if (res)
 		ALOGW("Cannot write flash\n");
