@@ -1,0 +1,4 @@
+# recovery uses cache
+allow recovery cache_file:dir mounton;
+# look in /dev/dri/
+allow recovery gpu_device:dir search;
