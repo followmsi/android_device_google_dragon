@@ -569,6 +569,7 @@ static int cmd_ec_usbpd(int argc, const char **argv)
 {
 	const char *role_str[] = {"", "toggle", "toggle-off", "sink", "source"};
 	const char *mux_str[] = {"", "none", "usb", "dp", "dock", "auto"};
+	const char *swap_str[] = {"", "dr_swap", "pr_swap", "vconn_swap"};
 	struct ec_params_usb_pd_control p;
 	struct ec_response_usb_pd_control_v1 r;
 	int rv, i;
@@ -581,6 +582,7 @@ static int cmd_ec_usbpd(int argc, const char **argv)
 
 	p.role = USB_PD_CTRL_ROLE_NO_CHANGE;
 	p.mux = USB_PD_CTRL_MUX_NO_CHANGE;
+	p.swap = USB_PD_CTRL_SWAP_NONE;
 
 	if (argc < 2) {
 		fprintf(stderr, "No port specified.\n");
@@ -633,6 +635,22 @@ static int cmd_ec_usbpd(int argc, const char **argv)
 				break;
 			}
 		}
+		if (option_ok)
+			continue;
+
+		for (j = 0; j < ARRAY_SIZE(swap_str); ++j) {
+			if (!strcmp(argv[i], swap_str[j])) {
+				if (p.swap != USB_PD_CTRL_SWAP_NONE) {
+					fprintf(stderr,
+						"Only one swap type allowed.\n");
+					return -1;
+				}
+				p.swap = j;
+				option_ok = 1;
+				break;
+			}
+		}
+
 
 		if (!option_ok) {
 			fprintf(stderr, "Unknown option: %s\n", argv[i]);
@@ -646,11 +664,12 @@ static int cmd_ec_usbpd(int argc, const char **argv)
 	if (rv < 0 || argc != 2)
 		return (rv < 0) ? rv : 0;
 
-	printf("Port C%d is %s,%s, Role:%s %s Polarity:CC%d State:%s\n",
+	printf("Port C%d is %s,%s, Role:%s %s%s Polarity:CC%d State:%s\n",
 	       p.port, (r.enabled & 1) ? "enabled" : "disabled",
 	       (r.enabled & 2) ? "connected" : "disconnected",
 	       r.role & PD_ROLE_SOURCE ? "SRC" : "SNK",
 	       r.role & (PD_ROLE_DFP << 1) ? "DFP" : "UFP",
+	       r.role & (1 << 2) ? " VCONN" : "",
 	       r.polarity + 1, r.state);
 
 	return (rv < 0 ? rv : 0);
