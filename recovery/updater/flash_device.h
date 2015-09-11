@@ -44,6 +44,7 @@ void flash_close(struct flash_device *dev);
 int flash_read(struct flash_device *dev, off_t off, void *buff, size_t len);
 int flash_write(struct flash_device *dev, off_t off, void *buff, size_t len);
 int flash_erase(struct flash_device *dev, off_t off, size_t len);
+size_t flash_get_size(struct flash_device *dev);
 int flash_cmd(struct flash_device *dev, int cmd, int ver,
 	      const void *odata, int osize, void *idata, int isize);
 

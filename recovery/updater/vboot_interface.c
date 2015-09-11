@@ -181,30 +181,38 @@ void *fmap_read_section(struct flash_device *dev,
 	int i, r;
 	struct fmap *fmap = flash_get_fmap(dev);
 	void *data;
+	off_t start_offset;
 
 	if (!fmap)
 		return NULL;
 
-	for (i = 0; i < fmap->nareas; i++)
-		if (!strcmp(name, (const char*)fmap->areas[i].name))
-			break;
-	if (i == fmap->nareas) {
-		ALOGD("Cannot find section '%s'\n", name);
-		return NULL;
+	if (name) {
+		for (i = 0; i < fmap->nareas; i++)
+			if (!strcmp(name, (const char*)fmap->areas[i].name))
+				break;
+		if (i == fmap->nareas) {
+			ALOGD("Cannot find section '%s'\n", name);
+			return NULL;
+		}
+		*size = fmap->areas[i].size;
+		start_offset = fmap->areas[i].offset;
+	} else {
+		*size = flash_get_size(dev);
+		start_offset = 0;
 	}
-	*size = fmap->areas[i].size;
+
 	data = malloc(*size);
 	if (!data)
 		return NULL;
 
-	r = flash_read(dev, fmap->areas[i].offset, data, *size);
+	r = flash_read(dev, start_offset, data, *size);
 	if (r) {
 		ALOGD("Cannot read section '%s'\n", name);
 		free(data);
 		return NULL;
 	}
 	if (offset)
-		*offset = fmap->areas[i].offset;
+		*offset = start_offset;
 
 	return data;
 }
