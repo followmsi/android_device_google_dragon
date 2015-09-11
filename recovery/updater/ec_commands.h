@@ -90,7 +90,10 @@
 /* Unused 0x84 - 0x8f */
 #define EC_MEMMAP_ACC_STATUS       0x90 /* Accelerometer status (8 bits )*/
 /* Unused 0x91 */
-#define EC_MEMMAP_ACC_DATA         0x92 /* Accelerometer data 0x92 - 0x9f */
+#define EC_MEMMAP_ACC_DATA         0x92 /* Accelerometers data 0x92 - 0x9f */
+/* 0x92: Lid Angle if available, LID_ANGLE_UNRELIABLE otherwise */
+/* 0x94 - 0x99: 1st Accelerometer */
+/* 0x9a - 0x9f: 2nd Accelerometer */
 #define EC_MEMMAP_GYRO_DATA        0xa0 /* Gyroscope data 0xa0 - 0xa5 */
 /* Unused 0xa6 - 0xdf */
 
@@ -427,6 +430,9 @@ enum host_event_code {
 
 	/* EC encountered a panic, triggering a reset */
 	EC_HOST_EVENT_PANIC = 24,
+
+	/* Keyboard fastboot combo has been pressed */
+	EC_HOST_EVENT_KEYBOARD_FASTBOOT = 25,
 
 	/*
 	 * The high bit of the event mask is not used as a host event code.  If
@@ -858,6 +864,7 @@ struct ec_response_get_set_value {
 
 /* More than one command can use these structs to get/set paramters. */
 #define EC_CMD_GSV_PAUSE_IN_S5	0x0c
+/*      EC_CMD_GSV_BOOT_ON_AC   0xa3 (defined below) */
 
 /*****************************************************************************/
 /* List the features supported by the firmware */
@@ -933,7 +940,11 @@ enum ec_feature_code {
 	/* Support USB Power delivery (PD) commands */
 	EC_FEATURE_USB_PD = 22,
 	/* Control USB multiplexer, for audio through USB port for instance. */
-	EC_FEATURE_USB_MUX = 23
+	EC_FEATURE_USB_MUX = 23,
+	/* Motion Sensor code has an internal software FIFO */
+	EC_FEATURE_MOTION_SENSE_FIFO = 24,
+	/* Support enabling/disabling booting the system on AC plug event */
+	EC_FEATURE_BOOT_ON_AC = 25,
 };
 
 #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
@@ -1555,7 +1566,7 @@ struct ec_response_led_control {
  */
 
 /* Verified boot hash command */
-#define EC_CMD_VBOOT_HASH 0x2A
+#define EC_CMD_VBOOT_HASH 0x2a
 
 struct ec_params_vboot_hash {
 	uint8_t cmd;             /* enum ec_vboot_hash_cmd */
@@ -1607,7 +1618,7 @@ enum ec_vboot_hash_status {
  * Motion sense commands. We'll make separate structs for sub-commands with
  * different input args, so that we know how much to expect.
  */
-#define EC_CMD_MOTION_SENSE_CMD 0x2B
+#define EC_CMD_MOTION_SENSE_CMD 0x2b
 
 /* Motion sense commands */
 enum motionsense_command {
@@ -1626,7 +1637,13 @@ enum motionsense_command {
 
 	/*
 	 * EC Rate command is a setter/getter command for the EC sampling rate
-	 * of all motion sensors in milliseconds.
+	 * in milliseconds.
+	 * It is per sensor, the EC run sample task  at the minimum of all
+	 * sensors EC_RATE.
+	 * For sensors without hardware FIFO, EC_RATE should be equals to 1/ODR
+	 * to collect all the sensor samples.
+	 * For sensor with hardware FIFO, EC_RATE is used as the maximal delay
+	 * to process of all motion sensors in milliseconds.
 	 */
 	MOTIONSENSE_CMD_EC_RATE = 2,
 
@@ -1651,6 +1668,41 @@ enum motionsense_command {
 	 */
 	MOTIONSENSE_CMD_KB_WAKE_ANGLE = 5,
 
+	/*
+	 * Returns a single sensor data.
+	 */
+	MOTIONSENSE_CMD_DATA = 6,
+
+	/*
+	 * Return sensor fifo info.
+	 */
+	MOTIONSENSE_CMD_FIFO_INFO = 7,
+
+	/*
+	 * Insert a flush element in the fifo and return sensor fifo info.
+	 * The host can use that element to synchronize its operation.
+	 */
+	MOTIONSENSE_CMD_FIFO_FLUSH = 8,
+
+	/*
+	 * Return a portion of the fifo.
+	 */
+	MOTIONSENSE_CMD_FIFO_READ = 9,
+
+	/*
+	 * Perform low level calibration.
+	 * On sensors that support it, ask to do offset calibration.
+	 */
+	MOTIONSENSE_CMD_PERFORM_CALIB = 10,
+
+	/*
+	 * Sensor Offset command is a setter/getter command for the offset
+	 * used for calibration.
+	 * The offsets can be calculated by the host, or via
+	 * PERFORM_CALIB command.
+	 */
+	MOTIONSENSE_CMD_SENSOR_OFFSET = 11,
+
 	/* Number of motionsense sub-commands. */
 	MOTIONSENSE_NUM_CMDS
 };
@@ -1660,12 +1712,16 @@ enum motionsensor_type {
 	MOTIONSENSE_TYPE_ACCEL = 0,
 	MOTIONSENSE_TYPE_GYRO = 1,
 	MOTIONSENSE_TYPE_MAG = 2,
+	MOTIONSENSE_TYPE_PROX = 3,
+	MOTIONSENSE_TYPE_LIGHT = 4,
+	MOTIONSENSE_TYPE_MAX,
 };
 
 /* List of motion sensor locations. */
 enum motionsensor_location {
 	MOTIONSENSE_LOC_BASE = 0,
 	MOTIONSENSE_LOC_LID = 1,
+	MOTIONSENSE_LOC_MAX,
 };
 
 /* List of motion sensor chips. */
@@ -1673,8 +1729,43 @@ enum motionsensor_chip {
 	MOTIONSENSE_CHIP_KXCJ9 = 0,
 	MOTIONSENSE_CHIP_LSM6DS0 = 1,
 	MOTIONSENSE_CHIP_BMI160 = 2,
+	MOTIONSENSE_CHIP_SI1141 = 3,
+	MOTIONSENSE_CHIP_SI1142 = 4,
+	MOTIONSENSE_CHIP_SI1143 = 5,
 };
 
+struct ec_response_motion_sensor_data {
+	/* Flags for each sensor. */
+	uint8_t flags;
+	/* sensor number the data comes from */
+	uint8_t sensor_num;
+	/* Each sensor is up to 3-axis. */
+	union {
+		int16_t             data[3];
+		struct {
+			uint16_t    rsvd;
+			uint32_t    timestamp;
+		} __packed;
+	};
+} __packed;
+
+struct ec_response_motion_sense_fifo_info {
+	/* Size of the fifo */
+	uint16_t size;
+	/* Amount of space used in the fifo */
+	uint16_t count;
+	/* TImestamp recorded in us */
+	uint32_t timestamp;
+	/* Total amount of vector lost */
+	uint16_t total_lost;
+	/* Lost events since the last fifo_info, per sensors */
+	uint16_t lost[0];
+} __packed;
+
+struct ec_response_motion_sense_fifo_data {
+	uint32_t number_data;
+	struct ec_response_motion_sensor_data data[0];
+} __packed;
 /* Module flag masks used for the dump sub-command. */
 #define MOTIONSENSE_MODULE_FLAG_ACTIVE (1<<0)
 
@@ -1682,11 +1773,24 @@ enum motionsensor_chip {
 #define MOTIONSENSE_SENSOR_FLAG_PRESENT (1<<0)
 
 /*
+ * Flush entry for synchronisation.
+ * data contains time stamp
+ */
+#define MOTIONSENSE_SENSOR_FLAG_FLUSH (1<<0)
+#define MOTIONSENSE_SENSOR_FLAG_TIMESTAMP (1<<1)
+
+/*
  * Send this value for the data element to only perform a read. If you
  * send any other value, the EC will interpret it as data to set and will
  * return the actual value set.
  */
 #define EC_MOTION_SENSE_NO_VALUE -1
+
+#define EC_MOTION_SENSE_INVALID_CALIB_TEMP 0x8000
+
+/* MOTIONSENSE_CMD_SENSOR_OFFSET subcommand flag */
+/* Set Calibration information */
+#define MOTION_SENSE_SET_OFFSET 1
 
 struct ec_params_motion_sense {
 	uint8_t cmd;
@@ -1702,22 +1806,24 @@ struct ec_params_motion_sense {
 		} dump;
 
 		/*
-		 * Used for MOTIONSENSE_CMD_EC_RATE and
-		 * MOTIONSENSE_CMD_KB_WAKE_ANGLE.
+		 * Used for MOTIONSENSE_CMD_KB_WAKE_ANGLE.
 		 */
 		struct {
-			/* Data to set or EC_MOTION_SENSE_NO_VALUE to read. */
+			/* Data to set or EC_MOTION_SENSE_NO_VALUE to read.
+			 * kb_wake_angle: angle to wakup AP.
+			 */
 			int16_t data;
-		} ec_rate, kb_wake_angle;
+		} kb_wake_angle;
 
-		/* Used for MOTIONSENSE_CMD_INFO. */
+		/* Used for MOTIONSENSE_CMD_INFO, MOTIONSENSE_CMD_DATA
+		 * and MOTIONSENSE_CMD_PERFORM_CALIB. */
 		struct {
 			uint8_t sensor_num;
-		} info;
+		} info, data, fifo_flush, perform_calib;
 
 		/*
-		 * Used for MOTIONSENSE_CMD_SENSOR_ODR and
-		 * MOTIONSENSE_CMD_SENSOR_RANGE.
+		 * Used for MOTIONSENSE_CMD_EC_RATE, MOTIONSENSE_CMD_SENSOR_ODR
+		 * and MOTIONSENSE_CMD_SENSOR_RANGE.
 		 */
 		struct {
 			uint8_t sensor_num;
@@ -1729,17 +1835,50 @@ struct ec_params_motion_sense {
 
 			/* Data to set or EC_MOTION_SENSE_NO_VALUE to read. */
 			int32_t data;
-		} sensor_odr, sensor_range;
+		} ec_rate, sensor_odr, sensor_range;
+
+		/* Used for MOTIONSENSE_CMD_SENSOR_OFFSET */
+		struct {
+			uint8_t sensor_num;
+
+			/*
+			 * bit 0: If set (MOTION_SENSE_SET_OFFSET), set
+			 * the calibration information in the EC.
+			 * If unset, just retrieve calibration information.
+			 */
+			uint16_t flags;
+
+			/*
+			 * Temperature at calibration, in units of 0.01 C
+			 * 0x8000: invalid / unknown.
+			 * 0x0: 0C
+			 * 0x7fff: +327.67C
+			 */
+			int16_t temp;
+
+			/*
+			 * Offset for calibration.
+			 * Unit:
+			 * Accelerometer: 1/1024 g
+			 * Gyro:          1/1024 deg/s
+			 * Compass:       1/16 uT
+			 */
+			int16_t offset[3];
+		} __packed sensor_offset;
+
+		/* Used for MOTIONSENSE_CMD_FIFO_INFO */
+		struct {
+		} fifo_info;
+
+		/* Used for MOTIONSENSE_CMD_FIFO_READ */
+		struct {
+			/*
+			 * Number of expected vector to return.
+			 * EC may return less or 0 if none available.
+			 */
+			uint32_t max_data_vector;
+		} fifo_read;
 	};
-} __packed;
-
-struct ec_response_motion_sensor_data {
-	/* Flags for each sensor. */
-	uint8_t flags;
-	uint8_t padding;
-
-	/* Each sensor is up to 3-axis. */
-	int16_t data[3];
 } __packed;
 
 struct ec_response_motion_sense {
@@ -1771,6 +1910,9 @@ struct ec_response_motion_sense {
 			uint8_t chip;
 		} info;
 
+		/* Used for MOTIONSENSE_CMD_DATA */
+		struct ec_response_motion_sensor_data data;
+
 		/*
 		 * Used for MOTIONSENSE_CMD_EC_RATE, MOTIONSENSE_CMD_SENSOR_ODR,
 		 * MOTIONSENSE_CMD_SENSOR_RANGE, and
@@ -1780,6 +1922,16 @@ struct ec_response_motion_sense {
 			/* Current value of the parameter queried. */
 			int32_t ret;
 		} ec_rate, sensor_odr, sensor_range, kb_wake_angle;
+
+		/* Used for MOTIONSENSE_CMD_SENSOR_OFFSET */
+		struct {
+			int16_t temp;
+			int16_t offset[3];
+		} sensor_offset, perform_calib;
+
+		struct ec_response_motion_sense_fifo_info fifo_info, fifo_flush;
+
+		struct ec_response_motion_sense_fifo_data fifo_read;
 	};
 } __packed;
 
@@ -2190,13 +2342,30 @@ enum ec_mkbp_event {
 	/* New host event. The event data is 4 bytes of host event flags. */
 	EC_MKBP_EVENT_HOST_EVENT = 1,
 
+	/* New Sensor FIFO data. The event data is fifo_info structure. */
+	EC_MKBP_EVENT_SENSOR_FIFO = 2,
+
 	/* Number of MKBP events */
 	EC_MKBP_EVENT_COUNT,
 };
 
+union ec_response_get_next_data {
+	uint8_t   key_matrix[13];
+
+	/* Unaligned */
+	uint32_t  host_event;
+
+	struct {
+		/* For aligning the fifo_info */
+		uint8_t rsvd[3];
+		struct ec_response_motion_sense_fifo_info info;
+	}        sensor_fifo;
+} __packed;
+
 struct ec_response_get_next_event {
 	uint8_t event_type;
 	/* Followed by event data if any */
+	union ec_response_get_next_data data;
 } __packed;
 
 /*****************************************************************************/
@@ -2409,12 +2578,27 @@ struct ec_params_charge_control {
 #define EC_CMD_CONSOLE_SNAPSHOT 0x97
 
 /*
- * Read next chunk of data from saved snapshot.
+ * Read data from the saved snapshot. If the subcmd parameter is
+ * CONSOLE_READ_NEXT, this will return data starting from the beginning of
+ * the latest snapshot. If it is CONSOLE_READ_RECENT, it will start from the
+ * end of the previous snapshot.
+ *
+ * The params are only looked at in version >= 1 of this command. Prior
+ * versions will just default to CONSOLE_READ_NEXT behavior.
  *
  * Response is null-terminated string.  Empty string, if there is no more
  * remaining output.
  */
 #define EC_CMD_CONSOLE_READ 0x98
+
+enum ec_console_read_subcmd {
+	CONSOLE_READ_NEXT = 0,
+	CONSOLE_READ_RECENT
+};
+
+struct ec_params_console_read_v1 {
+	uint8_t subcmd; /* enum ec_console_read_subcmd */
+} __packed;
 
 /*****************************************************************************/
 
@@ -2667,13 +2851,27 @@ struct ec_params_current_limit {
 } __packed;
 
 /*
- * Set maximum external power current.
+ * Set maximum external voltage / current.
  */
-#define EC_CMD_EXT_POWER_CURRENT_LIMIT 0xa2
+#define EC_CMD_EXTERNAL_POWER_LIMIT 0xa2
 
-struct ec_params_ext_power_current_limit {
-	uint32_t limit; /* in mA */
+/* Command v0 is used only on Spring and is obsolete + unsupported */
+struct ec_params_external_power_limit_v1 {
+	uint16_t current_lim; /* in mA, or EC_POWER_LIMIT_NONE to clear limit */
+	uint16_t voltage_lim; /* in mV, or EC_POWER_LIMIT_NONE to clear limit */
 } __packed;
+
+#define EC_POWER_LIMIT_NONE 0xffff
+
+/*****************************************************************************/
+
+/*
+ * Get/Set the option to boot the AP when the AC power is plugged
+ *
+ * Use ec_params_get_set_value/ec_response_get_set_value structs and EC_GSV_SET
+ * please see "Get/Set miscellaneous values" section above.
+ */
+#define EC_CMD_GSV_BOOT_ON_AC	0xa3
 
 /*****************************************************************************/
 /* Smart battery pass-through */
@@ -2916,6 +3114,11 @@ struct ec_params_pd_status {
 #define PD_STATUS_HOST_EVENT      (1 << 0) /* Forward host event to AP */
 #define PD_STATUS_IN_RW           (1 << 1) /* Running RW image */
 #define PD_STATUS_JUMPED_TO_IMAGE (1 << 2) /* Current image was jumped to */
+#define PD_STATUS_TCPC_ALERT_0    (1 << 3) /* Alert active in port 0 TCPC */
+#define PD_STATUS_TCPC_ALERT_1    (1 << 4) /* Alert active in port 1 TCPC */
+#define PD_STATUS_EC_INT_ACTIVE  (PD_STATUS_TCPC_ALERT_0 | \
+				      PD_STATUS_TCPC_ALERT_1 | \
+				      PD_STATUS_HOST_EVENT)
 struct ec_response_pd_status {
 	uint32_t status;      /* PD MCU status */
 	uint32_t curr_lim_ma; /* input current limit */
@@ -2956,10 +3159,19 @@ enum usb_pd_control_mux {
 	USB_PD_CTRL_MUX_COUNT
 };
 
+enum usb_pd_control_swap {
+	USB_PD_CTRL_SWAP_NONE = 0,
+	USB_PD_CTRL_SWAP_DATA = 1,
+	USB_PD_CTRL_SWAP_POWER = 2,
+	USB_PD_CTRL_SWAP_VCONN = 3,
+	USB_PD_CTRL_SWAP_COUNT
+};
+
 struct ec_params_usb_pd_control {
 	uint8_t port;
 	uint8_t role;
 	uint8_t mux;
+	uint8_t swap;
 } __packed;
 
 struct ec_response_usb_pd_control {
@@ -2971,7 +3183,8 @@ struct ec_response_usb_pd_control {
 
 struct ec_response_usb_pd_control_v1 {
 	uint8_t enabled; /* [0] comm enabled [1] connected */
-	uint8_t role; /* [0] power: 0=SNK/1=SRC [1] data: 0=UFP/1=DFP */
+	uint8_t role; /* [0] power: 0=SNK/1=SRC [1] data: 0=UFP/1=DFP
+			 [2] vconn 0=off/1=on */
 	uint8_t polarity;
 	char state[32];
 } __packed;
@@ -3097,8 +3310,8 @@ struct ec_response_pd_log {
 /* The timestamp is the microsecond counter shifted to get about a ms. */
 #define PD_LOG_TIMESTAMP_SHIFT 10 /* 1 LSB = 1024us */
 
-#define PD_LOG_SIZE_MASK  0x1F
-#define PD_LOG_PORT_MASK  0xE0
+#define PD_LOG_SIZE_MASK  0x1f
+#define PD_LOG_PORT_MASK  0xe0
 #define PD_LOG_PORT_SHIFT    5
 #define PD_LOG_PORT_SIZE(port, size) (((port) << PD_LOG_PORT_SHIFT) | \
 				      ((size) & PD_LOG_SIZE_MASK))
@@ -3124,7 +3337,7 @@ struct ec_response_pd_log {
 #define PD_EVENT_VIDEO_DP_MODE (PD_EVENT_VIDEO_BASE+0)
 #define PD_EVENT_VIDEO_CODEC   (PD_EVENT_VIDEO_BASE+1)
 /* Returned in the "type" field, when there is no entry available */
-#define PD_EVENT_NO_ENTRY       0xFF
+#define PD_EVENT_NO_ENTRY       0xff
 
 /*
  * PD_EVENT_MCU_CHARGE event definition :
@@ -3139,7 +3352,7 @@ struct ec_response_pd_log {
 #define CHARGE_FLAGS_OVERRIDE          (1 << 13)
 /* Charger type */
 #define CHARGE_FLAGS_TYPE_SHIFT               3
-#define CHARGE_FLAGS_TYPE_MASK       (0xF << CHARGE_FLAGS_TYPE_SHIFT)
+#define CHARGE_FLAGS_TYPE_MASK       (0xf << CHARGE_FLAGS_TYPE_SHIFT)
 /* Power delivery role */
 #define CHARGE_FLAGS_ROLE_MASK         (7 <<  0)
 
