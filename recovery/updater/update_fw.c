@@ -141,9 +141,6 @@ static int update_ap_fw(struct flash_device *spi, struct flash_device *img)
 {
 	int res = -EINVAL;
 
-	if (!check_compatible_keys(img, spi))
-		return -EINVAL;
-
 	/*
 	 * Save serial number. VPD changed in fmap. Dogfooders need serial
 	 * number for future OTAs.
