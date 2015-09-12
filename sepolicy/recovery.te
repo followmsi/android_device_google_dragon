@@ -5,3 +5,7 @@ allow recovery gpu_device:dir search;
 allow recovery gpu_device:chr_file rw_file_perms;
 
 allow recovery ffs_prop:property_service set;
+
+# for operations in recovery/updater/flash_mtd.c
+allow recovery mtd_device:dir search;
+allow recovery mtd_device:chr_file rw_file_perms;
