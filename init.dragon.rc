@@ -165,6 +165,8 @@ on boot
     # enable GPU dvfs
     write /sys/class/drm/card0/device/pstate auto
 
+    # set GPU auto suspend
+    write /sys/devices/57000000.gpu/power/autosuspend_delay_ms 150
 
 on fs
     mount_all /fstab.dragon
