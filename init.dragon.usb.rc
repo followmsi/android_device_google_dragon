@@ -1,5 +1,3 @@
-#TODO s/18d1/google vendor id/
-#TODO s/4ee./new product ids/
 on boot
     mkdir /dev/usb-ffs 0770 shell shell
     mkdir /dev/usb-ffs/adb 0770 shell shell
@@ -27,31 +25,31 @@ on boot
     setprop sys.usb.controller "700d0000.usb-device"
 
 on property:sys.usb.config=mtp && property:sys.usb.configfs=1
-    write /config/usb_gadget/g1/idProduct 0x4ee1
+    write /config/usb_gadget/g1/idProduct 0x5202
 
 on property:sys.usb.config=mtp,adb && property:sys.usb.configfs=1
-    write /config/usb_gadget/g1/idProduct 0x4ee2
+    write /config/usb_gadget/g1/idProduct 0x5203
 
 on property:sys.usb.config=rndis && property:sys.usb.configfs=1
-    write /config/usb_gadget/g1/idProduct 0x4ee3
+    write /config/usb_gadget/g1/idProduct 0x5204
 
 on property:sys.usb.config=rndis,adb && property:sys.usb.configfs=1
-    write /config/usb_gadget/g1/idProduct 0x4ee4
+    write /config/usb_gadget/g1/idProduct 0x5205
 
 on property:sys.usb.config=ptp && property:sys.usb.configfs=1
-    write /config/usb_gadget/g1/idProduct 0x4ee5
+    write /config/usb_gadget/g1/idProduct 0x5206
 
 on property:sys.usb.config=ptp,adb && property:sys.usb.configfs=1
-    write /config/usb_gadget/g1/idProduct 0x4ee6
+    write /config/usb_gadget/g1/idProduct 0x5207
 
 on property:sys.usb.config=adb && property:sys.usb.configfs=1
-    write /config/usb_gadget/g1/idProduct 0x4ee7
+    write /config/usb_gadget/g1/idProduct 0x5208
 
 on property:sys.usb.config=midi && property:sys.usb.configfs=1
-    write /config/usb_gadget/g1/idProduct 0x4ee8
+    write /config/usb_gadget/g1/idProduct 0x5209
 
 on property:sys.usb.config=midi,adb && property:sys.usb.configfs=1
-    write /config/usb_gadget/g1/idProduct 0x4ee9
+    write /config/usb_gadget/g1/idProduct 0x520a
 
 on property:sys.usb.config=accessory && property:sys.usb.configfs=1
     write /config/usb_gadget/g1/idProduct 0x2d00
