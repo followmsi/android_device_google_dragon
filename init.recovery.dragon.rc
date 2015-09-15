@@ -16,7 +16,7 @@ service watchdogd /sbin/watchdogd 10 20
     class core
     seclabel u:r:watchdogd:s0
 
-on property:sys.usb.ffs.ready=1 && property:ro.debuggable=1
+on property:sys.usb.ffs.ready=1
     write /config/usb_gadget/g1/UDC "none"
     rmdir /config/usb_gadget/g1/configs/b.1
     mkdir /config/usb_gadget/g1/configs/b.1 0777 shell shell
