@@ -34,13 +34,13 @@ namespace {
 
 const size_t kMaxCoredumpSize = 256 * 1024 * 1024;
 
-ssize_t GetFreeDiskSpace(const std::string& path) {
+int64_t GetFreeDiskSpace(const std::string& path) {
   struct statvfs stats;
   if (TEMP_FAILURE_RETRY(statvfs(path.c_str(), &stats)) != 0) {
     ALOGE("statvfs() failed. errno = %d", errno);
     return -1;
   }
-  return stats.f_bavail * stats.f_frsize;
+  return static_cast<int64_t>(stats.f_bavail) * stats.f_frsize;
 }
 
 bool Seek(int fd, off_t offset) {
@@ -161,7 +161,7 @@ ssize_t CoredumpWriter::WriteCoredumpToFD(int fd_dest) {
   FilterSegments(program_headers, file_mappings, &program_headers_filtered);
 
   // Calculate the coredump size limit.
-  const ssize_t free_disk_space = GetFreeDiskSpace(coredump_filename_);
+  const int64_t free_disk_space = GetFreeDiskSpace(coredump_filename_);
   if (free_disk_space < 0) {
     return -1;
   }
