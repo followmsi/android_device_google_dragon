@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2014 The Android Open Source Project
+ * Copyright (C) 2008-2015 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@
 #include <hardware/sensors.h>
 
 #include "cros_ec_sensors.h"
+#include "sensors.h"
 
 /*****************************************************************************/
 
@@ -410,51 +411,25 @@ struct sensors_module_t HAL_MODULE_INFO_SYM = {
 };
 
 /*****************************************************************************/
-
-/*
- * cros_ec_sensors_poll_context_t:
- *
- * Responsible for implementing the pool functions.
- * We are currently polling on 2 files:
- * - the IIO ring buffer (via CrosECSensor object)
- * - a pipe to sleep on. a call to activate() will wake up
- *   the context poll() is running in.
- *
- * This code could accomodate more than one ring buffer.
- * If we implement wake up/non wake up sensors, we would lister to
- * iio buffer woken up by sysfs triggers.
- */
-struct cros_ec_sensors_poll_context_t {
-    sensors_poll_device_1_t device; // must be first
-
-    cros_ec_sensors_poll_context_t(
-         const char *ring_device_name,
-         const char *ring_trigger_name);
-    ~cros_ec_sensors_poll_context_t();
-    int activate(int handle, int enabled);
-    int setDelay(int handle, int64_t ns);
-    int pollEvents(sensors_event_t* data, int count);
-    int batch(int handle, int flags, int64_t period_ns, int64_t timeout);
-    int flush(int handle);
-
-    private:
-    enum {
-        crosEcRingFd           = 0,
-        crosEcWakeFd,
-        numFds,
-    };
-
-    static const char WAKE_MESSAGE = 'W';
-    struct pollfd mPollFds[numFds];
-    int mWritePipeFd;
-    CrosECSensor *mSensor;
-
-};
-
 cros_ec_sensors_poll_context_t::cros_ec_sensors_poll_context_t(
-         const char *ring_device_name,
-         const char *ring_trigger_name)
+        const struct hw_module_t *module,
+        const char *ring_device_name,
+        const char *ring_trigger_name)
 {
+    memset(&device, 0, sizeof(sensors_poll_device_1_t));
+
+    device.common.tag      = HARDWARE_DEVICE_TAG;
+    device.common.version  = SENSORS_DEVICE_API_VERSION_1_3;
+    device.common.module   = const_cast<hw_module_t *>(module);
+    device.common.close    = wrapper_close;
+    device.activate        = wrapper_activate;
+    device.setDelay        = wrapper_setDelay;
+    device.poll            = wrapper_poll;
+
+    // Batch processing
+    device.batch           = wrapper_batch;
+    device.flush           = wrapper_flush;
+
     /*
      * One more time, assume only one sensor hub in the system.
      * Find the iio:deviceX with name "cros_ec_ring"
@@ -562,7 +537,7 @@ int cros_ec_sensors_poll_context_t::flush(int handle)
 
 /*****************************************************************************/
 
-static int poll__close(struct hw_device_t *dev)
+int cros_ec_sensors_poll_context_t::wrapper_close(struct hw_device_t *dev)
 {
     cros_ec_sensors_poll_context_t *ctx = reinterpret_cast<cros_ec_sensors_poll_context_t *>(dev);
     if (ctx) {
@@ -571,39 +546,43 @@ static int poll__close(struct hw_device_t *dev)
     if (Stotal_max_sensor_handle_ != 0) {
         free(Ssensor_info_);
         Stotal_max_sensor_handle_ = 0;
+        free(Sgesture_info_);
     }
     return 0;
 }
 
-static int poll__activate(struct sensors_poll_device_t *dev,
-        int handle, int enabled) {
+int cros_ec_sensors_poll_context_t::wrapper_activate(struct sensors_poll_device_t *dev,
+        int handle, int enabled)
+{
     cros_ec_sensors_poll_context_t *ctx = reinterpret_cast<cros_ec_sensors_poll_context_t *>(dev);
     return ctx->activate(handle, enabled);
 }
 
-static int poll__setDelay(struct sensors_poll_device_t *dev,
-        int handle, int64_t ns) {
+int cros_ec_sensors_poll_context_t::wrapper_setDelay(struct sensors_poll_device_t *dev,
+        int handle, int64_t ns)
+{
     cros_ec_sensors_poll_context_t *ctx = reinterpret_cast<cros_ec_sensors_poll_context_t *>(dev);
     return ctx->setDelay(handle, ns);
 }
 
-static int poll__poll(struct sensors_poll_device_t *dev,
-        sensors_event_t* data, int count) {
+int cros_ec_sensors_poll_context_t::wrapper_poll(struct sensors_poll_device_t *dev,
+        sensors_event_t* data, int count)
+{
     cros_ec_sensors_poll_context_t *ctx = reinterpret_cast<cros_ec_sensors_poll_context_t *>(dev);
     return ctx->pollEvents(data, count);
 }
 
-static int poll__batch(struct sensors_poll_device_1 *dev,
+int cros_ec_sensors_poll_context_t::wrapper_batch(struct sensors_poll_device_1 *dev,
         int handle, int flags, int64_t period_ns, int64_t timeout)
 {
-    cros_ec_sensors_poll_context_t *ctx = (cros_ec_sensors_poll_context_t *)dev;
+    cros_ec_sensors_poll_context_t *ctx = reinterpret_cast<cros_ec_sensors_poll_context_t *>(dev);
     return ctx->batch(handle, flags, period_ns, timeout);
 }
 
-static int poll__flush(struct sensors_poll_device_1 *dev,
+int cros_ec_sensors_poll_context_t::wrapper_flush(struct sensors_poll_device_1 *dev,
         int handle)
 {
-    cros_ec_sensors_poll_context_t *ctx = (cros_ec_sensors_poll_context_t *)dev;
+    cros_ec_sensors_poll_context_t *ctx = reinterpret_cast<cros_ec_sensors_poll_context_t *>(dev);
     return ctx->flush(handle);
 }
 
@@ -632,20 +611,6 @@ static int cros_ec_open_sensors(
 
     cros_ec_sensors_poll_context_t *dev = new cros_ec_sensors_poll_context_t(
             ring_device_name, ring_trigger_name);
-
-    memset(&dev->device, 0, sizeof(sensors_poll_device_1_t));
-
-    dev->device.common.tag      = HARDWARE_DEVICE_TAG;
-    dev->device.common.version  = SENSORS_DEVICE_API_VERSION_1_3;
-    dev->device.common.module   = const_cast<hw_module_t*>(module);
-    dev->device.common.close    = poll__close;
-    dev->device.activate        = poll__activate;
-    dev->device.setDelay        = poll__setDelay;
-    dev->device.poll            = poll__poll;
-
-    // Batch processing
-    dev->device.batch           = poll__batch;
-    dev->device.flush           = poll__flush;
 
     *device = &dev->device.common;
 
