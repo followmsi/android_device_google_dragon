@@ -33,6 +33,7 @@
 
 #include "cros_ec_sensors.h"
 
+
 /*****************************************************************************/
 static int min(int a, int b) {
     return (a < b) ? a : b;
@@ -59,9 +60,11 @@ int CrosECSensor::sysfs_set_input_attr(const char *path, const char *attr,
     }
 
     rc = write(fd, value, (size_t)len);
-    if (rc < 0)
+    if (rc < 0) {
         ALOGE("%s: write failed: fd = %d, rc = %d, strerr = %s\n", __func__,
               fd, rc, strerror(errno));
+        ALOGE("fname = %s, value = %s\n", fname, value);
+    }
 
     close(fd);
 
@@ -86,10 +89,13 @@ int CrosECSensor::sysfs_set_input_attr_by_int(const char *path,
  *
  * Setup and open the ring buffer.
  */
-CrosECSensor::CrosECSensor(struct cros_ec_sensor_info *sensor_info,
+CrosECSensor::CrosECSensor(
+        struct cros_ec_sensor_info *sensor_info,
+        struct cros_ec_gesture_info *gesture_info,
         const char *ring_device_name,
         const char *trigger_name)
-    : mSensorInfo(sensor_info)
+    : mSensorInfo(sensor_info),
+      mGestureInfo(gesture_info)
 {
     char ring_buffer_name[IIO_MAX_NAME_LENGTH] = "/dev/";
 
@@ -144,12 +150,20 @@ int CrosECSensor::getFd(void)
  */
 int CrosECSensor::flush(int handle)
 {
-    struct cros_ec_sensor_info *info = &mSensorInfo[handle];
-
-    if (!info->enabled)
+    if (handle >= CROS_EC_MAX_PHYSICAL_SENSOR) {
+        struct cros_ec_gesture_info* info = &mGestureInfo[handle - CROS_EC_MAX_PHYSICAL_SENSOR];
+        if (info->sensor_data.flags & SENSOR_FLAG_ONE_SHOT_MODE)
+            return -EINVAL;
+        /* not expected, current gestures are all one-shot. */
         return -EINVAL;
+    } else {
+        struct cros_ec_sensor_info *info = &mSensorInfo[handle];
 
-    return sysfs_set_input_attr_by_int(info->device_name, "flush", 1);
+        if (!info->enabled)
+            return -EINVAL;
+
+        return sysfs_set_input_attr_by_int(info->device_name, "flush", 1);
+    }
 }
 
 /*
@@ -160,32 +174,41 @@ int CrosECSensor::flush(int handle)
  */
 int CrosECSensor::activate(int handle, int enabled)
 {
-    struct cros_ec_sensor_info *info = &mSensorInfo[handle];
     int err;
-    /*
-     * Frequency is in mHz, sampling period in ns, use 10^(9 + 3)
-     * coefficient.
-     */
-    long frequency = enabled ? 1e12 / info->sampling_period_ns : 0;
+    if (handle < CROS_EC_MAX_PHYSICAL_SENSOR) {
+        struct cros_ec_sensor_info *info = &mSensorInfo[handle];
+        /*
+         * Frequency is in mHz, sampling period in ns, use 10^(9 + 3)
+         * coefficient.
+         */
+        long frequency = enabled ? 1e12 / info->sampling_period_ns : 0;
 
-    err = sysfs_set_input_attr_by_int(info->device_name,
-            "frequency", frequency);
-    if (err)
-        return err;
+        err = sysfs_set_input_attr_by_int(info->device_name,
+                "frequency", frequency);
+        if (err)
+            return err;
 
-    long ec_period = nanoseconds_to_milliseconds(info->max_report_latency_ns);
+        long ec_period = nanoseconds_to_milliseconds(info->max_report_latency_ns);
 
-    if (enabled)
-        ec_period = min(CROS_EC_MAX_SAMPLING_PERIOD, ec_period);
-    else
-        ec_period = 0;
+        if (enabled)
+            ec_period = min(CROS_EC_MAX_SAMPLING_PERIOD, ec_period);
+        else
+            ec_period = 0;
 
-    /* Sampling is encoded on a 16bit so, so the maximal period is ~65s. */
-    err = sysfs_set_input_attr_by_int(
-            info->device_name, "sampling_frequency", ec_period);
+        /* Sampling is encoded on a 16bit so, so the maximal period is ~65s. */
+        err = sysfs_set_input_attr_by_int(
+                info->device_name, "sampling_frequency", ec_period);
+        if (!err)
+            info->enabled = enabled;
+    } else {
+        struct cros_ec_gesture_info* info = &mGestureInfo[handle - CROS_EC_MAX_PHYSICAL_SENSOR];
+        char attr[PATH_MAX] = "events/";
+        strcat(attr, info->enable_entry);
+        err = sysfs_set_input_attr_by_int(info->device_name, attr, enabled);
+        if (!err)
+            info->enabled = enabled;
+    }
 
-    if (!err)
-        info->enabled = enabled;
     return err;
 }
 
@@ -198,34 +221,37 @@ int CrosECSensor::batch(int handle,
         int64_t sampling_period_ns,
         int64_t max_report_latency_ns)
 {
-    struct cros_ec_sensor_info *info = &mSensorInfo[handle];
+    if (handle < CROS_EC_MAX_PHYSICAL_SENSOR) {
+        struct cros_ec_sensor_info *info = &mSensorInfo[handle];
 
-    info->max_report_latency_ns = max_report_latency_ns;
+        info->max_report_latency_ns = max_report_latency_ns;
 
-    if (nanoseconds_to_microseconds(sampling_period_ns) >
-        info->sensor_data.maxDelay)
-        info->sampling_period_ns = microseconds_to_nanoseconds(info->sensor_data.maxDelay);
-    else if (nanoseconds_to_microseconds(sampling_period_ns) <
-             info->sensor_data.minDelay)
-        info->sampling_period_ns = microseconds_to_nanoseconds(info->sensor_data.minDelay);
-    else
-        info->sampling_period_ns = sampling_period_ns;
+        if (nanoseconds_to_microseconds(sampling_period_ns) >
+                info->sensor_data.maxDelay)
+            info->sampling_period_ns = microseconds_to_nanoseconds(info->sensor_data.maxDelay);
+        else if (nanoseconds_to_microseconds(sampling_period_ns) <
+                info->sensor_data.minDelay)
+            info->sampling_period_ns = microseconds_to_nanoseconds(info->sensor_data.minDelay);
+        else
+            info->sampling_period_ns = sampling_period_ns;
 
-    /*
-     * Note that the sensor hub limit minimal sampling frequency at few ms.
-     * Which is good, because HAL shold not ask for polling sensor at
-     * more than the sampling period, set in sensor_t.
-     */
-    if (info->max_report_latency_ns < info->sampling_period_ns) {
         /*
-         * We have to report an event as soon as available.
-         * Set polling frequency as low as sampling frequency
+         * Note that the sensor hub limit minimal sampling frequency at few ms.
+         * Which is good, because HAL shold not ask for polling sensor at
+         * more than the sampling period, set in sensor_t.
          */
-        info->max_report_latency_ns = info->sampling_period_ns;
+        if (info->max_report_latency_ns < info->sampling_period_ns) {
+            /*
+             * We have to report an event as soon as available.
+             * Set polling frequency as low as sampling frequency
+             */
+            info->max_report_latency_ns = info->sampling_period_ns;
+        }
+        /* Call activate to change the paramters if necessary */
+        return activate(handle, info->enabled);
+    } else {
+        return 0;
     }
-
-    /* Call activate to change the paramters if necessary */
-    return activate(handle, info->enabled);
 }
 
 /*
@@ -280,8 +306,6 @@ int CrosECSensor::readEvents(sensors_event_t* data, int count)
  */
 int CrosECSensor::processEvent(sensors_event_t* data, const cros_ec_event *event)
 {
-    struct cros_ec_sensor_info *info = &mSensorInfo[event->sensor_id];
-
     if (event->flags & CROS_EC_EVENT_FLUSH_FLAG) {
         data->version = META_DATA_VERSION;
         data->sensor = 0;
@@ -293,39 +317,62 @@ int CrosECSensor::processEvent(sensors_event_t* data, const cros_ec_event *event
         return 0;
     }
 
-    /*
-     * The sensor hub can send data even if the sensor is not set up.
-     * workaround it unitl b/23238991 is fixed.
-     */
-    if (!info->enabled)
-        return -ENOKEY;
+    struct cros_ec_sensor_info *info = &mSensorInfo[event->sensor_id];
 
-    data->version = sizeof(sensors_event_t);
-    data->sensor = event->sensor_id;
-    data->type = info->sensor_data.type;
-    data->timestamp = event->timestamp;
-    data->acceleration.status = SENSOR_STATUS_ACCURACY_LOW;
+    if (info->type == CROS_EC_ACTIVITY) {
+        ALOGI("Activity: %d - state: %d\n", event->activity, event->state);
+        if (event->activity >= MOTIONSENSE_MAX_ACTIVITY)
+            return -ENOKEY;
 
-    /*
-     * Even for sensor with one axis (light, proxmity), be sure to write
-     * the other vectors. EC 0s them out.
-     */
-    float d;
-    for (int i = X ; i < MAX_AXIS; i++) {
-        switch (info->sensor_data.type) {
-        case SENSOR_TYPE_ACCELEROMETER:
-        case SENSOR_TYPE_GYROSCOPE:
-        case SENSOR_TYPE_MAGNETIC_FIELD:
-            d = event->vector[i];
-            break;
-        case SENSOR_TYPE_LIGHT:
-        case SENSOR_TYPE_PROXIMITY:
-            d = (uint16_t)event->vector[i];
-            break;
-        default:
-            return -EINVAL;
+        struct cros_ec_gesture_info *gesture = &mGestureInfo[event->activity];
+        if (!gesture->enabled)
+            return -ENOKEY;
+
+        data->version = sizeof(sensors_event_t);
+        data->sensor = CROS_EC_MAX_PHYSICAL_SENSOR + event->activity;
+        data->type = gesture->sensor_data.type;
+        data->timestamp = event->timestamp;
+        data->data[0] = (float)event->state;
+
+        if (gesture->sensor_data.flags & SENSOR_FLAG_ONE_SHOT_MODE)
+            gesture->enabled = 0;
+    } else {
+
+        /*
+         * The sensor hub can send data even if the sensor is not set up.
+         * workaround it unitl b/23238991 is fixed.
+         */
+        if (!info->enabled)
+            return -ENOKEY;
+
+        data->version = sizeof(sensors_event_t);
+        data->sensor = event->sensor_id;
+        data->type = info->sensor_data.type;
+        data->timestamp = event->timestamp;
+        data->acceleration.status = SENSOR_STATUS_ACCURACY_LOW;
+
+        /*
+         * Even for sensor with one axis (light, proxmity), be sure to write
+         * the other vectors. EC 0s them out.
+         */
+        float d;
+        for (int i = X ; i < MAX_AXIS; i++) {
+            switch (info->sensor_data.type) {
+                case SENSOR_TYPE_ACCELEROMETER:
+                case SENSOR_TYPE_GYROSCOPE:
+                case SENSOR_TYPE_MAGNETIC_FIELD:
+                    d = event->vector[i];
+                    break;
+                case SENSOR_TYPE_LIGHT:
+                case SENSOR_TYPE_PROXIMITY:
+                    d = (uint16_t)event->vector[i];
+                    break;
+                default:
+                    return -EINVAL;
+            }
+            data->acceleration.v[i] =
+                d * mSensorInfo[event->sensor_id].sensor_data.resolution;
         }
-        data->acceleration.v[i] = d * mSensorInfo[event->sensor_id].sensor_data.resolution;
     }
     return 0;
 }
