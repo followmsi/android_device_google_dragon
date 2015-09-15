@@ -1,10 +1,13 @@
-#TODO(dgreid) add other devices.
 /dev/block/mmcblk0rpmb 0600 system drmrpc
 /dev/block/platform/700b0600.sdhci/by-name/recovery 0600 system system
 /dev/block/platform/700b0600.sdhci/by-name/PST 0600 system system
 
-/dev/ion                0666   system     system
-/dev/sw_sync            0666   system     system
+# Graphics
+/dev/ion                0666   system     graphics
+/dev/sw_sync            0660   system     graphics
+/dev/dri/card*          0660   system     graphics
+/dev/dri/control*       0660   system     graphics
+/dev/dri/render*        0666   system     graphics
 
 # GPS
 /dev/ttyTHS2            0660   gps        system
