@@ -39,16 +39,6 @@
 
 #define UNSET_FIELD -1
 
-enum cros_ec_sensor_device {
-    CROS_EC_ACCEL,
-    CROS_EC_GYRO,
-    CROS_EC_MAG,
-    CROS_EC_PROX,
-    CROS_EC_LIGHT,
-    CROS_EC_RING,
-    CROS_EC_MAX_DEVICE,
-};
-
 /* Name of iio devices, as reported by cros_ec_dev.c */
 const char *cros_ec_sensor_names[] = {
     [CROS_EC_ACCEL] = "cros-ec-accel",
@@ -56,8 +46,26 @@ const char *cros_ec_sensor_names[] = {
     [CROS_EC_MAG] = "cros-ec-mag",
     [CROS_EC_PROX] = "cros-ec-prox",
     [CROS_EC_LIGHT] = "cros-ec-light",
+    [CROS_EC_ACTIVITY] = "cros-ec-activity",
     [CROS_EC_RING] = "cros-ec-ring",
 };
+
+
+/*
+ * cros_ec_activity is shared between sensors interface and
+ * activity interface.
+ * Activity has a separate module is not implemented yet
+ */
+
+/* Activities that belongs to the sensor interface */
+const char *cros_ec_gesture_name[] = {
+    [CROS_EC_SIGMO] = "in_activity_still_change_falling_en",
+};
+
+const int cros_ec_gesture_id[] = {
+    [CROS_EC_SIGMO] = MOTIONSENSE_ACTIVITY_SIG_MOTION,
+};
+
 
 /*
  * Template for sensor_t structure return to motionservice.
@@ -171,15 +179,38 @@ static const struct sensor_t sSensorListTemplate[] = {
     },
 };
 
+static const struct sensor_t sGestureListTemplate[] = {
+    [CROS_EC_SIGMO] = {
+        name:               "CrosEC Significant Motion",
+        vendor:             "Google",
+        version:            1,
+        handle:             UNSET_FIELD,
+        type:               SENSOR_TYPE_SIGNIFICANT_MOTION,
+        maxRange:           1.0f,
+        resolution:         1.0f,
+        power:              0.18f,    /* Based on BMI160 */
+        minDelay:           -1,
+        fifoReservedEventCount: 0,
+        fifoMaxEventCount:  0,
+        stringType:         SENSOR_STRING_TYPE_SIGNIFICANT_MOTION,
+        requiredPermission: 0,
+        maxDelay:           0,
+        flags:              SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
+        reserved:           { 0 }
+    },
+};
+
 /* We only support the sensors in the lid */
 static const char *cros_ec_location = "lid";
 
 static int Stotal_sensor_count_ = 0;
 static int Stotal_max_sensor_handle_ = 0;
+static int Stotal_max_gesture_handle_ = 0;
 
 static struct sensor_t *Ssensor_list_ = NULL;
 
 struct cros_ec_sensor_info *Ssensor_info_ = NULL;
+struct cros_ec_gesture_info *Sgesture_info_ = NULL;
 
 static int cros_ec_open_sensors(const struct hw_module_t *module,
                                 const char *id,
@@ -250,8 +281,79 @@ static int cros_ec_get_sensors_list(struct sensors_module_t*,
         memcpy(&Ssensor_list_[Stotal_sensor_count_ - 1], sensor_data,
                sizeof(sensor_t));
     }
+
+    for (int i = 0 ; i < Stotal_max_gesture_handle_ ; i++) {
+        if (Sgesture_info_[i].device_name == NULL)
+            continue;
+
+        Stotal_sensor_count_++;
+        Ssensor_list_ = (sensor_t*)realloc(Ssensor_list_,
+                Stotal_sensor_count_ * sizeof(sensor_t));
+        if (Ssensor_list_ == NULL) {
+            ALOGI("Unable to allocate Ssensor_list_\n");
+            return 0;
+        }
+        sensor_t *sensor_data;
+        sensor_data = &Sgesture_info_[i].sensor_data;
+        memcpy(&Ssensor_list_[Stotal_sensor_count_ - 1], sensor_data,
+               sizeof(sensor_t));
+    }
     *list = Ssensor_list_;
     return Stotal_sensor_count_;
+}
+
+/*
+ * cros_ec_get_sensors_names: Build list of gestures from IIO
+ *
+ * Looking into the cros_ec_activity sensors, looks for events
+ * the sensorserivces are managing.
+ *
+ * We assume only one cros_ec activity sensor.
+ */
+static int cros_ec_get_gesture_names(const char *sensor_name)
+{
+    char path_device[IIO_MAX_DEVICE_NAME_LENGTH];
+    strcpy(path_device, IIO_DIR);
+    strcat(path_device, sensor_name);
+    strcat(path_device, "/events");
+    DIR *events_dir;
+    ALOGD("looking at %s:", path_device);
+    events_dir = opendir(path_device);
+    if (events_dir == NULL)
+        return -ENODEV;
+    const struct dirent *ent_event;
+    while (ent_event = readdir(events_dir), ent_event != NULL) {
+        int gesture;
+        for (gesture = 0; gesture < CROS_EC_MAX_GESTURE; gesture++) {
+            if (!strcmp(ent_event->d_name, cros_ec_gesture_name[gesture]))
+                break;
+        }
+        if (gesture == CROS_EC_MAX_GESTURE)
+            continue;
+        int gesture_id = cros_ec_gesture_id[gesture];
+        if (Stotal_max_gesture_handle_ <= gesture_id) {
+            Sgesture_info_ = (cros_ec_gesture_info*)realloc(Sgesture_info_,
+                    (gesture_id + 1) * sizeof(cros_ec_gesture_info));
+            if (Sgesture_info_ == NULL)
+                return -ENOMEM;
+            memset(&Sgesture_info_[Stotal_max_gesture_handle_], 0,
+                    (gesture_id + 1 - Stotal_max_gesture_handle_) *
+                    sizeof(cros_ec_gesture_info));
+            Stotal_max_gesture_handle_ = gesture_id + 1;
+        }
+        cros_ec_gesture_info *gesture_info = &Sgesture_info_[gesture_id];
+        gesture_info->device_name = strdup(sensor_name);
+        gesture_info->enable_entry = cros_ec_gesture_name[gesture];
+
+        sensor_t *sensor_data;
+        sensor_data = &gesture_info->sensor_data;
+        memcpy(sensor_data, &sGestureListTemplate[gesture], sizeof(sensor_t));
+        sensor_data->handle = CROS_EC_MAX_PHYSICAL_SENSOR + gesture_id;
+
+        ALOGD("new gesture '%s' on device '%s' : handle: %d\n",
+              gesture_info->enable_entry, gesture_info->device_name, gesture_id);
+    }
+    return 0;
 }
 
 /*
@@ -323,49 +425,52 @@ static int cros_ec_get_sensors_names(char **ring_device_name,
                 if (cros_ec_sysfs_read_attr(path_device, "id", dev_id))
                     continue;
                 int sensor_id = atoi(dev_id);
-
                 if (Stotal_max_sensor_handle_ <= sensor_id) {
-                    Stotal_max_sensor_handle_ = sensor_id + 1;
                     Ssensor_info_ = (cros_ec_sensor_info*)realloc(Ssensor_info_,
-                            Stotal_max_sensor_handle_ *
-                            sizeof(cros_ec_sensor_info));
+                            (sensor_id + 1) * sizeof(cros_ec_sensor_info));
                     if (Ssensor_info_ == NULL)
                         return -ENOMEM;
-                    memset(&Ssensor_info_[sensor_id], 0,
-                           sizeof(cros_ec_sensor_info));
+                    memset(&Ssensor_info_[Stotal_max_sensor_handle_], 0,
+                            (sensor_id + 1 - Stotal_max_sensor_handle_) *
+                            sizeof(cros_ec_sensor_info));
+                    Stotal_max_sensor_handle_ = sensor_id + 1;
                 }
 
-                char dev_scale[40];
-                if (cros_ec_sysfs_read_attr(path_device, "scale", dev_scale)) {
-                    ALOGE("Unable to read scale\n");
-                    return 0;
-                }
-                double scale = atof(dev_scale);
+                struct cros_ec_sensor_info *sensor_info = &Ssensor_info_[sensor_id];
+                sensor_info->type = static_cast<enum cros_ec_sensor_device>(i);
 
-                Ssensor_info_[sensor_id].device_name =
-                          strdup(ent_device->d_name);
-
-                sensor_t *sensor_data;
-                sensor_data = &Ssensor_info_[sensor_id].sensor_data;
-                memcpy(sensor_data, &sSensorListTemplate[i], sizeof(sensor_t));
-                sensor_data->handle = sensor_id;
-
-                if (sensor_data->type == SENSOR_TYPE_MAGNETIC_FIELD)
-                    /* iio units are in Gauss, not micro Telsa */
-                    scale *= 100;
-                if (sensor_data->type == SENSOR_TYPE_PROXIMITY) {
-                    /*
-                     * Proximity does not detect anything beyond 3m.
-                     */
-                    sensor_data->resolution = 1;
-                    sensor_data->maxRange = 300;
+                if (i == CROS_EC_ACTIVITY) {
+                    cros_ec_get_gesture_names(ent_device->d_name);
                 } else {
-                    sensor_data->resolution = scale;
-                    sensor_data->maxRange = scale * (1 << 15);
-                }
+                    sensor_info->device_name = strdup(ent_device->d_name);
+                    char dev_scale[40];
+                    if (cros_ec_sysfs_read_attr(path_device, "scale", dev_scale)) {
+                        ALOGE("Unable to read scale\n");
+                        return 0;
+                    }
+                    double scale = atof(dev_scale);
 
-                ALOGD("new dev '%s' handle: %d\n",
-                      Ssensor_info_[sensor_id].device_name, sensor_id);
+                    sensor_t *sensor_data = &sensor_info->sensor_data;
+                    memcpy(sensor_data, &sSensorListTemplate[i], sizeof(sensor_t));
+                    sensor_data->handle = sensor_id;
+
+                    if (sensor_data->type == SENSOR_TYPE_MAGNETIC_FIELD)
+                        /* iio units are in Gauss, not micro Telsa */
+                        scale *= 100;
+                    if (sensor_data->type == SENSOR_TYPE_PROXIMITY) {
+                        /*
+                         * Proximity does not detect anything beyond 3m.
+                         */
+                        sensor_data->resolution = 1;
+                        sensor_data->maxRange = 300;
+                    } else {
+                        sensor_data->resolution = scale;
+                        sensor_data->maxRange = scale * (1 << 15);
+                    }
+
+                    ALOGD("new dev '%s' handle: %d\n",
+                            sensor_info->device_name, sensor_id);
+                }
                 break;
             }
         }
@@ -435,7 +540,7 @@ cros_ec_sensors_poll_context_t::cros_ec_sensors_poll_context_t(
      * Find the iio:deviceX with name "cros_ec_ring"
      * Open /dev/iio:deviceX, enable buffer.
      */
-    mSensor = new CrosECSensor(Ssensor_info_,
+    mSensor = new CrosECSensor(Ssensor_info_, Sgesture_info_,
         ring_device_name, ring_trigger_name);
 
     mPollFds[crosEcRingFd].fd = mSensor->getFd();
@@ -610,7 +715,7 @@ static int cros_ec_open_sensors(
         return err;
 
     cros_ec_sensors_poll_context_t *dev = new cros_ec_sensors_poll_context_t(
-            ring_device_name, ring_trigger_name);
+            module, ring_device_name, ring_trigger_name);
 
     *device = &dev->device.common;
 
