@@ -120,3 +120,5 @@ TARGET_RECOVERY_UI_LIB := librecovery_ui_dragon
 ifeq ($(SECURE_OS_BUILD),tlk)
   BOARD_SUPPORT_ROLLBACK_PROTECTION := true
 endif
+
+BOARD_HAL_STATIC_LIBRARIES := libdumpstate.dragon
