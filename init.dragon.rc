@@ -10,7 +10,6 @@ on init
     setprop hwc.drm.device /dev/dri/card1
     setprop persist.tegra.compression off
     setprop persist.tegra.decompression disabled
-    setprop persist.tegra.18273276 0x76165656    
     setprop ro.radio.noril yes
     setprop persist.tegra.nvblit.engine gpu
 
