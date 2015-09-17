@@ -32,7 +32,8 @@
 #include <hardware/hardware.h>
 
 static pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
-char const* const BACKLIGHT_FILE = "/sys/class/backlight/lp8557-backlight/brightness";
+char const* const BACKLIGHT_FILE = "/sys/class/backlight/lpm102a188a-backlight/brightness";
+
 static int write_int(char const *path, int value)
 {
 	int fd;
