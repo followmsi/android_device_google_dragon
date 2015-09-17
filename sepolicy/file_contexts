@@ -16,6 +16,7 @@
 /dev/ttyTHS2                                    u:object_r:gps_device:s0
 /dev/ttyTHS3                                    u:object_r:hci_attach_dev:s0
 /dev/focuser                                    u:object_r:camera_device:s0
+/dev/cros_ec                                    u:object_r:cros_ec_device:s0
 
 # system executables
 /system/bin/glgps                               u:object_r:gpsd_exec:s0
