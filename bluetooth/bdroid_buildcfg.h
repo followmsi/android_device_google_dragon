@@ -19,6 +19,9 @@
 
 #define BTA_DM_COD {0x1A, 0x01, 0x1C}
 
+// Detect disconnects faster (N x 10ms)
+#define BTM_BLE_CONN_TIMEOUT_DEF 300
+
 #define BTIF_HF_SERVICES (BTA_HSP_SERVICE_MASK)
 #define BLE_VND_INCLUDED TRUE
 #define BTM_BLE_ADV_TX_POWER {-21, -15, -7, 1, 9}
