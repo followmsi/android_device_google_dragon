@@ -12,6 +12,7 @@ on init
     setprop persist.tegra.decompression disabled
     setprop ro.radio.noril yes
     setprop persist.tegra.nvblit.engine gpu
+    setprop persist.tegra.0x5344bb 0
 
     # fix navigation bar not showing
     setprop qemu.hw.mainkeys 0
