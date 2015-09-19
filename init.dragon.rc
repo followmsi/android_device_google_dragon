@@ -170,6 +170,12 @@ on boot
 on fs
     mount_all /fstab.dragon
 
+# tune thermal governor
+service tune_therm_gov /system/bin/tune-thermal-gov.sh skin-therm pd_thermal_gov \
+    max_err_temp 5000
+    class main
+    oneshot
+
 service battery_charger /charger
     class charger
     seclabel u:r:healthd:s0
