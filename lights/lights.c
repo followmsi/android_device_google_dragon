@@ -31,27 +31,75 @@
 #include <hardware/lights.h>
 #include <hardware/hardware.h>
 
-static pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
-char const* const BACKLIGHT_FILE = "/sys/class/backlight/lpm102a188a-backlight/brightness";
+#define ALOG_ONCE(mask, op, ...)			\
+	do {					\
+		if (!(mask & op)) {		\
+			ALOGE(__VA_ARGS__);	\
+			mask |= op;		\
+		}				\
+	} while (0);
+#define OP_WRITE_OPEN		(1 << 0)
+#define OP_BRIGHTNESS_PATH	(1 << 1)
+#define OP_BRIGHTNESS_VALUE	(1 << 2)
+#define OP_BRIGHTNESS_WRITE	(1 << 3)
 
-static int write_int(char const *path, int value)
+struct dragon_lights {
+	struct light_device_t base;
+
+	pthread_mutex_t lock;
+	char const *sysfs_path;
+
+	unsigned long logged_failures;
+};
+
+static char const * kBacklightPath =
+	"/sys/class/backlight/lpm102a188a-backlight";
+
+static struct dragon_lights *to_dragon_lights(struct light_device_t *dev)
 {
-	int fd;
-	static int already_warned = -1;
+	return (struct dragon_lights *)dev;
+}
+
+static int write_brightness(struct dragon_lights *lights, int brightness)
+{
+	char buffer[20], path[PATH_MAX];
+	int fd, bytes, amt, ret = 0;
+
+	bytes = snprintf(path, sizeof(path), "%s/brightness",
+			 lights->sysfs_path);
+	if (bytes < 0 || (size_t)bytes >= sizeof(path)) {
+		ALOG_ONCE(lights->logged_failures, OP_BRIGHTNESS_PATH,
+			  "failed to create brightness path %d\n", bytes);
+		return -EINVAL;
+	}
+
 	fd = open(path, O_RDWR);
-	if (fd >= 0) {
-		char buffer[20];
-		int bytes = snprintf(buffer, 20, "%d\n", value);
-		int amt = write(fd, buffer, bytes);
-		close(fd);
-		return amt == -1 ? -errno : 0;
-	} else {
-		if (already_warned == -1) {
-			ALOGE("write_int failed to open %s\n", path);
-			already_warned = 1;
-		}
+	if (fd < 0) {
+		ALOG_ONCE(lights->logged_failures, OP_WRITE_OPEN,
+			  "write_int failed to open %s/%d\n", path, errno);
 		return -errno;
 	}
+
+	bytes = snprintf(buffer, sizeof(buffer), "%d\n", brightness);
+	if (bytes < 0 || (size_t)bytes >= sizeof(buffer)) {
+		ALOG_ONCE(lights->logged_failures, OP_BRIGHTNESS_VALUE,
+			  "failed to create brightness value %d/%d\n",
+			  brightness, bytes);
+		ret = -EINVAL;
+		goto out;
+	}
+	amt = write(fd, buffer, bytes);
+	if (amt != bytes) {
+		ALOG_ONCE(lights->logged_failures, OP_BRIGHTNESS_WRITE,
+			  "failed to write brightness value %d/%d\n", amt,
+			  bytes);
+		ret = amt == -1 ? -errno : -EINVAL;
+		goto out;
+	}
+
+out:
+	close(fd);
+	return ret;
 }
 
 static int rgb_to_brightness(struct light_state_t const *state)
@@ -63,69 +111,63 @@ static int rgb_to_brightness(struct light_state_t const *state)
 }
 
 static int set_light_backlight(struct light_device_t *dev,
-		struct light_state_t const *state)
+			       struct light_state_t const *state)
 {
+	struct dragon_lights *lights = to_dragon_lights(dev);
 	int err;
 	int brightness = rgb_to_brightness(state);
 
-	pthread_mutex_lock(&g_lock);
-	err = write_int(BACKLIGHT_FILE, brightness);
-	pthread_mutex_unlock(&g_lock);
+	pthread_mutex_lock(&lights->lock);
+	err = write_brightness(lights, brightness);
+	pthread_mutex_unlock(&lights->lock);
 
 	return err;
 }
 
-/** Close the lights device */
-static int close_lights(struct light_device_t *dev)
+static int close_lights(struct hw_device_t *dev)
 {
-	if (dev)
-		free(dev);
+	struct dragon_lights *lights = (struct dragon_lights *)dev;
+	if (lights)
+		free(lights);
 	return 0;
 }
 
-/** Open a new instance of a lights device using name */
 static int open_lights(const struct hw_module_t *module, char const *name,
-		struct hw_device_t **device)
+		       struct hw_device_t **device)
 {
-	struct light_device_t *dev = malloc(sizeof(struct light_device_t));
-	int (*set_light) (struct light_device_t *dev,
-			struct light_state_t const *state);
-	pthread_t lighting_poll_thread;
-	ALOGV("open lights");
-	if (dev == NULL) {
-		ALOGE("failed to allocate memory");
-		return -1;
-	}
-	memset(dev, 0, sizeof(*dev));
+	struct dragon_lights *lights;
+	int ret;
 
-	if (0 == strcmp(LIGHT_ID_BACKLIGHT, name))
-		set_light = set_light_backlight;
-	else
+	// Only support backlight at the moment
+	if (strcmp(LIGHT_ID_BACKLIGHT, name))
 		return -EINVAL;
 
-	pthread_mutex_init(&g_lock, NULL);
+	lights = malloc(sizeof(*lights));
+	if (lights == NULL) {
+		ALOGE("failed to allocate lights memory");
+		return -ENOMEM;
+	}
+	memset(lights, 0, sizeof(*lights));
 
-	dev->common.tag = HARDWARE_DEVICE_TAG;
-	dev->common.version = 0;
-	dev->common.module = (struct hw_module_t *)module;
-	dev->common.close = (int (*)(struct hw_device_t *))close_lights;
-	dev->set_light = set_light;
+	pthread_mutex_init(&lights->lock, NULL);
 
-	*device = (struct hw_device_t *)dev;
+	lights->sysfs_path = kBacklightPath;
 
+	lights->base.common.tag = HARDWARE_DEVICE_TAG;
+	lights->base.common.version = 0;
+	lights->base.common.module = (struct hw_module_t *)module;
+	lights->base.common.close = close_lights;
+	lights->base.set_light = set_light_backlight;
+
+	*device = (struct hw_device_t *)lights;
 	return 0;
 }
 
-static struct hw_module_methods_t lights_methods =
-{
+static struct hw_module_methods_t lights_methods = {
 	.open =  open_lights,
 };
 
-/*
- * The backlight Module
- */
-struct hw_module_t HAL_MODULE_INFO_SYM =
-{
+struct hw_module_t HAL_MODULE_INFO_SYM = {
 	.tag = HARDWARE_MODULE_TAG,
 	.version_major = 1,
 	.version_minor = 0,
