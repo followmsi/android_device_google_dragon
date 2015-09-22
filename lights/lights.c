@@ -42,12 +42,17 @@
 #define OP_BRIGHTNESS_PATH	(1 << 1)
 #define OP_BRIGHTNESS_VALUE	(1 << 2)
 #define OP_BRIGHTNESS_WRITE	(1 << 3)
+#define OP_MAX_BRIGHTNESS_PATH	(1 << 4)
+#define OP_MAX_BRIGHTNESS_OPEN	(1 << 5)
+#define OP_MAX_BRIGHTNESS_READ	(1 << 6)
 
 struct dragon_lights {
 	struct light_device_t base;
 
 	pthread_mutex_t lock;
 	char const *sysfs_path;
+
+	int max_brightness;
 
 	unsigned long logged_failures;
 };
@@ -102,6 +107,41 @@ out:
 	return ret;
 }
 
+static int read_max_brightness(struct dragon_lights *lights, int *value)
+{
+	char buffer[20], path[PATH_MAX];
+	int ret = 0, fd, bytes;
+
+	bytes = snprintf(path, sizeof(path), "%s/max_brightness",
+			 lights->sysfs_path);
+	if (bytes < 0 || (size_t)bytes >= sizeof(path)) {
+		ALOG_ONCE(lights->logged_failures, OP_MAX_BRIGHTNESS_PATH,
+			  "failed to create max_brightness path %d\n", bytes);
+		return -EINVAL;
+	}
+
+	fd = open(path, O_RDONLY);
+	if (fd < 0) {
+		ALOG_ONCE(lights->logged_failures, OP_MAX_BRIGHTNESS_OPEN,
+			  "failed to open max_brightness %s/%d\n", path, errno);
+		return -errno;
+	}
+
+	bytes = read(fd, buffer, sizeof(buffer));
+	if (bytes <= 0) {
+		ALOG_ONCE(lights->logged_failures, OP_MAX_BRIGHTNESS_READ,
+			  "failed to read max_brightness %s/%d\n", path, errno);
+		ret = -errno;
+		goto out;
+	}
+
+	*value = atoi(buffer);
+
+out:
+	close(fd);
+	return ret;
+}
+
 static int rgb_to_brightness(struct light_state_t const *state)
 {
 	int color = state->color & 0x00ffffff;
@@ -116,6 +156,9 @@ static int set_light_backlight(struct light_device_t *dev,
 	struct dragon_lights *lights = to_dragon_lights(dev);
 	int err;
 	int brightness = rgb_to_brightness(state);
+
+	// normalize to our max brightness
+	brightness = brightness * lights->max_brightness / 0xff;
 
 	pthread_mutex_lock(&lights->lock);
 	err = write_brightness(lights, brightness);
@@ -152,6 +195,12 @@ static int open_lights(const struct hw_module_t *module, char const *name,
 	pthread_mutex_init(&lights->lock, NULL);
 
 	lights->sysfs_path = kBacklightPath;
+
+	ret = read_max_brightness(lights, &lights->max_brightness);
+	if (ret) {
+		close_lights((struct hw_device_t *)lights);
+		return ret;
+	}
 
 	lights->base.common.tag = HARDWARE_DEVICE_TAG;
 	lights->base.common.version = 0;
