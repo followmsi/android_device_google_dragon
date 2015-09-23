@@ -22,6 +22,7 @@
 /system/bin/glgps                               u:object_r:gpsd_exec:s0
 /system/bin/init_regions\.sh                    u:object_r:locale_exec:s0
 /system/bin/tune-thermal-gov\.sh                u:object_r:thermal_gov_exec:s0
+/system/bin/dump_bq25892\.sh                    u:object_r:dumpstate_exec:s0
 
 # /sys
 /sys/devices/virtual/gpio/gpio66(/.*)?          u:object_r:sysfs_gps_gpio:s0
