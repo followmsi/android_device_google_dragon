@@ -123,6 +123,91 @@ static int cmd_ec_battery(int argc, const char **argv)
 	return 0;
 }
 
+/* BQ25892 I2C registers */
+#define BQ2589X_ADDR         (0x6B << 1)
+#define BQ2589X_REG_CFG1            0x02
+#define BQ2589X_CFG1_CONV_START     (1<<7)
+#define BQ2589X_REG_ADC_BATT_VOLT   0x0E
+#define BQ2589X_REG_ADC_SYS_VOLT    0x0F
+#define BQ2589X_REG_ADC_TS          0x10
+#define BQ2589X_REG_ADC_VBUS_VOLT   0x11
+#define BQ2589X_REG_ADC_CHG_CURR    0x12
+#define BQ2589X_REG_ADC_INPUT_CURR  0x13
+
+static int bq25892_read(int reg, int *value)
+{
+	int rv;
+	struct ec_response_i2c_read r;
+	struct ec_params_i2c_read p = {
+		.port = 0, .read_size = 8, .addr = BQ2589X_ADDR, .offset = reg
+	};
+
+	rv = flash_cmd(ec, EC_CMD_I2C_READ, 0, &p, sizeof(p), &r, sizeof(r));
+	if (rv < 0) {
+		*value = -1;
+		return rv;
+	}
+
+	*value = r.data;
+	return 0;
+}
+
+static int bq25892_write(int reg, int value)
+{
+	int rv;
+	struct ec_params_i2c_write p = {
+		.port = 0, .write_size = 8, .addr = BQ2589X_ADDR,
+		.offset = reg, .data = value
+	};
+
+	rv = flash_cmd(ec, EC_CMD_I2C_WRITE, 0, &p, sizeof(p), NULL, 0);
+	return rv < 0 ? rv : 0;
+}
+
+static int cmd_ec_bq25892(int argc, const char **argv)
+{
+	int i;
+	int value;
+	int rv;
+	int batt_mv, sys_mv, vbus_mv, chg_ma, input_ma;
+
+
+	if (!get_ec())
+		return -ENODEV;
+
+	/* Trigger one ADC conversion */
+	bq25892_read(BQ2589X_REG_CFG1, &value);
+	bq25892_write(BQ2589X_REG_CFG1, value | BQ2589X_CFG1_CONV_START);
+	do {
+		rv = bq25892_read(BQ2589X_REG_CFG1, &value);
+	} while ((value & BQ2589X_CFG1_CONV_START) || (rv < 0));
+
+	bq25892_read(BQ2589X_REG_ADC_BATT_VOLT, &batt_mv);
+	bq25892_read(BQ2589X_REG_ADC_SYS_VOLT, &sys_mv);
+	bq25892_read(BQ2589X_REG_ADC_VBUS_VOLT, &vbus_mv);
+	bq25892_read(BQ2589X_REG_ADC_CHG_CURR, &chg_ma);
+	bq25892_read(BQ2589X_REG_ADC_INPUT_CURR, &input_ma);
+	printf("ADC Batt %dmV Sys %dmV VBUS %dmV Chg %dmA Input %dmA\n",
+		2304 + (batt_mv & 0x7f) * 20, 2304 + sys_mv * 20,
+		2600 + (vbus_mv & 0x7f) * 100,
+		chg_ma * 50, 100 + (input_ma & 0x3f) * 50);
+
+	printf("REG:");
+	for (i = 0; i <= 0x14; ++i)
+		printf(" %02x", i);
+	printf("\n");
+
+	printf("VAL:");
+	for (i = 0; i <= 0x14; ++i) {
+		rv = bq25892_read(i, &value);
+		if (rv)
+			return rv;
+		printf(" %02x", value);
+	}
+	printf("\n");
+	return 0;
+}
+
 static int cmd_ec_chargecontrol(int argc, const char **argv)
 {
 	struct ec_params_charge_control p;
@@ -807,6 +892,7 @@ static int cmd_ec_version(int argc, const char **argv)
 
 struct command subcmds_ec[] = {
 	CMD(ec_battery, "Show battery status"),
+	CMD(ec_bq25892, "Dump the state of the bq25892 charger chip"),
 	CMD(ec_chargecontrol, "Force the battery to stop charging/discharge"),
 	CMD(ec_gpioget, "Get the value of GPIO signal"),
 	CMD(ec_gpioset, "Set the value of GPIO signal"),
