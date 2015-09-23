@@ -204,18 +204,13 @@ int update_fw(Value *fw_file, Value *ec_file, int force)
 	if (!spi)
 		goto out_close_ec;
 
-	/*
-	 * Currently, we will be performing RO+RW updates for AP firmware.
-	 * TODO: Remove call to update_ap_fw and if(0) below when switch to RW
-	 * updates only is done.
-	 */
-	res = update_ap_fw(spi, img);
-	if (0) {
-		if (cur_part == 'R') /* Recovery mode */
-			res = update_recovery_fw(spi, ec, img, ec_file);
-		else /* Normal mode */
-			res = update_rw_fw(spi, img, cur_part);
-	}
+	if (0)
+		res = update_ap_fw(spi, img);
+
+	if (cur_part == 'R') /* Recovery mode */
+		res = update_recovery_fw(spi, ec, img, ec_file);
+	else /* Normal mode */
+		res = update_rw_fw(spi, img, cur_part);
 
 	if (!res) /* successful update : record it */
 		res = 1;
