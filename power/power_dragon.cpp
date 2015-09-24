@@ -40,6 +40,9 @@
 #define TOUCH_SYNA_INTERACTIVE_PATH "/sys/bus/i2c/devices/0-0020/0018:06CB:3370.0001/input/input0/inhibited"
 #define IO_IS_BUSY_PATH "/sys/devices/system/cpu/cpufreq/interactive/io_is_busy"
 #define LIGHTBAR_SEQUENCE_PATH "/sys/class/chromeos/cros_ec/lightbar/sequence"
+#define IIO_ACTIVITY_DEVICE_PATH "/sys/class/chromeos/cros_ec/device/cros-ec-activity.0"
+#define IIO_DOUBLE_TAP_EVENT "events/in_activity_double_tap_change_falling_en"
+#define IIO_DEVICE_PREFIX "iio:device"
 #define EXT_VOLTAGE_LIM_PATH "/sys/class/chromeos/cros_ec/usb-pd-charger/ext_voltage_lim"
 #define EC_POWER_LIMIT_NONE "0xffff"
 #define LOW_POWER_MAX_FREQ "1020000"
@@ -59,6 +62,7 @@ struct dragon_power_module {
 };
 
 static bool low_power_mode = false;
+static char *iio_activity_device = NULL;
 
 static const char *max_cpu_freq = NORMAL_MAX_FREQ;
 static const char *low_power_max_cpu_freq = LOW_POWER_MAX_FREQ;
@@ -113,6 +117,22 @@ static void power_init(struct power_module __unused *module)
                 "1000000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/io_is_busy", "0");
     sysfs_write("/sys/class/chromeos/cros_ec/lightbar/userspace_control", "1");
+
+    /* Find the iio device used for activities/estures recognition */
+    DIR *iio_activity_dir = opendir(IIO_ACTIVITY_DEVICE_PATH);
+    if (iio_activity_dir == NULL) {
+        ALOGE("%s is not available.\n", iio_activity_dir);
+        return;
+    }
+    const struct dirent *ent_device;
+    while (ent_device = readdir(iio_activity_dir), ent_device != NULL) {
+        if (!strncmp(ent_device->d_name, IIO_DEVICE_PREFIX, strlen(IIO_DEVICE_PREFIX))) {
+            iio_activity_device = strdup(ent_device->d_name);
+            break;
+        }
+    }
+    if (iio_activity_device == NULL)
+        ALOGE("Activity device not found");
 }
 
 static void power_set_interactive(struct power_module __unused *module, int on)
@@ -130,6 +150,12 @@ static void power_set_interactive(struct power_module __unused *module, int on)
     /* limit charging voltage to 5V when interactive otherwise no limit */
     sysfs_write(EXT_VOLTAGE_LIM_PATH, on ? "5000" : EC_POWER_LIMIT_NONE);
     sysfs_write(CPU_QUIET_NR_MIN_CPUS_PATH, on ? "2" : "1");
+    if (iio_activity_device != NULL) {
+        char buf[128];
+        snprintf(buf, sizeof(buf), "%s/%s/%s", IIO_ACTIVITY_DEVICE_PATH,
+                 iio_activity_device, IIO_DOUBLE_TAP_EVENT);
+        sysfs_write(buf, on ? "0" : "1");
+    }
     ALOGV("power_set_interactive: %d done\n", on);
 }
 
