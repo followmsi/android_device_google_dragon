@@ -1,1 +1,0 @@
-allow { appdomain -isolated_app } gpu_device:dir search;
