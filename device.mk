@@ -33,6 +33,7 @@ TARGET_RECOVERY_FSTAB = $(LOCAL_FSTAB)
 
 PRODUCT_COPY_FILES := \
     $(LOCAL_KERNEL):kernel \
+    $(LOCAL_PATH)/dump_bq25892.sh:system/bin/dump_bq25892.sh \
     $(LOCAL_PATH)/init.dragon.rc:root/init.dragon.rc \
     $(LOCAL_PATH)/init.dragon.usb.rc:root/init.dragon.usb.rc \
     $(LOCAL_PATH)/init.recovery.dragon.rc:root/init.recovery.dragon.rc \

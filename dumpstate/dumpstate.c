@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
+#include <cutils/properties.h>
 #include <dumpstate.h>
 
 void dumpstate_board()
 {
+    /* ask init.dragon.rc to dump the charging state and wait */
+    property_set("debug.bq25892", "dump");
+    sleep(1);
+
     dump_file("EC Version", "/sys/class/chromeos/cros_ec/version");
     run_command("FW Version", 5, "fwtool", "vboot", NULL);
+    dump_file("Charger chip registers", "/data/local/tmp/bq25892.txt");
 };
