@@ -172,6 +172,9 @@ on boot
     write /sys/devices/system/cpu/cpuquiet/current_governor runnable
 
 on fs
+    # Enable verity notification
+    write /sys/module/dm_verity/parameters/error_behavior notify
+
     mount_all /fstab.dragon
 
 service battery_charger /charger
