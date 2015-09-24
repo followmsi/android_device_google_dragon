@@ -8,5 +8,3 @@ allow system_server crash_reports_data_file:file r_file_perms;
 
 allow system_server gps_data_file:dir w_dir_perms;
 allow system_server gps_data_file:fifo_file create_file_perms;
-
-allow system_server gpu_device:dir search;
