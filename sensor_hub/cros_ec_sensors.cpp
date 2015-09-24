@@ -40,51 +40,6 @@ static int min(int a, int b) {
 }
 
 /*
- * sysfs_set_input_attr: Helper function to write a sysfs attribute.
- */
-int CrosECSensor::sysfs_set_input_attr(const char *path, const char *attr,
-                                       const char *value, size_t len)
-{
-    char fname[PATH_MAX];
-    int fd;
-    int rc;
-
-    snprintf(fname, sizeof(fname), "%s%s/%s", IIO_DIR, path, attr);
-    fname[sizeof(fname) - 1] = '\0';
-
-    fd = open(fname, O_WRONLY);
-    if (fd < 0) {
-        ALOGE("%s: fname = %s, fd = %d, failed: %s\n", __func__,
-              fname, fd, strerror(errno));
-        return -EACCES;
-    }
-
-    rc = write(fd, value, (size_t)len);
-    if (rc < 0) {
-        ALOGE("%s: write failed: fd = %d, rc = %d, strerr = %s\n", __func__,
-              fd, rc, strerror(errno));
-        ALOGE("fname = %s, value = %s\n", fname, value);
-    }
-
-    close(fd);
-
-    return rc < 0 ? rc : 0;
-}
-
-int CrosECSensor::sysfs_set_input_attr_by_int(const char *path,
-                                              const char *attr, int value)
-{
-    char buf[INT32_CHAR_LEN];
-
-    size_t n = snprintf(buf, sizeof(buf), "%d", value);
-    if (n > sizeof(buf)) {
-        return -1;
-    }
-
-    return sysfs_set_input_attr(path, attr, buf, n);
-}
-
-/*
  * Constructor.
  *
  * Setup and open the ring buffer.
@@ -108,21 +63,21 @@ CrosECSensor::CrosECSensor(
 
     strcpy(mRingPath, ring_device_name);
 
-    if (sysfs_set_input_attr_by_int(mRingPath, "buffer/enable", 0) < 0) {
+    if (cros_ec_sysfs_set_input_attr_by_int(mRingPath, "buffer/enable", 0) < 0) {
         ALOGE("disable IIO buffer failed: %s\n", strerror(errno));
         return;
     }
-    if (sysfs_set_input_attr(mRingPath, "trigger/current_trigger",
+    if (cros_ec_sysfs_set_input_attr(mRingPath, "trigger/current_trigger",
                 trigger_name, strlen(trigger_name))) {
         ALOGE("Unable to set trigger name: %s\n", strerror(errno));
         return;
     }
-    if (sysfs_set_input_attr_by_int(mRingPath, "buffer/length",
+    if (cros_ec_sysfs_set_input_attr_by_int(mRingPath, "buffer/length",
                 IIO_MAX_BUFF_SIZE) < 0) {
         ALOGE("set IIO buffer length (%d) failed: %s\n",
                 IIO_MAX_BUFF_SIZE, strerror(errno));
     }
-    if (sysfs_set_input_attr_by_int(mRingPath, "buffer/enable", 1) < 0) {
+    if (cros_ec_sysfs_set_input_attr_by_int(mRingPath, "buffer/enable", 1) < 0) {
         ALOGE("enable IIO buffer failed: %s\n",
                 strerror(errno));
         return;
@@ -162,7 +117,7 @@ int CrosECSensor::flush(int handle)
         if (!info->enabled)
             return -EINVAL;
 
-        return sysfs_set_input_attr_by_int(info->device_name, "flush", 1);
+        return cros_ec_sysfs_set_input_attr_by_int(info->device_name, "flush", 1);
     }
 }
 
@@ -183,7 +138,7 @@ int CrosECSensor::activate(int handle, int enabled)
          */
         long frequency = enabled ? 1e12 / info->sampling_period_ns : 0;
 
-        err = sysfs_set_input_attr_by_int(info->device_name,
+        err = cros_ec_sysfs_set_input_attr_by_int(info->device_name,
                 "frequency", frequency);
         if (err)
             return err;
@@ -196,7 +151,7 @@ int CrosECSensor::activate(int handle, int enabled)
             ec_period = 0;
 
         /* Sampling is encoded on a 16bit so, so the maximal period is ~65s. */
-        err = sysfs_set_input_attr_by_int(
+        err = cros_ec_sysfs_set_input_attr_by_int(
                 info->device_name, "sampling_frequency", ec_period);
         if (!err)
             info->enabled = enabled;
@@ -204,7 +159,7 @@ int CrosECSensor::activate(int handle, int enabled)
         struct cros_ec_gesture_info* info = &mGestureInfo[handle - CROS_EC_MAX_PHYSICAL_SENSOR];
         char attr[PATH_MAX] = "events/";
         strcat(attr, info->enable_entry);
-        err = sysfs_set_input_attr_by_int(info->device_name, attr, enabled);
+        err = cros_ec_sysfs_set_input_attr_by_int(info->device_name, attr, enabled);
         if (!err)
             info->enabled = enabled;
     }
@@ -375,4 +330,77 @@ int CrosECSensor::processEvent(sensors_event_t* data, const cros_ec_event *event
         }
     }
     return 0;
+}
+
+
+/*
+ * cros_ec_sysfs_get_attr: Helper function to read sysfs attributes.
+ *
+ * path: the path of the device.
+ * attr: attribute to read (path/attr)
+ * output: where to put the string read.
+ */
+int cros_ec_sysfs_get_attr(const char *path, const char *attr, char *output)
+{
+    char name[IIO_MAX_DEVICE_NAME_LENGTH + 10];
+    strcpy(name, path);
+    strcat(name, "/");
+    strcat(name, attr);
+    int fd = open(name, O_RDONLY);
+    if (fd < 0) {
+        ALOGE("Unable to read %s\n", name);
+        return -errno;
+    }
+    int size = read(fd, output, IIO_MAX_NAME_LENGTH);
+    close(fd);
+    if (size == 0)
+        return -EINVAL;
+    output[size - 1] = 0;
+    ALOGD("Analyzing attribute '%s/%s : %s'\n", path, attr, output);
+    return 0;
+}
+
+/*
+ * cros_ec_sysfs_set_input_attr: Helper function to write a sysfs attribute.
+ */
+int cros_ec_sysfs_set_input_attr(const char *path, const char *attr,
+                                 const char *value, size_t len)
+{
+    char fname[PATH_MAX];
+    int fd;
+    int rc;
+
+    snprintf(fname, sizeof(fname), "%s%s/%s", IIO_DIR, path, attr);
+    fname[sizeof(fname) - 1] = '\0';
+
+    fd = open(fname, O_WRONLY);
+    if (fd < 0) {
+        ALOGE("%s: fname = %s, fd = %d, failed: %s\n", __func__,
+              fname, fd, strerror(errno));
+        return -EACCES;
+    }
+
+    rc = write(fd, value, (size_t)len);
+    if (rc < 0) {
+        ALOGE("%s: write failed: fd = %d, rc = %d, strerr = %s\n", __func__,
+              fd, rc, strerror(errno));
+        ALOGE("fname = %s, value = %s\n", fname, value);
+    }
+
+    close(fd);
+
+    return rc < 0 ? rc : 0;
+}
+
+int cros_ec_sysfs_set_input_attr_by_int(const char *path,
+                                        const char *attr, int value)
+{
+    char buf[INT32_CHAR_LEN];
+
+    size_t n = snprintf(buf, sizeof(buf), "%d", value);
+    if (n > sizeof(buf)) {
+        return -1;
+    }
+
+    return cros_ec_sysfs_set_input_attr(path, attr, buf, n);
 }
