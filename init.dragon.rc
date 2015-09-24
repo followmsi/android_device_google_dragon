@@ -168,6 +168,9 @@ on boot
     # set GPU auto suspend
     write /sys/devices/57000000.gpu/power/autosuspend_delay_ms 520
 
+    # set the governor of cpuquiet
+    write /sys/devices/system/cpu/cpuquiet/current_governor runnable
+
 on fs
     mount_all /fstab.dragon
 
