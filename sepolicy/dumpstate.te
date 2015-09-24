@@ -1,0 +1,6 @@
+# dumpstate sets the debug.bq25892 property
+# to trigger the charger chip register dump as root by init
+set_prop(dumpstate, debug_bq25892_prop)
+
+# Use fwtool to communicate with the EC through /dev/cros_ec
+allow dumpstate cros_ec_device:chr_file rw_file_perms;
