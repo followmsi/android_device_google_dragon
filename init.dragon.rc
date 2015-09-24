@@ -279,3 +279,6 @@ service netmgrd /vendor/bin/netmgrd
 service tlk_daemon /vendor/bin/tlk_daemon --storagedir /data/ss --rpmbdev /dev/block/mmcblk0rpmb
     class main
     group system
+
+on property:debug.bq25892=dump
+    exec - root root system -- /system/bin/dump_bq25892.sh
