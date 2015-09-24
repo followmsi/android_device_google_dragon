@@ -148,7 +148,7 @@ bool WriteMetadata(ssize_t result_coredump_size,
   content += ",";
   content += "\"username\":\"" + username + "\"";
   content += ",";
-  content += "\"exec_name\":\"" + exec_name + "\"";
+  content += "\"process\":\"" + exec_name + "\"";
   content += "}";
   return android::base::WriteStringToFile(
       content, filename, S_IRUSR | S_IWUSR, AID_SYSTEM, AID_SYSTEM);
