@@ -50,6 +50,11 @@ const char *cros_ec_sensor_names[] = {
     [CROS_EC_RING] = "cros-ec-ring",
 };
 
+/* Name of iio data names, as reported by IIO */
+const char *cros_ec_iio_axis_names[] = {
+    [CROS_EC_ACCEL] = "in_accel",
+    [CROS_EC_GYRO] = "in_anglvel",
+};
 
 /*
  * cros_ec_activity is shared between sensors interface and
@@ -216,35 +221,6 @@ static int cros_ec_open_sensors(const struct hw_module_t *module,
                                 const char *id,
                                 struct hw_device_t **device);
 /*
- * cros_ec_sysfs_read_attr: Helper function to read sysfs attributes.
- *
- * path: the path of the device.
- * attr: attribute to read (path/attr)
- * output: where to put the string read.
- */
-static int cros_ec_sysfs_read_attr(const char *path,
-                                   const char *attr,
-                                   char *output)
-{
-    char name[IIO_MAX_DEVICE_NAME_LENGTH + 10];
-    strcpy(name, path);
-    strcat(name, "/");
-    strcat(name, attr);
-    int fd = open(name, O_RDONLY);
-    if (fd < 0) {
-        ALOGE("Unable to read %s\n", name);
-        return -errno;
-    }
-    int size = read(fd, output, IIO_MAX_NAME_LENGTH);
-    close(fd);
-    if (size == 0)
-        return -EINVAL;
-    output[size - 1] = 0;
-    ALOGD("Analyzing attribute '%s/%s : %s'\n", path, attr, output);
-    return 0;
-}
-
-/*
  * cros_ec_get_sensors_list: entry point that returns the list
  * of sensors.
  *
@@ -357,6 +333,36 @@ static int cros_ec_get_gesture_names(const char *sensor_name)
 }
 
 /*
+ * cros_ec_calibrate_3d_sensor: calibrate Accel or Gyro.
+ *
+ * In factory, calibration data is in VPD.
+ * It is available from user space by reading /sys/firmware/vpd/ro/<Key>.
+ * Key names are similar to iio: <type>_<axis>_calibbias,
+ * when type is in_accel or in_anglvel and axis is x,y, or z.
+ */
+static int cros_ec_calibrate_3d_sensor(int sensor_type, const char *device_name)
+{
+    const char vpd_path[] = "/sys/firmware/vpd/ro";
+
+    for (int i = X ; i < MAX_AXIS; i++) {
+        char calib_key[IIO_MAX_NAME_LENGTH];
+        char calib_value[20];
+        snprintf(calib_key, sizeof(calib_key), "%s_%c_calibbias",
+                 cros_ec_iio_axis_names[sensor_type], 'x' + i);
+        if (cros_ec_sysfs_get_attr(vpd_path, calib_key, calib_value)) {
+            ALOGI("Calibration key %s missing.\n", calib_key);
+            continue;
+        }
+        if (cros_ec_sysfs_set_input_attr(device_name, calib_key,
+                                         calib_value, strlen(calib_value))) {
+            ALOGE("Writing bias %s to %s for device %s failed.\n",
+                  calib_key, calib_value, device_name);
+        }
+    }
+    return 0;
+}
+
+/*
  * cros_ec_get_sensors_names: Build list of sensors from IIO
  *
  * Scanning /sys/iio/devices, finds all the sensors managed by the EC.
@@ -395,7 +401,7 @@ static int cros_ec_get_sensors_names(char **ring_device_name,
         strcat(path_device, ent_device->d_name);
 
         char dev_name[IIO_MAX_NAME_LENGTH + 1];
-        if (cros_ec_sysfs_read_attr(path_device, "name", dev_name))
+        if (cros_ec_sysfs_get_attr(path_device, "name", dev_name))
             continue;
 
         for (int i = CROS_EC_ACCEL; i < CROS_EC_RING; ++i) {
@@ -416,13 +422,13 @@ static int cros_ec_get_sensors_names(char **ring_device_name,
                  * (base is keyboard)
                  */
                 char loc[IIO_MAX_NAME_LENGTH + 1];
-                if (cros_ec_sysfs_read_attr(path_device, "location", loc))
+                if (cros_ec_sysfs_get_attr(path_device, "location", loc))
                     continue;
                 if (strcmp(cros_ec_location, loc))
                     continue;
 
                 char dev_id[40];
-                if (cros_ec_sysfs_read_attr(path_device, "id", dev_id))
+                if (cros_ec_sysfs_get_attr(path_device, "id", dev_id))
                     continue;
                 int sensor_id = atoi(dev_id);
                 if (Stotal_max_sensor_handle_ <= sensor_id) {
@@ -444,7 +450,7 @@ static int cros_ec_get_sensors_names(char **ring_device_name,
                 } else {
                     sensor_info->device_name = strdup(ent_device->d_name);
                     char dev_scale[40];
-                    if (cros_ec_sysfs_read_attr(path_device, "scale", dev_scale)) {
+                    if (cros_ec_sysfs_get_attr(path_device, "scale", dev_scale)) {
                         ALOGE("Unable to read scale\n");
                         return 0;
                     }
@@ -467,6 +473,15 @@ static int cros_ec_get_sensors_names(char **ring_device_name,
                         sensor_data->resolution = scale;
                         sensor_data->maxRange = scale * (1 << 15);
                     }
+
+                    if (sensor_data->type == SENSOR_TYPE_ACCELEROMETER ||
+                        sensor_data->type == SENSOR_TYPE_GYROSCOPE)
+                        /* There is an assumption by the calibration code that there is
+                         * only one type of sensors per device.
+                         * If it needs to change, we will add "location" sysfs key
+                         * to find the proper calibration data.
+                         */
+                        cros_ec_calibrate_3d_sensor(i, sensor_info->device_name);
 
                     ALOGD("new dev '%s' handle: %d\n",
                             sensor_info->device_name, sensor_id);

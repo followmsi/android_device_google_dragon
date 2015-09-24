@@ -103,6 +103,17 @@ struct cros_ec_gesture_info {
     bool enabled;
 };
 
+/*
+ * To write sysfs parameters: IIO_DIR is appended before path.
+ */
+int cros_ec_sysfs_set_input_attr(const char *path, const char *attr, const char *value, size_t len);
+int cros_ec_sysfs_set_input_attr_by_int(const char *path, const char *attr, int value);
+
+/*
+ * To read sysfs parameters: IIO_DIR is NOT appended.
+ */
+int cros_ec_sysfs_get_attr(const char *path, const char *attr, char *output);
+
 class CrosECSensor {
     struct cros_ec_sensor_info *mSensorInfo;
     struct cros_ec_gesture_info *mGestureInfo;
@@ -110,8 +121,6 @@ class CrosECSensor {
     cros_ec_event mEvents[IIO_MAX_BUFF_SIZE];
     int mDataFd;
 
-    int sysfs_set_input_attr(const char *path, const char *attr, const char *value, size_t len);
-    int sysfs_set_input_attr_by_int(const char *path, const char *attr, int value);
     int processEvent(sensors_event_t* data, const cros_ec_event *event);
 public:
     CrosECSensor(
