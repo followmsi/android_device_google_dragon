@@ -25,3 +25,4 @@ case "${REGION}" in
 esac
 
 setprop ro.product.locale "${LANGUAGE}-${COUNTRY}"
+setprop ro.boot.wificountrycode "${COUNTRY}"
