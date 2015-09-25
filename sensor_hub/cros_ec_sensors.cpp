@@ -356,7 +356,6 @@ int cros_ec_sysfs_get_attr(const char *path, const char *attr, char *output)
     if (size == 0)
         return -EINVAL;
     output[size - 1] = 0;
-    ALOGD("Analyzing attribute '%s/%s : %s'\n", path, attr, output);
     return 0;
 }
 
