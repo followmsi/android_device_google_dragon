@@ -240,6 +240,11 @@ service dhcpcd_eth0 /system/bin/dhcpcd -aABDKL
     disabled
     oneshot
 
+service fwtool /system/bin/fwtool mark_boot success
+    class late_start
+    user root
+    oneshot
+
 service iprenew_wlan0 /system/bin/dhcpcd -n
     class main
     disabled
