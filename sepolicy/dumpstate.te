@@ -2,5 +2,8 @@
 # to trigger the charger chip register dump as root by init
 set_prop(dumpstate, debug_bq25892_prop)
 
+# allow dumpstate to execute fwtool in its own domain
+allow dumpstate fwtool_exec:file rx_file_perms;
+
 # Use fwtool to communicate with the EC through /dev/cros_ec
 allow dumpstate cros_ec_device:chr_file rw_file_perms;
