@@ -174,6 +174,29 @@ static int cmd_vbnv_write(int argc, const char **argv)
 	return 0;
 }
 
+static int cmd_mark_boot(int argc, const char **argv)
+{
+	if (argc != 2) {
+		printf("Usage: fwtool mark_boot <status>\n");
+		printf("    where status can be:\n");
+		printf("    success: This boot was successful.\n");
+		return -EINVAL;
+	}
+
+	if (!get_spi())
+		return -ENODEV;
+
+	if (strcmp(argv[1], "success") == 0) {
+		vbnv_set_flag(spi, "boot_result", VB2_FW_RESULT_SUCCESS);
+		vbnv_set_flag(spi, "try_count", 0);
+	} else {
+		printf("Invalid arg\n");
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
 static struct command subcmds_flash[] = {
 	CMD(flash_fmap, "Dump FMAP information"),
 	CMD_GUARD_LAST
@@ -191,6 +214,7 @@ static struct command cmds[] = {
 	CMD(update,    "Update the firmwares"),
 	CMD(vboot,     "dump VBoot information"),
 	SUBCMDS(vbnv,      "Vboot NvStorage"),
+	CMD(mark_boot, "Mark boot result"),
 	CMD_GUARD_LAST
 };
 
