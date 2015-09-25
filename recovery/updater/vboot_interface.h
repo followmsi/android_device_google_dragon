@@ -52,8 +52,6 @@ enum vb2_fw_result {
 int vbnv_set_flag(struct flash_device *spi, const char *param, uint8_t value);
 int vbnv_get_flag(struct flash_device *spi, const char *param, uint8_t *value);
 
-int vbnv_set_fw_try_next(struct flash_device *ec, int next);
-
 void vbnv_usage(int write);
 #endif /* _RECOVERY_VBOOT_INTERFACE_H_ */
 
