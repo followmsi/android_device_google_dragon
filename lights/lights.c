@@ -158,16 +158,18 @@ static int set_light_backlight(struct light_device_t *dev,
 	int err, level_size;
 	int brightness = rgb_to_brightness(state);
 
-	// normalize to our max brightness
-	brightness = brightness * lights->max_brightness / 0xff;
+	if (brightness > 0) {
+		// normalize to our max brightness
+		brightness = brightness * lights->max_brightness / 0xff;
 
-	// Bin it into one of the discrete levels
-	level_size = lights->max_brightness / kNumBrightnessLevels;
-	brightness = (brightness / level_size + 1) * level_size;
+		// Bin it into one of the discrete levels
+		level_size = lights->max_brightness / kNumBrightnessLevels;
+		brightness = (brightness / level_size + 1) * level_size;
 
-	// Since we bump the level above, account for overflow
-	if (brightness > lights->max_brightness)
-		brightness = lights->max_brightness;
+		// Since we bump the level above, account for overflow
+		if (brightness > lights->max_brightness)
+			brightness = lights->max_brightness;
+	}
 
 	pthread_mutex_lock(&lights->lock);
 	err = write_brightness(lights, brightness);
