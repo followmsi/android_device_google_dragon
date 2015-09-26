@@ -186,6 +186,7 @@ ENABLE_LIBDRM := true
 BOARD_GPU_DRIVERS := tegra
 PRODUCT_PACKAGES += \
     hwcomposer.drm \
-    libdrm
+    libdrm \
+    rmi4utils
 
 $(call inherit-product-if-exists, vendor/nvidia/dragon/dragon-vendor.mk)
