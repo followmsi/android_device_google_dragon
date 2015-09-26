@@ -260,6 +260,10 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
     disabled
     oneshot
 
+service touchfwup /system/bin/rmi4update -d /dev/hidraw0 /vendor/firmware/synaptics.img
+    class late_start
+    oneshot
+
 service gpsd /system/bin/glgps -c /system/etc/gpsconfig.xml
     class late_start
     user gps
