@@ -60,6 +60,8 @@ struct dragon_lights {
 static char const * kBacklightPath =
 	"/sys/class/backlight/lpm102a188a-backlight";
 static const int kNumBrightnessLevels = 16;
+static const int kBrightnessLevels[] =
+	{8, 25, 30, 40, 55, 65, 75, 85, 95, 105, 120, 135, 160, 180, 200, 220};
 
 static struct dragon_lights *to_dragon_lights(struct light_device_t *dev)
 {
@@ -155,20 +157,15 @@ static int set_light_backlight(struct light_device_t *dev,
 			       struct light_state_t const *state)
 {
 	struct dragon_lights *lights = to_dragon_lights(dev);
-	int err, level_size;
+	int err, brightness_idx;
 	int brightness = rgb_to_brightness(state);
 
 	if (brightness > 0) {
-		// normalize to our max brightness
-		brightness = brightness * lights->max_brightness / 0xff;
+		// Get the bin number for brightness (0 to kNumBrightnessLevels - 1)
+		brightness_idx = (brightness - 1) * kNumBrightnessLevels / 0xff;
 
-		// Bin it into one of the discrete levels
-		level_size = lights->max_brightness / kNumBrightnessLevels;
-		brightness = (brightness / level_size + 1) * level_size;
-
-		// Since we bump the level above, account for overflow
-		if (brightness > lights->max_brightness)
-			brightness = lights->max_brightness;
+		// Get brightness level
+		brightness = kBrightnessLevels[brightness_idx];
 	}
 
 	pthread_mutex_lock(&lights->lock);
