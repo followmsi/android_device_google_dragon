@@ -136,23 +136,14 @@ static int mtd_erase(void *hnd, off_t offset, size_t count)
 {
 	struct mtd_data *dev = hnd;
 	int res;
-	size_t i;
 	struct erase_info_user ei;
 
-	for (i = 0; i < count; i+= dev->info.erasesize) {
-		ei.start = offset + i;
-
-		if ((count - i) < dev->info.erasesize)
-			ei.length = (count - i);
-		else
-			ei.length = dev->info.erasesize;
-
-
-		res = ioctl(dev->fd, MEMERASE, &ei);
-		if (res < 0) {
-			ALOGW("Cannot erase at %ld : %d\n", offset, res);
-			return errno;
-		}
+	ei.start = offset;
+	ei.length = count;
+	res = ioctl(dev->fd, MEMERASE, &ei);
+	if (res < 0) {
+		ALOGW("Cannot erase at %ld : %d\n", offset, res);
+		return errno;
 	}
 
 	return 0;
