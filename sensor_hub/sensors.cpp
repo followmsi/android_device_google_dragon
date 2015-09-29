@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "Sensors"
+#define LOG_TAG "CrosECSensor"
 
 #include <dirent.h>
 #include <errno.h>
@@ -559,7 +559,9 @@ cros_ec_sensors_poll_context_t::cros_ec_sensors_poll_context_t(
      * Find the iio:deviceX with name "cros_ec_ring"
      * Open /dev/iio:deviceX, enable buffer.
      */
-    mSensor = new CrosECSensor(Ssensor_info_, Sgesture_info_,
+    mSensor = new CrosECSensor(
+        Ssensor_info_, Stotal_max_sensor_handle_,
+        Sgesture_info_, Stotal_max_gesture_handle_,
         ring_device_name, ring_trigger_name);
 
     mPollFds[crosEcRingFd].fd = mSensor->getFd();
