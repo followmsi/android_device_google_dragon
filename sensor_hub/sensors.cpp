@@ -329,6 +329,7 @@ static int cros_ec_get_gesture_names(const char *sensor_name)
         ALOGD("new gesture '%s' on device '%s' : handle: %d\n",
               gesture_info->enable_entry, gesture_info->device_name, gesture_id);
     }
+    closedir(events_dir);
     return 0;
 }
 
@@ -434,8 +435,10 @@ static int cros_ec_get_sensors_names(char **ring_device_name,
                 if (Stotal_max_sensor_handle_ <= sensor_id) {
                     Ssensor_info_ = (cros_ec_sensor_info*)realloc(Ssensor_info_,
                             (sensor_id + 1) * sizeof(cros_ec_sensor_info));
-                    if (Ssensor_info_ == NULL)
+                    if (Ssensor_info_ == NULL) {
+                        closedir(iio_dir);
                         return -ENOMEM;
+                    }
                     memset(&Ssensor_info_[Stotal_max_sensor_handle_], 0,
                             (sensor_id + 1 - Stotal_max_sensor_handle_) *
                             sizeof(cros_ec_sensor_info));
@@ -452,7 +455,7 @@ static int cros_ec_get_sensors_names(char **ring_device_name,
                     char dev_scale[40];
                     if (cros_ec_sysfs_get_attr(path_device, "scale", dev_scale)) {
                         ALOGE("Unable to read scale\n");
-                        return 0;
+                        continue;
                     }
                     double scale = atof(dev_scale);
 
@@ -503,6 +506,7 @@ static int cros_ec_get_sensors_names(char **ring_device_name,
             continue;
         }
     }
+    closedir(iio_dir);
 
     if (*ring_device_name == NULL || *ring_trigger_name == NULL)
         return -ENODEV;
