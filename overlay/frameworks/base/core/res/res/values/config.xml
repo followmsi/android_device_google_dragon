@@ -108,22 +108,23 @@
          The brightness values must be between 0 and 255 and be non-decreasing.
          This must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLcdBacklightValues">
-        <item>8</item>
-        <item>25</item>
-        <item>30</item>
-        <item>40</item>
-        <item>55</item>
-        <item>65</item>
-        <item>75</item>
-        <item>85</item>
-        <item>95</item>
-        <item>105</item>
-        <item>120</item>
-        <item>135</item>
-        <item>160</item>
-        <item>180</item>
-        <item>200</item>
-        <item>220</item>
+        <!-- This will be converted to kernel brightness level in light HAL -->
+        <item>1</item>     <!--  18 nit -->
+        <item>17</item>    <!--  57 nit -->
+        <item>33</item>    <!--  68 nit -->
+        <item>49</item>    <!--  91 nit -->
+        <item>65</item>    <!-- 125 nit -->
+        <item>81</item>    <!-- 148 nit -->
+        <item>97</item>    <!-- 170 nit -->
+        <item>113</item>   <!-- 193 nit -->
+        <item>129</item>   <!-- 216 nit -->
+        <item>145</item>   <!-- 239 nit -->
+        <item>161</item>   <!-- 273 nit -->
+        <item>177</item>   <!-- 307 nit -->
+        <item>193</item>   <!-- 364 nit -->
+        <item>209</item>   <!-- 409 nit -->
+        <item>225</item>   <!-- 455 nit -->
+        <item>241</item>   <!-- 500 nit -->
     </integer-array>
 
 </resources>
