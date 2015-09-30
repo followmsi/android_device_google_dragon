@@ -8,3 +8,6 @@ allow thermal_gov shell_exec:file rx_file_perms;
 
 # write to files in /sys/class/thermal/thermal_zone
 allow thermal_gov sysfs:file w_file_perms;
+
+# execute toolbox/toybox
+allow locale toolbox_exec:file rx_file_perms;
