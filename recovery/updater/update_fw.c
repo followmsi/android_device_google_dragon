@@ -127,8 +127,11 @@ static int update_rw_fw(struct flash_device *spi, struct flash_device *img,
 		return -EINVAL;
 
 	res = update_partition(img, spi, rw_name);
-	if (!res) /* We have updated the SPI flash */
-		vbnv_set_fw_try_next(spi, try_next);
+	if (!res) {
+		/* We have updated the SPI flash */
+		vbnv_set_flag(spi, "fw_try_next", try_next);
+		vbnv_set_flag(spi, "try_count", 6);
+	}
 
 	return res;
 }

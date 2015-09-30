@@ -53,7 +53,8 @@ PRODUCT_PACKAGES += \
     fs_config_files \
     crash_dispatcher \
     crash_collector \
-    CrashReportProvider
+    CrashReportProvider \
+    fwtool
 
 ifeq ($(TARGET_BUILD_VARIANT),eng)
 PRODUCT_PACKAGES += \

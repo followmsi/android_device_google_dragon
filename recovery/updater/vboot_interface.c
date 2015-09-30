@@ -477,9 +477,4 @@ void vbnv_usage(int write)
 		    printf("   %s\n", param_table[i].name);
 }
 
-int vbnv_set_fw_try_next(struct flash_device *spi, int next)
-{
-	return vbnv_set_flag(spi, "fw_try_next", next);
-}
-
 /* ---- Vital Product Data handling ---- */
