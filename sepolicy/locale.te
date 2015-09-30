@@ -10,3 +10,6 @@ set_prop(locale, wifi_region_prop)
 
 # use cat to read /sys/firmware/vpd/ro/region
 allow locale shell_exec:file rx_file_perms;
+
+# execute toolbox/toybox
+allow locale toolbox_exec:file rx_file_perms;
