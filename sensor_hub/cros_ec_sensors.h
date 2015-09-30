@@ -116,7 +116,9 @@ int cros_ec_sysfs_get_attr(const char *path, const char *attr, char *output);
 
 class CrosECSensor {
     struct cros_ec_sensor_info *mSensorInfo;
+    size_t mSensorNb;
     struct cros_ec_gesture_info *mGestureInfo;
+    size_t mGestureNb;
     char mRingPath[IIO_MAX_DEVICE_NAME_LENGTH];
     cros_ec_event mEvents[IIO_MAX_BUFF_SIZE];
     int mDataFd;
@@ -125,7 +127,9 @@ class CrosECSensor {
 public:
     CrosECSensor(
         struct cros_ec_sensor_info *sensor_info,
+        size_t sensor_nb,
         struct cros_ec_gesture_info *gesture_info,
+        size_t gesture_nb,
         const char *ring_device_name,
         const char *trigger_name);
     virtual ~CrosECSensor();
