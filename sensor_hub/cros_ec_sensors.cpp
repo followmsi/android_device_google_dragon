@@ -46,11 +46,15 @@ static int min(int a, int b) {
  */
 CrosECSensor::CrosECSensor(
         struct cros_ec_sensor_info *sensor_info,
+        size_t sensor_nb,
         struct cros_ec_gesture_info *gesture_info,
+        size_t gesture_nb,
         const char *ring_device_name,
         const char *trigger_name)
     : mSensorInfo(sensor_info),
-      mGestureInfo(gesture_info)
+      mSensorNb(sensor_nb),
+      mGestureInfo(gesture_info),
+      mGestureNb(gesture_nb)
 {
     char ring_buffer_name[IIO_MAX_NAME_LENGTH] = "/dev/";
 
@@ -63,6 +67,7 @@ CrosECSensor::CrosECSensor(
 
     strcpy(mRingPath, ring_device_name);
 
+    /* Be sure the buffer is disbabled before altering parameters */
     if (cros_ec_sysfs_set_input_attr_by_int(mRingPath, "buffer/enable", 0) < 0) {
         ALOGE("disable IIO buffer failed: %s\n", strerror(errno));
         return;
@@ -85,6 +90,21 @@ CrosECSensor::CrosECSensor(
 }
 
 CrosECSensor::~CrosECSensor() {
+    /* Silence all the sensors, so that we can stop the buffer */
+    for (size_t i = 0 ; i < mSensorNb ; i++) {
+        if (mSensorInfo[i].device_name == NULL)
+            continue;
+        activate(i, 0);
+    }
+    for (size_t i = 0 ; i < mGestureNb ; i++) {
+        if (mGestureInfo[i].device_name == NULL)
+            continue;
+        activate(i + CROS_EC_MAX_PHYSICAL_SENSOR, 0);
+    }
+    if (cros_ec_sysfs_set_input_attr_by_int(mRingPath, "buffer/enable", 0) < 0) {
+        ALOGE("disable IIO buffer failed: %s\n", strerror(errno));
+        return;
+    }
     close(mDataFd);
 }
 
@@ -272,11 +292,14 @@ int CrosECSensor::processEvent(sensors_event_t* data, const cros_ec_event *event
         return 0;
     }
 
+    if (event->sensor_id >= mSensorNb) {
+        return -EINVAL;
+    }
     struct cros_ec_sensor_info *info = &mSensorInfo[event->sensor_id];
 
     if (info->type == CROS_EC_ACTIVITY) {
         ALOGI("Activity: %d - state: %d\n", event->activity, event->state);
-        if (event->activity >= MOTIONSENSE_MAX_ACTIVITY)
+        if (event->activity >= mGestureNb)
             return -ENOKEY;
 
         struct cros_ec_gesture_info *gesture = &mGestureInfo[event->activity];
@@ -356,7 +379,6 @@ int cros_ec_sysfs_get_attr(const char *path, const char *attr, char *output)
     if (size == 0)
         return -EINVAL;
     output[size - 1] = 0;
-    ALOGD("Analyzing attribute '%s/%s : %s'\n", path, attr, output);
     return 0;
 }
 
