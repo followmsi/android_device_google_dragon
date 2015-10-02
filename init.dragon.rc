@@ -77,6 +77,9 @@ on post-fs-data
     # crash_collector
     mkdir /data/system/crash_reports 0700 system system
 
+    # EC/charger logs
+    mkdir /data/misc/fw_logs 0755 root root
+
     # initialize region info
     exec -- /system/bin/init_regions.sh
 
