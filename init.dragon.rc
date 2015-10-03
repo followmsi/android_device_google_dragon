@@ -43,6 +43,7 @@ on post-fs-data
     mount dummy dummy /data remount nosuid nodev noatime rw seclabel,background_gc=on,user_xattr,acl,errors=panic
 
     mkdir /data/nvcam 0700 media camera
+    mkdir /data/misc/camera 0700 media camera
 
     # NFC: create data/nfc for nv storage
     mkdir /data/nfc 0770 nfc nfc
