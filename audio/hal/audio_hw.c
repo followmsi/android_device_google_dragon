@@ -63,6 +63,7 @@ struct pcm_device_profile pcm_device_playback_hs = {
     .id = 0,
     .type = PCM_PLAYBACK,
     .devices = AUDIO_DEVICE_OUT_WIRED_HEADSET|AUDIO_DEVICE_OUT_WIRED_HEADPHONE,
+    .dsp_name = "invert_lr",
 };
 
 struct pcm_device_profile pcm_device_capture = {
@@ -1243,6 +1244,7 @@ static int out_open_pcm_devices(struct stream_out *out)
 {
     struct pcm_device *pcm_device;
     struct listnode *node;
+    struct audio_device *adev = out->dev;
     int ret = 0;
 
     list_for_each(node, &out->pcm_dev_list) {
@@ -1252,7 +1254,8 @@ static int out_open_pcm_devices(struct stream_out *out)
 
         if (pcm_device->pcm_profile->dsp_name) {
             pcm_device->dsp_context = cras_dsp_context_new(pcm_device->pcm_profile->config.rate,
-                                                           "playback");
+                    (adev->mode == AUDIO_MODE_IN_CALL || adev->mode == AUDIO_MODE_IN_COMMUNICATION)
+                        ? "voice-comm" : "playback");
             if (pcm_device->dsp_context) {
                 cras_dsp_set_variable(pcm_device->dsp_context, "dsp_name",
                                       pcm_device->pcm_profile->dsp_name);
