@@ -255,6 +255,39 @@ static int cmd_ec_chargecontrol(int argc, const char **argv)
 	return 0;
 }
 
+static int cmd_ec_console(int argc, const char **argv)
+{
+	char data[128];
+	int rv;
+
+	if (!get_ec())
+		return -ENODEV;
+
+	/* Snapshot the EC console */
+	rv = flash_cmd(ec, EC_CMD_CONSOLE_SNAPSHOT, 0, NULL, 0, NULL, 0);
+	if (rv < 0)
+		return rv;
+
+	/* Loop and read from the snapshot until it's done */
+	while (1) {
+		memset(data, 0, sizeof(data));
+		rv = flash_cmd(ec, EC_CMD_CONSOLE_READ, 0,
+			       NULL, 0, data, sizeof(data));
+		if (rv)
+			return rv;
+
+		/* Empty response means done */
+		if (!data[0])
+			break;
+
+		/* Make sure output is null-terminated, then dump it */
+		data[sizeof(data) - 1] = '\0';
+		fputs(data, stdout);
+	}
+	printf("\n");
+	return 0;
+}
+
 static int cmd_ec_gpioget(int argc, const char **argv)
 {
 	struct ec_params_gpio_get_v1 p_v1;
@@ -645,6 +678,94 @@ static int cmd_ec_lightbar(int argc, const char **argv)
 	return 0;
 }
 
+/* PI3USB9281 I2C registers */
+#define PI3USB9281_ADDR      (0x25 << 1)
+#define PI3USB9281_REG_DEV_ID       0x01
+#define PI3USB9281_REG_CONTROL      0x02
+#define PI3USB9281_REG_INT          0x03
+#define PI3USB9281_REG_INT_MASK     0x05
+#define PI3USB9281_REG_DEV_TYPE     0x0a
+#define PI3USB9281_REG_CHG_STATUS   0x0e
+#define PI3USB9281_REG_MANUAL       0x13
+#define PI3USB9281_REG_RESET        0x1b
+#define PI3USB9281_REG_VBUS         0x1d
+
+static const uint8_t pi3usb9281_regs[] = {
+	PI3USB9281_REG_DEV_ID, PI3USB9281_REG_CONTROL, PI3USB9281_REG_INT,
+	PI3USB9281_REG_INT_MASK, PI3USB9281_REG_DEV_TYPE, PI3USB9281_REG_CHG_STATUS,
+	PI3USB9281_REG_MANUAL, PI3USB9281_REG_VBUS
+};
+#define PI3USB9281_COUNT ARRAY_SIZE(pi3usb9281_regs)
+
+static int pi3usb9281_read(int reg, int *value)
+{
+	int rv;
+	struct ec_response_i2c_read r;
+	struct ec_params_i2c_read p = {
+		.port = 0, .read_size = 8, .addr = PI3USB9281_ADDR, .offset = reg
+	};
+
+	rv = flash_cmd(ec, EC_CMD_I2C_READ, 0, &p, sizeof(p), &r, sizeof(r));
+	if (rv < 0) {
+		*value = -1;
+		return rv;
+	}
+
+	*value = r.data;
+	return 0;
+}
+
+static int cmd_ec_pi3usb9281(int argc, const char **argv)
+{
+	unsigned i;
+	int value;
+	int rv;
+	int dev_type, chg_stat, vbus;
+	char *apple_chg = "", *proprio_chg = "";
+
+	if (!get_ec())
+		return -ENODEV;
+
+	pi3usb9281_read(PI3USB9281_REG_DEV_TYPE, &dev_type);
+	pi3usb9281_read(PI3USB9281_REG_CHG_STATUS, &chg_stat);
+	pi3usb9281_read(PI3USB9281_REG_VBUS, &vbus);
+	switch((chg_stat>>2)&7) {
+	case 4: apple_chg = "Apple 2.4A"; break;
+	case 2: apple_chg = "Apple 2A"; break;
+	case 1: apple_chg = "Apple 1A"; break;
+	}
+	switch(chg_stat&3) {
+	case 3: proprio_chg = "type-2"; break;
+	case 2: proprio_chg = "type-1"; break;
+	case 1: proprio_chg = "rsvd"; break;
+	}
+	printf("USB: %s%s%s%s%s%s Charger: %s%s VBUS: %d\n",
+		dev_type & (1<<6) ? "DCP" : " ",
+		dev_type & (1<<5) ? "CDP" : " ",
+		dev_type & (1<<4) ? "CarKit" : " ",
+		dev_type & (1<<2) ? "SDP" : " ",
+		dev_type & (1<<1) ? "OTG" : " ",
+		dev_type & (1<<0) ? "MHL" : " ",
+		apple_chg,
+		proprio_chg,
+		!!(vbus & 2));
+
+	printf("REG:");
+	for (i = 0; i < PI3USB9281_COUNT; ++i)
+		printf(" %02x", pi3usb9281_regs[i]);
+	printf("\n");
+
+	printf("VAL:");
+	for (i = 0; i < PI3USB9281_COUNT; ++i) {
+		rv = bq25892_read(pi3usb9281_regs[i], &value);
+		if (rv)
+			return rv;
+		printf(" %02x", value);
+	}
+	printf("\n");
+	return 0;
+}
+
 #define PD_ROLE_SINK   0
 #define PD_ROLE_SOURCE 1
 #define PD_ROLE_UFP    0
@@ -894,10 +1015,12 @@ struct command subcmds_ec[] = {
 	CMD(ec_battery, "Show battery status"),
 	CMD(ec_bq25892, "Dump the state of the bq25892 charger chip"),
 	CMD(ec_chargecontrol, "Force the battery to stop charging/discharge"),
+	CMD(ec_console, "Prints the last output to the EC debug console"),
 	CMD(ec_gpioget, "Get the value of GPIO signal"),
 	CMD(ec_gpioset, "Set the value of GPIO signal"),
 	CMD(ec_echash, "Various EC hash commands"),
 	CMD(ec_lightbar, "Lightbar control commands"),
+	CMD(ec_pi3usb9281, "Dump the state of the Pericom PI3USB9281 chip"),
 	CMD(ec_usbpd, "Control USB PD/type-C"),
 	CMD(ec_usbpdpower, "Power information about USB PD ports"),
 	CMD(ec_version, "Prints EC version"),
