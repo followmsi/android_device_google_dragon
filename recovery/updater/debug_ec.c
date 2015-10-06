@@ -208,6 +208,73 @@ static int cmd_ec_bq25892(int argc, const char **argv)
 	return 0;
 }
 
+/* BQ27742 I2C registers */
+#define BQ27742_ADDR         	    0xAA
+#define BQ27742_REG_CTRL            0x00
+#define BQ27742_REG_FLAGS           0x0A
+#define BQ27742_REG_CHARGING_MV     0x30
+#define BQ27742_REG_CHARGING_MA     0x32
+#define BQ27742_REG_PROTECTOR       0x6D
+
+static int bq27742_read(int reg, int size, int *value)
+{
+	int rv;
+	struct ec_response_i2c_read r;
+	struct ec_params_i2c_read p = {
+		.port = 0, .read_size = size, .addr = BQ27742_ADDR,
+		.offset = reg
+	};
+
+	rv = flash_cmd(ec, EC_CMD_I2C_READ, 0, &p, sizeof(p), &r, sizeof(r));
+	if (rv < 0) {
+		*value = -1;
+		return rv;
+	}
+
+	*value = r.data;
+	return 0;
+}
+
+static int bq27742_write(int reg, int size, int value)
+{
+	int rv;
+	struct ec_params_i2c_write p = {
+		.port = 0, .write_size = size, .addr = BQ27742_ADDR,
+		.offset = reg, .data = value
+	};
+
+	rv = flash_cmd(ec, EC_CMD_I2C_WRITE, 0, &p, sizeof(p), NULL, 0);
+	return rv < 0 ? rv : 0;
+}
+
+static int cmd_ec_bq27742(int argc, const char **argv)
+{
+	int i;
+	int value;
+	int rv;
+	int chg_mv, chg_ma;
+
+
+	if (!get_ec())
+		return -ENODEV;
+
+	/* Get chip ID in Control subcommand DEVICE_TYPE (0x1) */
+	bq27742_write(BQ27742_REG_CTRL, 16, 0x1);
+	bq27742_read(BQ27742_REG_CTRL, 16, &value);
+	printf("ID: BQ27%3x\n", value);
+
+	bq27742_read(BQ27742_REG_CHARGING_MV, 16, &chg_mv);
+	bq27742_read(BQ27742_REG_CHARGING_MA, 16, &chg_ma);
+	printf("Requested charge: %d mV %d mA\n", chg_mv, chg_ma);
+
+	bq27742_read(BQ27742_REG_FLAGS, 16, &value);
+	printf("Flags: %04x\n", value);
+	bq27742_read(BQ27742_REG_PROTECTOR, 8, &value);
+	printf("ProtectorState: %02x\n", value);
+
+	return 0;
+}
+
 static int cmd_ec_chargecontrol(int argc, const char **argv)
 {
 	struct ec_params_charge_control p;
@@ -1014,6 +1081,7 @@ static int cmd_ec_version(int argc, const char **argv)
 struct command subcmds_ec[] = {
 	CMD(ec_battery, "Show battery status"),
 	CMD(ec_bq25892, "Dump the state of the bq25892 charger chip"),
+	CMD(ec_bq27742, "Dump the state of the bq27742 gas gauge"),
 	CMD(ec_chargecontrol, "Force the battery to stop charging/discharge"),
 	CMD(ec_console, "Prints the last output to the EC debug console"),
 	CMD(ec_gpioget, "Get the value of GPIO signal"),
