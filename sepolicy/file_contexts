@@ -57,3 +57,6 @@
 
 # data file for battery/charging bug reports
 /data/misc/fw_logs(/.*)?                        u:object_r:fw_logs_data_file:s0
+
+# camera overrides ISP files
+/vendor/firmware/camera(/.*)?                   u:object_r:camera_data_file:s0
