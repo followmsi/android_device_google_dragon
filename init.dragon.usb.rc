@@ -4,7 +4,7 @@ on boot
     mount configfs none /config
     mkdir /config/usb_gadget/g1 0770 shell shell
     write /config/usb_gadget/g1/idVendor 0x18d1
-    write /config/usb_gadget/g1/bcdDevice 0xffff
+    write /config/usb_gadget/g1/bcdDevice 0x0223
     write /config/usb_gadget/g1/bcdUSB 0x0200
     mkdir /config/usb_gadget/g1/strings/0x409 0770
     write /config/usb_gadget/g1/strings/0x409/serialnumber ${ro.serialno}
@@ -20,14 +20,29 @@ on boot
     mkdir /config/usb_gadget/g1/functions/midi.gs5
     mkdir /config/usb_gadget/g1/configs/b.1 0770 shell shell
     mkdir /config/usb_gadget/g1/configs/b.1/strings/0x409 0770 shell shell
+    write /config/usb_gadget/g1/os_desc/b_vendor_code 0x1
+    write /config/usb_gadget/g1/os_desc/qw_sign "MSFT100"
+    write /config/usb_gadget/g1/configs/b.1/MaxPower 500
+    symlink /config/usb_gadget/g1/configs/b.1 /config/usb_gadget/g1/os_desc/b.1
     mount functionfs adb /dev/usb-ffs/adb uid=2000,gid=2000
     setprop sys.usb.configfs 1
     setprop sys.usb.controller "700d0000.usb-device"
 
+on property:sys.usb.config=none && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/os_desc/use 0
+    setprop sys.usb.ffs.ready 0
+
+on property:init.svc.adbd=stopped
+    setprop sys.usb.ffs.ready 0
+
 on property:sys.usb.config=mtp && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/functions/mtp.gs0/os_desc/interface.MTP/compatible_id "MTP"
+    write /config/usb_gadget/g1/os_desc/use 1
     write /config/usb_gadget/g1/idProduct 0x5202
 
 on property:sys.usb.config=mtp,adb && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/functions/mtp.gs0/os_desc/interface.MTP/compatible_id "MTP"
+    write /config/usb_gadget/g1/os_desc/use 1
     write /config/usb_gadget/g1/idProduct 0x5203
 
 on property:sys.usb.config=rndis && property:sys.usb.configfs=1
@@ -37,9 +52,13 @@ on property:sys.usb.config=rndis,adb && property:sys.usb.configfs=1
     write /config/usb_gadget/g1/idProduct 0x5205
 
 on property:sys.usb.config=ptp && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/functions/ptp.gs1/os_desc/interface.MTP/compatible_id "PTP"
+    write /config/usb_gadget/g1/os_desc/use 1
     write /config/usb_gadget/g1/idProduct 0x5206
 
 on property:sys.usb.config=ptp,adb && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/functions/ptp.gs1/os_desc/interface.MTP/compatible_id "PTP"
+    write /config/usb_gadget/g1/os_desc/use 1
     write /config/usb_gadget/g1/idProduct 0x5207
 
 on property:sys.usb.config=adb && property:sys.usb.configfs=1
