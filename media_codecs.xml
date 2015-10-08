@@ -114,7 +114,7 @@ Only the three quirks included above are recognized at this point:
             <Limit name="bitrate" range="1-120000000" />
             <Feature name="adaptive-playback" />
             <Feature name="secure-playback" required="true" />
-            <Limit name="concurrent-instances" max="1" />
+            <Limit name="concurrent-instances" max="32" />
         </MediaCodec>
         <MediaCodec name="OMX.Nvidia.vp8.decode" type="video/x-vnd.on2.vp8" >
             <Limit name="size" min="48x48" max="3840x2176" />
@@ -151,7 +151,7 @@ Only the three quirks included above are recognized at this point:
             <Limit name="bitrate" range="1-120000000" />
             <Feature name="adaptive-playback" />
             <Feature name="secure-playback" required="true" />
-            <Limit name="concurrent-instances" max="1" />
+            <Limit name="concurrent-instances" max="32" />
         </MediaCodec>
     </Decoders>
     <!--Encoders>
