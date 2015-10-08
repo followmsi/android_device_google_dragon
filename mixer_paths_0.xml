@@ -12,8 +12,8 @@
   <ctl name="ADC1 Capture Volume" value="23"/>
   <ctl name="ADC2 Capture Volume" value="23"/>
   <ctl name="ADC3 Capture Volume" value="23"/>
-  <ctl name="MIC Volume" value="207"/>
-  <ctl name="Frontend PGA Gain" value="1"/>
+  <ctl name="Mic Volume" value="207"/>
+  <ctl name="Frontend PGA Volume" value="1"/>
 
   <ctl name="I2S1 Mux" value="ADMAIF1"/>
   <ctl name="ADMAIF1 Mux" value="I2S1"/>
