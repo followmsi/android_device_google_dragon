@@ -129,8 +129,6 @@ on boot
     chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration
     chown system system /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
     chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
-    chown system system /sys/bus/i2c/devices/0-0020/0018:06CB:3370.0001/input/input0/inhibited
-    chmod 0660 /sys/bus/i2c/devices/0-0020/0018:06CB:3370.0001/input/input0/inhibited
     chown system system /sys/devices/57000000.gpu/pstate
 
     # for cpuquiet nr_min_cpus
