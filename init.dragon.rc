@@ -173,6 +173,9 @@ on boot
     # set the governor of cpuquiet
     write /sys/devices/system/cpu/cpuquiet/current_governor runnable
 
+    # Do touch firmware update here so that it blocks bootanim from exiting
+    exec -- /system/bin/rmi4update -d /dev/hidraw0 /vendor/firmware/synaptics.img
+
 on fs
     # Enable verity notification
     write /sys/module/dm_verity/parameters/error_behavior notify
@@ -265,10 +268,6 @@ service iprenew_p2p /system/bin/dhcpcd -n
 service iprenew_bt-pan /system/bin/dhcpcd -n
     class main
     disabled
-    oneshot
-
-service touchfwup /system/bin/rmi4update -d /dev/hidraw0 /vendor/firmware/synaptics.img
-    class late_start
     oneshot
 
 service gpsd /system/bin/glgps -c /system/etc/gpsconfig.xml
