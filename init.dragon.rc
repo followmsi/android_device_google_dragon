@@ -105,6 +105,12 @@ on boot
     write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
 
+    # (crosbug.com/p/46057) : Limit min frequency to 204Mhz for audio latency
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 204000
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 204000
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 204000
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 204000
+
     restorecon_recursive /sys/devices/system/cpu/cpufreq/interactive
     chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_rate
     chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/timer_rate

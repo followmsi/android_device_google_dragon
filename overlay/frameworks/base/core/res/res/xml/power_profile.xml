@@ -33,8 +33,6 @@
     <!-- Different CPU speeds as reported in
          /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state -->
     <array name="cpu.speeds">
-        <value>51000</value>
-        <value>102000</value>
         <value>204000</value>
         <value>306000</value>
         <value>408000</value>
@@ -58,8 +56,6 @@
     <item name="cpu.idle">38.85</item>  <!-- suspend power 168.93 mW -->
     <item name="cpu.awake">90.35</item> <!-- idle screen off 541.24 mW -->
     <!-- Power consumption at different speeds -->
-        <value>60.96</value> <!-- 51000 -->
-        <value>109.97</value> <!-- 102000 -->
         <value>172.13</value> <!-- 204000 -->
         <value>234.29</value> <!-- 306000 -->
         <value>292.56</value> <!-- 408000 -->
