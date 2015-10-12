@@ -170,6 +170,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.audio.monitorRotation=true \
     ro.frp.pst=/dev/block/platform/700b0600.sdhci/by-name/PST
 
+# for keyboard key mappings
+PRODUCT_PACKAGES += \
+    DragonKeyboard
+
 # Allows healthd to boot directly from charger mode rather than initiating a reboot.
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.enable_boot_charger_mode=1
