@@ -80,6 +80,9 @@ on post-fs-data
     # EC/charger logs
     mkdir /data/misc/fw_logs 0755 root root
 
+    # touch firmware updater logs
+    mkdir /data/misc/touchfwup 0750 root log
+
     # initialize region info
     exec -- /system/bin/init_regions.sh
 
@@ -183,6 +186,10 @@ on fs
     write /sys/module/dm_verity/parameters/error_behavior notify
 
     mount_all /fstab.dragon
+
+# run the touch firmware update script as soon as non-tmpfs /data is ready
+on property:vold.decrypt=trigger_restart_framework
+    exec -- /system/bin/touchfwup.sh
 
 # tune thermal governor
 service tune_therm_gov /system/bin/tune-thermal-gov.sh skin-therm pd_thermal_gov \

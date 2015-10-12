@@ -24,7 +24,8 @@
 /system/bin/init_regions\.sh                    u:object_r:locale_exec:s0
 /system/bin/tune-thermal-gov\.sh                u:object_r:thermal_gov_exec:s0
 /system/bin/dump_bq25892\.sh                    u:object_r:dump_bq25892_exec:s0
-/system/bin/rmi4update                          u:object_r:touch_fw_update_exec:s0
+/system/bin/touchfwup\.sh                       u:object_r:touch_fw_update_exec:s0
+/system/bin/rmi4update                          u:object_r:rmi4update_exec:s0
 /system/bin/fwtool                              u:object_r:fwtool_exec:s0
 
 # /sys
@@ -57,6 +58,9 @@
 
 # data file for battery/charging bug reports
 /data/misc/fw_logs(/.*)?                        u:object_r:fw_logs_data_file:s0
+
+# logs for touch firmware update
+/data/misc/touchfwup(/.*)?                      u:object_r:touch_fw_update_log_file:s0
 
 # camera overrides ISP files
 /vendor/firmware/camera(/.*)?                   u:object_r:camera_data_file:s0
