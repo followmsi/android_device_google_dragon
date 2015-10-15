@@ -14,4 +14,5 @@
 
 LOCAL_STEM := dragon/device-partial.mk
 
-$(call inherit-product-if-exists, vendor/google/$(LOCAL_STEM))
+$(call inherit-product-if-exists, vendor/google_devices/$(LOCAL_STEM))
+$(call inherit-product-if-exists, vendor/nvidia/$(LOCAL_STEM))

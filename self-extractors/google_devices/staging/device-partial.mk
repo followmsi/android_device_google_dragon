@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LOCAL_STEM := dragon/BoardConfigPartial.mk
+# Vendor blob(s) necessary for Dragon hardware
+PRODUCT_COPY_FILES := \
+    vendor/google_devices/dragon/proprietary/vendor.img:vendor.img:google \
 
--include vendor/google_devices/$(LOCAL_STEM)
--include vendor/nvidia/$(LOCAL_STEM)
