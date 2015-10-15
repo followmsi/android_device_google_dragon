@@ -18,9 +18,9 @@
   <ctl name="I2S1 Mux" value="ADMAIF1"/>
   <ctl name="ADMAIF1 Mux" value="I2S1"/>
 
-  <ctl name="Stereo1 DMIC Mux" value="DMIC1"/>
+  <ctl name="Stereo1 DMIC Mux" value="DMIC2"/>
   <ctl name="Stereo1 ADC2 Mux" value="DMIC"/>
-  <ctl name="Stereo2 DMIC Mux" value="DMIC2"/>
+  <ctl name="Stereo2 DMIC Mux" value="DMIC1"/>
   <ctl name="Stereo2 ADC2 Mux" value="DMIC"/>
 
   <ctl name="Stereo3 ADC1 Mux" value="Stereo DAC MIX"/>
