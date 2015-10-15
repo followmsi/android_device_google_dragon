@@ -160,7 +160,8 @@ static const struct sensor_t sSensorListTemplate[] = {
         requiredPermission: 0,
         /* Forced mode, can be long: 10s */
         maxDelay:           10000000,
-        flags:              SENSOR_FLAG_ON_CHANGE_MODE,
+        /* WAKE UP required by API */
+        flags:              SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
         reserved:           { 0 }
     },
     [CROS_EC_LIGHT] = {
