@@ -109,6 +109,9 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/gps/gpsconfig.xml:system/etc/gpsconfig.xml \
     $(LOCAL_PATH)/gps/gps.dragon.so:system/lib64/hw/gps.dragon.so
 
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/enctune.conf:system/etc/enctune.conf
+
 PRODUCT_AAPT_CONFIG := normal large xlarge hdpi xhdpi xxhdpi
 PRODUCT_AAPT_PREF_CONFIG := xhdpi
 
