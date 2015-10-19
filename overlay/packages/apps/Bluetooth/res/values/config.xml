@@ -18,5 +18,6 @@
 -->
 <resources>
     <!-- Disable MAP profile by default. -->
+    <bool name="profile_supported_hs_hfp">false</bool>
     <bool name="profile_supported_map">false</bool>
 </resources>
