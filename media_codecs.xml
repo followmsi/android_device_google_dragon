@@ -162,13 +162,6 @@ Only the three quirks included above are recognized at this point:
             <Limit name="blocks-per-second" min="1" max="783360" />
             <Limit name="bitrate" range="1-50000000" />
         </MediaCodec>
-        <MediaCodec name="OMX.Nvidia.h265.encoder" type="video/hevc" >
-            <Limit name="size" min="48x48" max="3840x2176" />
-            <Limit name="alignment" value="2x2" />
-            <Limit name="block-size" value="16x16" />
-            <Limit name="blocks-per-second" min="1" max="783360" />
-            <Limit name="bitrate" range="1-50000000" />
-        </MediaCodec>
         <MediaCodec name="OMX.Nvidia.vp8.encoder" type="video/x-vnd.on2.vp8" >
             <Limit name="size" min="48x48" max="3840x2176" />
             <Limit name="alignment" value="2x2" />
