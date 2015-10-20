@@ -315,9 +315,22 @@
 
     <EncoderProfile quality="high" fileFormat="3gp" duration="30">
       <Video codec="h264"
-             bitRate="8000000"
-             width="1280"
-             height="720"
+             bitRate="14000000"
+             width="1920"
+             height="1080"
+             frameRate="30" />
+
+      <Audio codec="aac"
+             bitRate="96000"
+             sampleRate="48000"
+             channels="2" />
+    </EncoderProfile>
+
+    <EncoderProfile quality="1080p" fileFormat="3gp" duration="30">
+      <Video codec="h264"
+             bitRate="14000000"
+             width="1920"
+             height="1080"
              frameRate="30" />
 
       <Audio codec="aac"
@@ -397,9 +410,9 @@
 
     <EncoderProfile quality="timelapsehigh" fileFormat="3gp" duration="30">
       <Video codec="h264"
-             bitRate="4000000"
-             width="640"
-             height="480"
+             bitRate="14000000"
+             width="1920"
+             height="1080"
              frameRate="30" />
 
       <!--
@@ -462,6 +475,24 @@
              sampleRate="48000"
              channels="2" />
     </EncoderProfile>
+
+    <EncoderProfile quality="timelapse1080p" fileFormat="3gp" duration="30">
+      <Video codec="h264"
+             bitRate="14000000"
+             width="1920"
+             height="1080"
+             frameRate="30" />
+
+      <!--
+            The Audio part of the profile will not be used since time lapse mode
+            does not capture audio
+      -->
+      <Audio codec="aac"
+             bitRate="96000"
+             sampleRate="48000"
+             channels="2" />
+    </EncoderProfile>
+
 
     <ImageEncoding quality="90" />
     <ImageEncoding quality="80" />
