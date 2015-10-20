@@ -27,5 +27,6 @@ void dumpstate_board()
     run_command("FW Version", 5, "fwtool", "vboot", NULL);
     dump_file("Charger chip registers", "/data/misc/fw_logs/bq25892.txt");
     dump_file("Battery gas gauge", "/sys/class/power_supply/bq27742-0/uevent");
+    dump_file("Touchscreen firmware updater", "/data/misc/touchfwup/rmi4update.txt");
     dump_file("Ion heap", "/d/ion/heaps/system");
 };
