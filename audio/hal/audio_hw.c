@@ -1397,7 +1397,6 @@ int start_output_stream(struct stream_out *out)
     return 0;
 error_open:
     stop_output_stream(out);
-error_config:
     return ret;
 }
 
