@@ -1,12 +1,17 @@
-# init runs /system/bin/rmi4update
+# init runs /system/bin/touchfwup.sh
 type touch_fw_update, domain;
 type touch_fw_update_exec, exec_type, file_type;
+type touch_fw_update_log_file, file_type, data_file_type;
 
 init_daemon_domain(touch_fw_update)
 
-# access to /dev/hidraw0
-allow touch_fw_update hidraw_device:chr_file rw_file_perms;
+# Run a shell.
+allow touch_fw_update shell_exec:file rx_file_perms;
 
-# TODO give the files being access a more specific label.
-allow touch_fw_update sysfs:dir search;
-allow touch_fw_update sysfs:file rw_file_perms;
+# write to /data/misc/touchfwup/rmi4update.txt
+allow touch_fw_update touch_fw_update_log_file:file create_file_perms;
+allow touch_fw_update touch_fw_update_log_file:dir w_dir_perms;
+
+# Execute rmi4update
+domain_auto_trans(touch_fw_update, rmi4update_exec, rmi4update)
+allow touch_fw_update rmi4update_exec:file rx_file_perms;
