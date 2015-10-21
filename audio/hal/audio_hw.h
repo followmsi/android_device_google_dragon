@@ -181,6 +181,7 @@ typedef enum {
 struct pcm_device_profile {
     struct pcm_config config;
     int               card;
+    int               device;
     int               id;
     usecase_type_t    type;
     audio_devices_t   devices;
