@@ -114,4 +114,14 @@
   <path name="camcorder-mic">
       <path name="speaker-mic" />
   </path>
+
+  <path name="speaker-and-headphones">
+    <ctl name="ADC3 Capture Volume" value="23"/>
+
+    <ctl name="IF2 ADC3 Mux" value="STO3 ADC MIX"/>
+    <ctl name="IF3 ADC Mux" value="STO3 ADC MIX"/>
+
+    <ctl name="Int Spk Switch" value="1"/>
+    <ctl name="Headphone Jack Switch" value="1"/>
+  </path>
 </mixer>
