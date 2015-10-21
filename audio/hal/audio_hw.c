@@ -60,7 +60,8 @@ struct pcm_device_profile pcm_device_playback_hs = {
         .avail_min = PLAYBACK_AVAILABLE_MIN,
     },
     .card = SOUND_CARD,
-    .id = 0,
+    .id = 1,
+    .device = 0,
     .type = PCM_PLAYBACK,
     .devices = AUDIO_DEVICE_OUT_WIRED_HEADSET|AUDIO_DEVICE_OUT_WIRED_HEADPHONE,
     .dsp_name = "invert_lr",
@@ -79,7 +80,8 @@ struct pcm_device_profile pcm_device_capture = {
         .avail_min = 0,
     },
     .card = SOUND_CARD,
-    .id = 0,
+    .id = 2,
+    .device = 0,
     .type = PCM_CAPTURE,
     .devices = AUDIO_DEVICE_IN_BUILTIN_MIC|AUDIO_DEVICE_IN_WIRED_HEADSET|AUDIO_DEVICE_IN_BACK_MIC,
 };
@@ -97,7 +99,8 @@ struct pcm_device_profile pcm_device_capture_loopback_aec = {
         .avail_min = 0,
     },
     .card = SOUND_CARD,
-    .id = 1,
+    .id = 3,
+    .device = 1,
     .type = PCM_CAPTURE,
     .devices = SND_DEVICE_IN_LOOPBACK_AEC,
 };
@@ -115,7 +118,8 @@ struct pcm_device_profile pcm_device_playback_spk_and_headset = {
         .avail_min = PLAYBACK_AVAILABLE_MIN,
     },
     .card = SOUND_CARD,
-    .id = 0,
+    .id = 4,
+    .device = 0,
     .type = PCM_PLAYBACK,
     .devices = AUDIO_DEVICE_OUT_SPEAKER|AUDIO_DEVICE_OUT_WIRED_HEADSET|AUDIO_DEVICE_OUT_WIRED_HEADPHONE,
     .dsp_name = "speaker_eq",
@@ -134,7 +138,8 @@ struct pcm_device_profile pcm_device_playback_spk = {
         .avail_min = PLAYBACK_AVAILABLE_MIN,
     },
     .card = SOUND_CARD,
-    .id = 0,
+    .id = 5,
+    .device = 0,
     .type = PCM_PLAYBACK,
     .devices = AUDIO_DEVICE_OUT_SPEAKER,
     .dsp_name = "speaker_eq",
@@ -1153,11 +1158,11 @@ int start_input_stream(struct stream_in *in)
      * As such a change in aux_channels will not have an effect.
      */
     ALOGV("%s: Opening PCM device card_id(%d) device_id(%d), channels %d, smp rate %d format %d, \
-          period_size %d", __func__, pcm_device->pcm_profile->card, pcm_device->pcm_profile->id,
+          period_size %d", __func__, pcm_device->pcm_profile->card, pcm_device->pcm_profile->device,
           pcm_device->pcm_profile->config.channels,pcm_device->pcm_profile->config.rate,
           pcm_device->pcm_profile->config.format, pcm_device->pcm_profile->config.period_size);
 
-    pcm_device->pcm = pcm_open(pcm_device->pcm_profile->card, pcm_device->pcm_profile->id,
+    pcm_device->pcm = pcm_open(pcm_device->pcm_profile->card, pcm_device->pcm_profile->device,
             PCM_IN | PCM_MONOTONIC, &pcm_device->pcm_profile->config);
 
     if (pcm_device->pcm && !pcm_is_ready(pcm_device->pcm)) {
@@ -1279,7 +1284,7 @@ static int out_open_pcm_devices(struct stream_out *out)
     list_for_each(node, &out->pcm_dev_list) {
         pcm_device = node_to_item(node, struct pcm_device, stream_list_node);
         ALOGV("%s: Opening PCM device card_id(%d) device_id(%d)",
-              __func__, pcm_device->pcm_profile->card, pcm_device->pcm_profile->id);
+              __func__, pcm_device->pcm_profile->card, pcm_device->pcm_profile->device);
 
         if (pcm_device->pcm_profile->dsp_name) {
             pcm_device->dsp_context = cras_dsp_context_new(pcm_device->pcm_profile->config.rate,
@@ -1292,7 +1297,7 @@ static int out_open_pcm_devices(struct stream_out *out)
             }
         }
 
-        pcm_device->pcm = pcm_open(pcm_device->pcm_profile->card, pcm_device->pcm_profile->id,
+        pcm_device->pcm = pcm_open(pcm_device->pcm_profile->card, pcm_device->pcm_profile->device,
                                PCM_OUT | PCM_MONOTONIC, &pcm_device->pcm_profile->config);
 
         if (pcm_device->pcm && !pcm_is_ready(pcm_device->pcm)) {
@@ -1308,7 +1313,7 @@ static int out_open_pcm_devices(struct stream_out *out)
         if (out->sample_rate != pcm_device->pcm_profile->config.rate) {
             ALOGV("%s: create_resampler(), pcm_device_card(%d), pcm_device_id(%d), \
                     out_rate(%d), device_rate(%d)",__func__,
-                    pcm_device->pcm_profile->card, pcm_device->pcm_profile->id,
+                    pcm_device->pcm_profile->card, pcm_device->pcm_profile->device,
                     out->sample_rate, pcm_device->pcm_profile->config.rate);
             ret = create_resampler(out->sample_rate,
                     pcm_device->pcm_profile->config.rate,
