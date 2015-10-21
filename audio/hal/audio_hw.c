@@ -102,6 +102,25 @@ struct pcm_device_profile pcm_device_capture_loopback_aec = {
     .devices = SND_DEVICE_IN_LOOPBACK_AEC,
 };
 
+struct pcm_device_profile pcm_device_playback_spk_and_headset = {
+    .config = {
+        .channels = PLAYBACK_DEFAULT_CHANNEL_COUNT,
+        .rate = PLAYBACK_DEFAULT_SAMPLING_RATE,
+        .period_size = PLAYBACK_PERIOD_SIZE,
+        .period_count = PLAYBACK_PERIOD_COUNT,
+        .format = PCM_FORMAT_S16_LE,
+        .start_threshold = PLAYBACK_START_THRESHOLD,
+        .stop_threshold = PLAYBACK_STOP_THRESHOLD,
+        .silence_threshold = 0,
+        .avail_min = PLAYBACK_AVAILABLE_MIN,
+    },
+    .card = SOUND_CARD,
+    .id = 0,
+    .type = PCM_PLAYBACK,
+    .devices = AUDIO_DEVICE_OUT_SPEAKER|AUDIO_DEVICE_OUT_WIRED_HEADSET|AUDIO_DEVICE_OUT_WIRED_HEADPHONE,
+    .dsp_name = "speaker_eq",
+};
+
 struct pcm_device_profile pcm_device_playback_spk = {
     .config = {
         .channels = PLAYBACK_DEFAULT_CHANNEL_COUNT,
@@ -126,6 +145,7 @@ struct pcm_device_profile *pcm_devices[] = {
     &pcm_device_capture,
     &pcm_device_playback_spk,
     &pcm_device_capture_loopback_aec,
+    &pcm_device_playback_spk_and_headset,
     NULL,
 };
 
@@ -340,12 +360,17 @@ struct pcm_device_profile *get_pcm_device(usecase_type_t uc_type, audio_devices_
     int i;
 
     devices &= ~AUDIO_DEVICE_BIT_IN;
+
+    if (!devices)
+        return NULL;
+
     for (i = 0; pcm_devices[i] != NULL; i++) {
         if ((pcm_devices[i]->type == uc_type) &&
-                (devices & pcm_devices[i]->devices))
-            break;
+                (devices & pcm_devices[i]->devices) == devices)
+            return pcm_devices[i];
     }
-    return pcm_devices[i];
+
+    return NULL;
 }
 
 static struct audio_usecase *get_usecase_from_id(struct audio_device *adev,
@@ -1200,7 +1225,8 @@ static int uc_select_pcm_devices(struct audio_usecase *usecase)
     list_init(&usecase->mixer_list);
     list_init(&out->pcm_dev_list);
 
-    while ((pcm_profile = get_pcm_device(usecase->type, devices)) != NULL) {
+    pcm_profile = get_pcm_device(usecase->type, devices);
+    if (pcm_profile) {
         pcm_device = calloc(1, sizeof(struct pcm_device));
         pcm_device->pcm_profile = pcm_profile;
         list_add_tail(&out->pcm_dev_list, &pcm_device->stream_list_node);
@@ -1210,6 +1236,9 @@ static int uc_select_pcm_devices(struct audio_usecase *usecase)
             list_add_tail(&usecase->mixer_list, &mixer_card->uc_list_node[usecase->id]);
         }
         devices &= ~pcm_profile->devices;
+    } else {
+        ALOGE("usecase type=%d, devices=%d did not find exact match",
+            usecase->type, devices);
     }
 
     return 0;
