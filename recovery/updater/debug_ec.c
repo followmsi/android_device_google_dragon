@@ -824,7 +824,7 @@ static int cmd_ec_pi3usb9281(int argc, const char **argv)
 
 	printf("VAL:");
 	for (i = 0; i < PI3USB9281_COUNT; ++i) {
-		rv = bq25892_read(pi3usb9281_regs[i], &value);
+		rv = pi3usb9281_read(pi3usb9281_regs[i], &value);
 		if (rv)
 			return rv;
 		printf(" %02x", value);
