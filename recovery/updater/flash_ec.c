@@ -17,8 +17,6 @@
 
 #define LOG_TAG "fwtool"
 
-#include <cutils/log.h>
-
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,6 +31,7 @@
 
 #include "ec_commands.h"
 #include "flash_device.h"
+#include "update_log.h"
 
 #define CROS_EC_DEV_NAME "/dev/cros_ec"
 
