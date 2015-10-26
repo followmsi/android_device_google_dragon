@@ -130,12 +130,12 @@ static const struct sensor_t sSensorListTemplate[] = {
         type:               SENSOR_TYPE_MAGNETIC_FIELD,
         maxRange:           UNSET_FIELD,
         resolution:         UNSET_FIELD,
-        power:              0.5f,  /* Based on BMM150 */
+        power:              5.0f,  /* Based on BMM150 */
         /*
          * BMI150 uses repetition to reduce output noise.
-         * Set ODR at no more than 50Hz.
+         * Set ODR at no more than 25Hz.
          */
-        minDelay:           20000,
+        minDelay:           40000,
         fifoReservedEventCount: 0,
         fifoMaxEventCount:  2048,
         stringType:         SENSOR_STRING_TYPE_MAGNETIC_FIELD,
