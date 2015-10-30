@@ -46,6 +46,9 @@
 #define EC_POWER_LIMIT_NONE "0xffff"
 #define LOW_POWER_MAX_FREQ "1020000"
 #define NORMAL_MAX_FREQ "1912500"
+#define GPU_CAP_PATH "/sys/kernel/debug/system_edp/capping/force_gpu"
+#define LOW_POWER_GPU_CAP "3000"
+#define NORMAL_GPU_CAP "0"
 #define GPU_BOOST_PATH "/sys/devices/57000000.gpu/pstate"
 #define GPU_BOOST_ENTER_CMD "03,0C"    // boost GPU to work at least on 03 - 230MHz
 #define GPU_BOOST_DURATION_MS 40
@@ -66,6 +69,9 @@ static char *iio_activity_device = NULL;
 
 static const char *max_cpu_freq = NORMAL_MAX_FREQ;
 static const char *low_power_max_cpu_freq = LOW_POWER_MAX_FREQ;
+
+static const char *normal_gpu_cap = NORMAL_GPU_CAP;
+static const char *low_power_gpu_cap = LOW_POWER_GPU_CAP;
 
 
 void sysfs_write(const char *path, const char *s)
@@ -211,8 +217,10 @@ static void dragon_power_hint(struct power_module *module, power_hint_t hint,
         pthread_mutex_lock(&dragon->low_power_lock);
         if (data) {
             sysfs_write(CPU_MAX_FREQ_PATH, low_power_max_cpu_freq);
+            sysfs_write(GPU_CAP_PATH, low_power_gpu_cap);
         } else {
             sysfs_write(CPU_MAX_FREQ_PATH, max_cpu_freq);
+            sysfs_write(GPU_CAP_PATH, normal_gpu_cap);
         }
         low_power_mode = data;
         pthread_mutex_unlock(&dragon->low_power_lock);
