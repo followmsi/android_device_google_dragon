@@ -16,6 +16,18 @@
 
 <MediaCodecs>
     <Encoders>
+        <MediaCodec name="OMX.Nvidia.h264.encoder" type="video/avc" update="true">
+            <Limit name="measured-frame-rate-320x240" range="160-160" />
+            <Limit name="measured-frame-rate-720x480" range="118-118" />
+            <Limit name="measured-frame-rate-1280x720" range="78-78" />
+            <Limit name="measured-frame-rate-1920x1080" range="57-57" />
+        </MediaCodec>
+        <MediaCodec name="OMX.Nvidia.vp8.encoder" type="video/x-vnd.on2.vp8" update="true">
+            <Limit name="measured-frame-rate-320x180" range="200-200" />
+            <Limit name="measured-frame-rate-640x360" range="156-156" />
+            <Limit name="measured-frame-rate-1280x720" range="83-83" />
+            <Limit name="measured-frame-rate-1920x1080" range="50-50" />
+        </MediaCodec>
         <MediaCodec name="OMX.google.h264.encoder" type="video/avc" update="true">
             <Limit name="measured-frame-rate-320x240" range="1008-1008" />
             <Limit name="measured-frame-rate-720x480" range="235-235" />
