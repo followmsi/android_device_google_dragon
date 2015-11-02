@@ -93,6 +93,8 @@
     <ctl name="Int Mic Switch" value="0"/>
     <ctl name="Stereo1 ADC2 Mux" value="DD MIX1"/>
     <ctl name="Mic Jack Switch" value="1"/>
+    <ctl name="STO1 ADC Boost Volume" value="2"/>
+    <ctl name="ADC1 Capture Volume" value="27"/>
   </path>
 
   <path name="voice-headset-mic">
@@ -101,10 +103,13 @@
 
   <path name="voice-rec-mic">
       <path name="speaker-mic" />
+      <ctl name="STO1 ADC Boost Volume" value="0"/>
+      <ctl name="ADC1 Capture Volume" value="31"/>
   </path>
 
   <path name="voice-rec-headset-mic">
       <path name="headset-mic" />
+      <ctl name="ADC1 Capture Volume" value="31"/>
   </path>
 
   <path name="handset-mic">
