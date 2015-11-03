@@ -161,10 +161,6 @@ on boot
     write /dev/cpuset/background/cpus 0
     write /dev/cpuset/system-background/cpus 0-1
 
-    # for cpuquiet nr_min_cpus
-    chown system system /sys/devices/system/cpu/cpuquiet/nr_min_cpus
-    chmod 0660 /sys/devices/system/cpu/cpuquiet/nr_min_cpus
-
     # for gpu cap in battery saver mode
     chown system system /sys/kernel/debug/system_edp/capping/force_gpu
     chmod 0660 /sys/kernel/debug/system_edp/capping/force_gpu
@@ -203,9 +199,6 @@ on boot
 
     # set GPU auto suspend
     write /sys/devices/57000000.gpu/power/autosuspend_delay_ms 520
-
-    # set the governor of cpuquiet
-    write /sys/devices/system/cpu/cpuquiet/current_governor runnable
 
 on fs
     # Enable verity notification

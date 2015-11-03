@@ -36,7 +36,6 @@
 
 #define BOOSTPULSE_PATH "/sys/devices/system/cpu/cpufreq/interactive/boostpulse"
 #define CPU_MAX_FREQ_PATH "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq"
-#define CPU_QUIET_NR_MIN_CPUS_PATH "/sys/devices/system/cpu/cpuquiet/nr_min_cpus"
 #define IO_IS_BUSY_PATH "/sys/devices/system/cpu/cpufreq/interactive/io_is_busy"
 #define LIGHTBAR_SEQUENCE_PATH "/sys/class/chromeos/cros_ec/lightbar/sequence"
 #define IIO_ACTIVITY_DEVICE_PATH "/sys/class/chromeos/cros_ec/device/cros-ec-activity.0"
@@ -154,7 +153,6 @@ static void power_set_interactive(struct power_module __unused *module, int on)
     sysfs_write(LIGHTBAR_SEQUENCE_PATH, on ? "s3s0" : "s0s3");
     /* limit charging voltage to 5V when interactive otherwise no limit */
     sysfs_write(EXT_VOLTAGE_LIM_PATH, on ? "5000" : EC_POWER_LIMIT_NONE);
-    sysfs_write(CPU_QUIET_NR_MIN_CPUS_PATH, on ? "2" : "1");
     if (iio_activity_device != NULL) {
         char buf[128];
         snprintf(buf, sizeof(buf), "%s/%s/%s", IIO_ACTIVITY_DEVICE_PATH,
