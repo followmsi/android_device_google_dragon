@@ -165,6 +165,10 @@ on boot
     chown system system /sys/devices/system/cpu/cpuquiet/nr_min_cpus
     chmod 0660 /sys/devices/system/cpu/cpuquiet/nr_min_cpus
 
+    # for gpu cap in battery saver mode
+    chown system system /sys/kernel/debug/system_edp/capping/force_gpu
+    chmod 0660 /sys/kernel/debug/system_edp/capping/force_gpu
+
     # for lightbar
     chown system system /sys/class/chromeos/cros_ec/lightbar/userspace_control
     chmod 0660 /sys/class/chromeos/cros_ec/lightbar/userspace_control
