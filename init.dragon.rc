@@ -215,7 +215,6 @@ service bugreport /system/bin/dumpstate -d -p -B -z \
     class late_start
     disabled
     oneshot
-    keycodes 114 115 116
 
 service p2p_supplicant /system/bin/wpa_supplicant \
     -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
