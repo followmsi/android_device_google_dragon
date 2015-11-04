@@ -1,4 +1,4 @@
-type crash_collector_app, domain;
+type crash_collector_app, domain, domain_deprecated;
 
 # com.google.android.crashuploader runs in the crash_collector_app domain
 app_domain(crash_collector_app)
