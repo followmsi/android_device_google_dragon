@@ -46,3 +46,4 @@
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/tablet_core_hardware.xml)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/dragon_features.xml)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/android.hardware.camera.raw.xml)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/android.hardware.location.gps.xml)
