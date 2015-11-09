@@ -19,16 +19,17 @@
 <device name="Android">
     <!-- All values are in mAh except as noted -->
     <item name="none">2.8</item>
-    <item name="screen.on">204.60</item>
-    <item name="screen.full">532.98</item>
-    <item name="bluetooth.active">25.2</item> <!-- dummy -->
-    <item name="bluetooth.on">3.6</item>
-    <item name="wifi.on">2.16</item>
-    <item name="wifi.active">189.9</item>
-    <item name="wifi.scan">105.35</item>
-    <item name="dsp.audio">23.44</item>
-    <item name="dsp.video">37.51</item>
-    <item name="gps.on">30</item> <!-- dummy -->
+    <item name="screen.on">194.59</item>
+    <item name="screen.full">530.74</item>
+    <item name="bluetooth.active">26.47</item>
+    <item name="bluetooth.on">4.9</item>
+    <item name="wifi.on">2.68</item>
+    <item name="wifi.active">79.06</item>
+    <item name="wifi.scan">128.80</item>
+    <item name="dsp.audio">21.54</item>
+    <item name="dsp.video">143.10</item>
+    <item name="camera.avg">143.10</item>
+    <item name="gps.on">40.01</item>
 
     <!-- Different CPU speeds as reported in
          /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state -->
@@ -53,28 +54,28 @@
         <value>1912500</value>
     </array>
     <!-- Power consumption when CPU is idle -->
-    <item name="cpu.idle">17.15</item>  <!-- suspend power 73.35 mW -->
-    <item name="cpu.awake">93.42</item> <!-- idle screen off 466.21 mW -->
+    <item name="cpu.idle">8.01</item>  <!-- suspend power 31.60 mW -->
+    <item name="cpu.awake">95.31</item> <!-- idle screen off 412.10 mW -->
     <array name="cpu.active.cluster0">
     <!-- Power consumption at different speeds -->
-        <value>44.12</value> <!-- 204000 -->
-        <value>63.61</value> <!-- 306000 -->
-        <value>85.44</value> <!-- 408000 -->
-        <value>110.01</value> <!-- 510000 -->
-        <value>141.04</value> <!-- 612000 -->
-        <value>160.46</value> <!-- 714000 -->
-        <value>183.59</value> <!-- 816000 -->
-        <value>193.19</value> <!-- 918000 -->
-        <value>201.57</value> <!-- 1020000 -->
-        <value>201.54</value> <!-- 1122000 -->
-        <value>203.11</value> <!-- 1224000 -->
-        <value>355.80</value> <!-- 1326000 -->
-        <value>390.51</value> <!-- 1428000 -->
-        <value>433.80</value> <!-- 1530000 -->
-        <value>474.59</value> <!-- 1632000 -->
-        <value>518.01</value> <!-- 1734000 -->
-        <value>536.70</value> <!-- 1836000 -->
-        <value>541.27</value> <!-- 1912500 -->
+        <value>36.95</value> <!-- 204000 -->
+        <value>60.08</value> <!-- 306000 -->
+        <value>80.32</value> <!-- 408000 -->
+        <value>103.28</value> <!-- 510000 -->
+        <value>121.55</value> <!-- 612000 -->
+        <value>147.79</value> <!-- 714000 -->
+        <value>174.06</value> <!-- 816000 -->
+        <value>173.26</value> <!-- 918000 -->
+        <value>181.49</value> <!-- 1020000 -->
+        <value>180.85</value> <!-- 1122000 -->
+        <value>179.45</value> <!-- 1224000 -->
+        <value>334.99</value> <!-- 1326000 -->
+        <value>373.08</value> <!-- 1428000 -->
+        <value>404.53</value> <!-- 1530000 -->
+        <value>454.39</value> <!-- 1632000 -->
+        <value>483.34</value> <!-- 1734000 -->
+        <value>533.69</value> <!-- 1836000 -->
+        <value>531.57</value> <!-- 1912500 -->
     </array>
     <array name="cpu.clusters.cores">
         <value>4</value> <!-- Cluster 0 has 4 cores (cpu0, cpu1, cpu2, cpu3) -->
@@ -82,7 +83,7 @@
     <!-- This is the battery capacity in mAh -->
     <item name="battery.capacity">9000</item>
 
-    <array name="wifi.batchedscan"> <!-- mA. Dummy -->
+    <array name="wifi.batchedscan">
         <value>.0003</value> <!-- 1-8/hr -->
         <value>.003</value>  <!-- 9-64/hr -->
         <value>.03</value>   <!-- 65-512/hr -->
