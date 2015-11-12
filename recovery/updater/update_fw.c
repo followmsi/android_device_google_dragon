@@ -17,8 +17,6 @@
 
 #define LOG_TAG "fwtool"
 
-#include <cutils/log.h>
-
 #include "errno.h"
 #include <stdint.h>
 #include <stdlib.h>
@@ -27,6 +25,7 @@
 
 #include "edify/expr.h"
 #include "flash_device.h"
+#include "update_log.h"
 #include "vboot_interface.h"
 
 int check_compatible_keys(struct flash_device *img, struct flash_device *spi)

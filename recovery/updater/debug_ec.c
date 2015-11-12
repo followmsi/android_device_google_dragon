@@ -17,8 +17,6 @@
 
 #define LOG_TAG "fwtool"
 
-#include <cutils/log.h>
-
 #include <errno.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -28,6 +26,7 @@
 #include "ec_commands.h"
 #include "debug_cmd.h"
 #include "flash_device.h"
+#include "update_log.h"
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
