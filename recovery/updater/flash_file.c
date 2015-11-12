@@ -17,8 +17,6 @@
 
 #define LOG_TAG "fwtool"
 
-#include <cutils/log.h>
-
 #include <errno.h>
 #include <fcntl.h>
 #include <stdint.h>
@@ -31,6 +29,7 @@
 
 #include "edify/expr.h"
 #include "flash_device.h"
+#include "update_log.h"
 
 struct file_data {
 	int fd;
