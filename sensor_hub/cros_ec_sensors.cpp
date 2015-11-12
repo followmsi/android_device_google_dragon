@@ -309,7 +309,14 @@ int CrosECSensor::processEvent(sensors_event_t* data, const cros_ec_event *event
         data->version = sizeof(sensors_event_t);
         data->sensor = CROS_EC_MAX_PHYSICAL_SENSOR + event->activity;
         data->type = gesture->sensor_data.type;
-        data->timestamp = event->timestamp;
+
+        /*
+         * bootime Timestamp coming from the kernel are not reliable when
+         * the system resume: very early, the sleep delay has not yet been added.
+         * Use the current time, not the kernel timestamp.
+         * chrome-os-partner:46724
+         */
+        data->timestamp = systemTime(SYSTEM_TIME_BOOTTIME);
         data->data[0] = (float)event->state;
 
         if (gesture->sensor_data.flags & SENSOR_FLAG_ONE_SHOT_MODE)
