@@ -17,8 +17,6 @@
 
 #define LOG_TAG "fwtool"
 
-#include <cutils/log.h>
-
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,6 +29,7 @@
 #include <mtd/mtd-user.h>
 
 #include "flash_device.h"
+#include "update_log.h"
 #include "vboot_interface.h"
 
 static const char * const DEFAULT_MTD_FILE = "/dev/mtd/mtd0";

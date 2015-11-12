@@ -29,6 +29,7 @@ Value* firmware_update(const char *name, State * state, int argc, Expr * argv[])
 	int res;
 	Value *retval = NULL;
 
+	printf("%s: running %s.\n", __func__, name);
 	if (argc < 2) {
 		ErrorAbort(state, "syntax: %s bios.bin ec.bin", name);
 		return NULL;
@@ -46,6 +47,9 @@ Value* firmware_update(const char *name, State * state, int argc, Expr * argv[])
 
 	FreeValue(firmware);
 	FreeValue(ec);
+
+	printf("%s: [%s] done.\n", __func__,
+		retval ? retval->data : state->errmsg);
 	return retval;
 }
 

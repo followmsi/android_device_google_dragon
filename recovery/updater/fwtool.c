@@ -17,8 +17,6 @@
 
 #define LOG_TAG "fwtool"
 
-#include <cutils/log.h>
-
 #include <errno.h>
 #include <inttypes.h>
 #include <stdint.h>
@@ -31,6 +29,7 @@
 #include "flash_device.h"
 #include "fmap.h"
 #include "update_fw.h"
+#include "update_log.h"
 #include "vboot_interface.h"
 
 static void *spi;
