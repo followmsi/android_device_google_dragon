@@ -49,7 +49,7 @@
 #define LOW_POWER_GPU_CAP "3000"
 #define NORMAL_GPU_CAP "0"
 #define GPU_BOOST_PATH "/sys/devices/57000000.gpu/pstate"
-#define GPU_BOOST_ENTER_CMD "03,0C"    // boost GPU to work at least on 03 - 230MHz
+#define GPU_BOOST_ENTER_CMD "0b,0C"    // boost GPU to work at least on 0b - 844MHz
 #define GPU_BOOST_DURATION_MS 40
 #define GPU_BOOST_EXIT_CMD "auto"
 #define GPU_FREQ_CONSTRAINT "852000 852000 -1 2000"
