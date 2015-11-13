@@ -40,20 +40,9 @@ def IncrementalOTA_InstallEnd(info):
     print "no firmware images in target target_files; skipping install"
     return
 
-  try:
-    source_bootloader_img = info.source_zip.read("RADIO/bootloader.img")
-  except KeyError:
-    source_bootloader_img = None
-
-  try:
-    source_ec_img = info.source_zip.read("RADIO/ec.bin")
-  except KeyError:
-    source_ec_img = None
-
-  if source_bootloader_img == target_bootloader_img and source_ec_img == target_ec_img:
-      print "firmware unchanged; skipping"
-      return
-
+  # copy the data into the package irrespective of source and target versions.
+  # If previous OTA missed a firmware update, we can try that again on the next
+  # OTA.
   common.ZipWriteStr(info.output_zip, "bootloader.img", target_bootloader_img)
   common.ZipWriteStr(info.output_zip, "ec.bin", target_ec_img)
 
