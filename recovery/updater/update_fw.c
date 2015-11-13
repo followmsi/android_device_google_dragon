@@ -183,7 +183,7 @@ int update_fw(Value *fw_file, Value *ec_file, int force)
 	img = flash_open("file", fw_file);
 	if (!img)
 		goto out_free;
-	fwid = fmap_read_section(img, "RO_FRID", &size, NULL);
+	fwid = fmap_read_section(img, "RW_FWID_A", &size, NULL);
 
 	if (!fwid) {
 		ALOGD("Cannot find firmware image version\n");
