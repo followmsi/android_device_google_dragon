@@ -1,0 +1,49 @@
+<!--
+   Copyright 2015, The Android Open Source Project
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- Service name (for user) -->
+    <string name="app_name">
+        <xliff:g id="product_name">Pixel C</xliff:g> Keyboard Firmware Updater
+    </string>
+
+    <!-- Static information of the target keyboard. (for service use) -->
+    <string name="target_keyboard_name" translatable="false">Pixel C Keyboard</string>
+    <string name="target_manufacturer" translatable="false">Google</string>
+    <string name="target_battery_level" translatable="false">20</string>
+    <string name="target_firmware_version" translatable="false">0.151104</string>
+
+    <!-- File names of the firmware images in raw resource (for service use)-->
+    <string name="target_firmware_init_file_name" translatable="false">init_151104_mp_signed</string>
+    <string name="target_firmware_image_file_name" translatable="false">image_151104_mp_signed</string>
+
+    <!-- Update notification texts (for users) -->
+    <string name="notification_title">Keyboard update available</string>
+    <string name="notification_text">
+        <xliff:g id="product_name">Pixel C</xliff:g> keyboard update is ready
+    </string>
+    <string name="notification_later">LATER</string>
+    <string name="notification_install">INSTALL</string>
+
+    <!-- UpdateConfirmationActivity messages (for users) -->
+    <string name="confirmation_update_info">The keyboard will not work while it is updating.\nThis will take about 3 minutes.\n\nPlease do not disconnect the keyboard before the update completes.\n</string>
+    <string name="confirmation_install">INSTALL</string>
+
+    <!-- Update preference names (for service use)-->
+    <string name="preference_notification_flag" translatable="false">com.android.dragonkeyboardfirmwareupdater.preference_notification_flag</string>
+    <string name="preference_current_version" translatable="false">com.android.dragonkeyboardfirmwareupdater.preference_current_version</string>
+
+</resources>

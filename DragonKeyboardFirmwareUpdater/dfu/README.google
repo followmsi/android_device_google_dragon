@@ -1,0 +1,3 @@
+HACKs in src/no/nordicsemi/android/dfu/DfuBaseService.java:
+mPackageBeforeNotification = 2
+BuildConfig.DEBUG

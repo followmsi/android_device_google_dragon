@@ -56,7 +56,8 @@ PRODUCT_PACKAGES += \
     crash_dispatcher \
     crash_collector \
     CrashReportProvider \
-    fwtool
+    fwtool \
+    DragonKeyboardFirmwareUpdater
 
 ifeq ($(TARGET_BUILD_VARIANT),eng)
 PRODUCT_PACKAGES += \
