@@ -106,7 +106,7 @@ PRODUCT_COPY_FILES += \
 # Copy dsp firmware to the vendor parition so it is available when hotwording
 # starts
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/rt5677_elf_vad:vendor/firmware
+    $(LOCAL_PATH)/rt5677_elf_vad:vendor/firmware/rt5677_elf_vad
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/enctune.conf:system/etc/enctune.conf
