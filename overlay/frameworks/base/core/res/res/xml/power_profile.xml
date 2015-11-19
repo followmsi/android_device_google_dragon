@@ -18,18 +18,17 @@
 -->
 <device name="Android">
     <!-- All values are in mAh except as noted -->
-    <item name="none">2.8</item>
-    <item name="screen.on">194.59</item>
-    <item name="screen.full">530.74</item>
+    <item name="none">2.18</item>
+    <item name="screen.on">184.86</item>
+    <item name="screen.full">609.72</item>
     <item name="bluetooth.active">26.47</item>
-    <item name="bluetooth.on">4.9</item>
-    <item name="wifi.on">2.68</item>
+    <item name="bluetooth.on">6.29</item>
+    <item name="wifi.on">4.07</item>
     <item name="wifi.active">79.06</item>
     <item name="wifi.scan">128.80</item>
-    <item name="dsp.audio">21.54</item>
-    <item name="dsp.video">143.10</item>
-    <item name="camera.avg">143.10</item>
-    <item name="gps.on">40.01</item>
+    <item name="dsp.audio">22.93</item>
+    <item name="dsp.video">137.57</item>
+    <item name="camera.avg">997.50</item>
 
     <!-- Different CPU speeds as reported in
          /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state -->
@@ -54,8 +53,8 @@
         <value>1912500</value>
     </array>
     <!-- Power consumption when CPU is idle -->
-    <item name="cpu.idle">8.01</item>  <!-- suspend power 31.60 mW -->
-    <item name="cpu.awake">95.31</item> <!-- idle screen off 412.10 mW -->
+    <item name="cpu.idle">7.62</item>  <!-- suspend power 32.00 mW -->
+    <item name="cpu.awake">94.31</item> <!-- idle screen off 428.10 mW -->
     <array name="cpu.active.cluster0">
     <!-- Power consumption at different speeds -->
         <value>36.95</value> <!-- 204000 -->
@@ -88,6 +87,6 @@
         <value>.003</value>  <!-- 9-64/hr -->
         <value>.03</value>   <!-- 65-512/hr -->
         <value>.3</value>    <!-- 513-4,096/hr -->
-        <value>3</value>    <!-- 4097-/hr -->
+        <value>3</value>     <!-- 4097-/hr -->
     </array>
 </device>
