@@ -15,7 +15,10 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <!-- Service name (for user) -->
+    <!-- This is the name of the keyboard updater service. It is shown in
+         Settings > Apps and when the user activates the Recents view while in the
+         installation confirmation screen.
+    -->
     <string name="app_name">
         <xliff:g id="product_name">Pixel C</xliff:g> Keyboard Firmware Updater
     </string>
@@ -30,19 +33,44 @@
     <string name="target_firmware_init_file_name" translatable="false">init_151104_mp_signed</string>
     <string name="target_firmware_image_file_name" translatable="false">image_151104_mp_signed</string>
 
-    <!-- Update notification texts (for users) -->
+    <!-- The notification message title shown when a keyboard update is
+         available. Users are given the option to install or postpone the update.
+    -->
     <string name="notification_title">Keyboard update available</string>
+
+    <!-- The notification message subtitle shown when a keyboard update is
+         available. It elaborates more on the title of the notification
+         ("Keyboard update available") by specifying the product name. Users are
+         given the option to install or postpone the update.
+    -->
     <string name="notification_text">
-        <xliff:g id="product_name">Pixel C</xliff:g> keyboard update is ready
+        <xliff:g id="product_name">Pixel C</xliff:g> Keyboard update is ready
     </string>
+
+    <!-- One of the two options provided by the "keyboard update available"
+         notification. Tapping on this option will dismiss the notification, and
+         the notification is expected to resurface again some time later.
+    -->
     <string name="notification_later">LATER</string>
+
+    <!-- One of the two options provided by the "keyboard update available"
+         notification. Tapping on this option will send users to the installation
+         screen.
+    -->
     <string name="notification_install">INSTALL</string>
 
-    <!-- UpdateConfirmationActivity messages (for users) -->
+    <!-- The text shown in the installation confirmation screen. The most
+         important points to convey to the user are that the keyboard will not work
+         during the update, and that they should not disconnect it during the
+         process.
+    -->
     <string name="confirmation_update_info">The keyboard will not work while it is updating.\nThis will take about 3 minutes.\n\nPlease do not disconnect the keyboard before the update completes.\n</string>
-    <string name="confirmation_install">INSTALL</string>
 
-    <!-- Update preference names (for service use)-->
+    <!-- A button provided on the installation confirmation screen. Tapping on
+         this will begin the installation process.
+    -->
+    <string name="confirmation_install">INSTALL</string>
+    <!-- Update preference names (for service use) -->
     <string name="preference_notification_flag" translatable="false">com.android.dragonkeyboardfirmwareupdater.preference_notification_flag</string>
     <string name="preference_current_version" translatable="false">com.android.dragonkeyboardfirmwareupdater.preference_current_version</string>
 
