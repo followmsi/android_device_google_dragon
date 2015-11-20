@@ -1,31 +1,14 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="dfu_unknown_name">unnamed device</string>
-    
-    <string name="dfu_action_abort">Abort</string>
+    <string name="dfu_unknown_name">Unnamed device</string>
+    <string name="dfu_action_cancel">Cancel</string>
 
-    <string name="dfu_status_initializing">Initializing&#8230;</string>
-    <string name="dfu_status_connecting">Connecting&#8230;</string>
-    <string name="dfu_status_starting">Starting DFU&#8230;</string>
-    <string name="dfu_status_switching_to_dfu">Starting bootloader&#8230;</string>
-    <string name="dfu_status_uploading">Uploading&#8230;</string>
-    <string name="dfu_status_uploading_part" formatted="false">Uploading part %d/%d&#8230;</string>
-    <string name="dfu_status_validating">Validating&#8230;</string>
-    <string name="dfu_status_disconnecting">Disconnecting&#8230;</string>
-    <string name="dfu_status_completed">Done</string>
-    <string name="dfu_status_aborted">Aborted</string>
-    <string name="dfu_status_aborting">Aborting&#8230;</string>
-    <string name="dfu_status_error">Upload failed</string>
-    
-    <string name="dfu_status_connecting_msg">Connecting to %s&#8230;</string>
-    <string name="dfu_status_starting_msg">Initializing DFU process&#8230;</string>
-    <string name="dfu_status_switching_to_dfu_msg">Waiting for bootloader&#8230;</string>
-    <string name="dfu_status_uploading_components_msg">Transmitting components to %s&#8230;</string>
-    <string name="dfu_status_uploading_msg">Transmitting application to %s&#8230;</string>
-    <string name="dfu_status_validating_msg">Validating&#8230;</string>
-    <string name="dfu_status_completed_msg">Application has been send successfully.</string>
-    <string name="dfu_status_aborted_msg">Application upload has been canceled.</string>
-    <string name="dfu_status_disconnecting_msg">Disconnecting from %s&#8230;</string>
-    <string name="dfu_status_error_msg">DFU process failed.</string>
-    
+    <!-- Pixel C Keyboard firmware update notification messages -->
+    <string name="dfu_status_notification_updating_title"><xliff:g id="product_name">Pixel C</xliff:g> Keyboard update</string>
+    <string name="dfu_status_notification_update_finished_title"><xliff:g id="product_name">Pixel C</xliff:g> Keyboard update installed</string>
+    <string name="dfu_status_notification_update_canceled_title"><xliff:g id="product_name">Pixel C</xliff:g> Keyboard update canceled</string>
+    <string name="dfu_status_notification_update_failed_title"><xliff:g id="product_name">Pixel C</xliff:g> Keyboard update did not succeed</string>
+
+    <string name="dfu_status_notification_updating_msg"><xliff:g id="update_progress_percent">%1$d %%</xliff:g></string>
+
 </resources>

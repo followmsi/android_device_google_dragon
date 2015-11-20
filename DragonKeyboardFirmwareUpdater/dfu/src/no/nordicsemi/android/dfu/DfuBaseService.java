@@ -2743,39 +2743,39 @@ public abstract class DfuBaseService extends IntentService {
 
 		switch (progress) {
 			case PROGRESS_CONNECTING:
-				builder.setOngoing(true).setContentTitle(getString(R.string.dfu_status_connecting)).setContentText(getString(R.string.dfu_status_connecting_msg, deviceName)).setProgress(100, 0, true);
+				builder.setOngoing(true).setContentTitle(getString(R.string.dfu_status_notification_updating_title)).setContentText(getString(R.string.dfu_status_notification_updating_msg, 0)).setProgress(100, 0, true);
 				break;
 			case PROGRESS_STARTING:
-				builder.setOngoing(true).setContentTitle(getString(R.string.dfu_status_starting)).setContentText(getString(R.string.dfu_status_starting_msg, deviceName)).setProgress(100, 0, true);
+				builder.setOngoing(true).setContentTitle(getString(R.string.dfu_status_notification_updating_title)).setContentText(getString(R.string.dfu_status_notification_updating_msg, 0)).setProgress(100, 0, true);
 				break;
 			case PROGRESS_ENABLING_DFU_MODE:
-				builder.setOngoing(true).setContentTitle(getString(R.string.dfu_status_switching_to_dfu)).setContentText(getString(R.string.dfu_status_switching_to_dfu_msg, deviceName))
+				builder.setOngoing(true).setContentTitle(getString(R.string.dfu_status_notification_updating_title)).setContentText(getString(R.string.dfu_status_notification_updating_msg, 0))
 						.setProgress(100, 0, true);
 				break;
 			case PROGRESS_VALIDATING:
-				builder.setOngoing(true).setContentTitle(getString(R.string.dfu_status_validating)).setContentText(getString(R.string.dfu_status_validating_msg, deviceName)).setProgress(100, 0, true);
+				builder.setOngoing(true).setContentTitle(getString(R.string.dfu_status_notification_updating_title)).setContentText(getString(R.string.dfu_status_notification_updating_msg, 0)).setProgress(100, 0, true);
 				break;
 			case PROGRESS_DISCONNECTING:
-				builder.setOngoing(true).setContentTitle(getString(R.string.dfu_status_disconnecting)).setContentText(getString(R.string.dfu_status_disconnecting_msg, deviceName))
+				builder.setOngoing(true).setContentTitle(getString(R.string.dfu_status_notification_updating_title)).setContentText(getString(R.string.dfu_status_notification_updating_msg, 100))
 						.setProgress(100, 0, true);
 				break;
 			case PROGRESS_COMPLETED:
-				builder.setOngoing(false).setContentTitle(getString(R.string.dfu_status_completed)).setSmallIcon(android.R.drawable.stat_sys_upload_done)
-						.setContentText(getString(R.string.dfu_status_completed_msg)).setAutoCancel(true).setColor(0xFF00B81A);
+				builder.setOngoing(false).setContentTitle(getString(R.string.dfu_status_notification_update_finished_title)).setSmallIcon(android.R.drawable.stat_sys_upload_done)
+						.setContentText(getString(R.string.dfu_status_notification_update_finished_title)).setAutoCancel(true).setColor(0xFF00B81A);
 				break;
 			case PROGRESS_ABORTED:
-				builder.setOngoing(false).setContentTitle(getString(R.string.dfu_status_aborted)).setSmallIcon(android.R.drawable.stat_sys_upload_done)
-						.setContentText(getString(R.string.dfu_status_aborted_msg)).setAutoCancel(true);
+				builder.setOngoing(false).setContentTitle(getString(R.string.dfu_status_notification_update_canceled_title)).setSmallIcon(android.R.drawable.stat_sys_upload_done)
+						.setContentText(getString(R.string.dfu_status_notification_update_canceled_title)).setAutoCancel(true);
 				break;
 			default:
 				if (progress >= ERROR_MASK) {
 					// progress is an error number
-					builder.setOngoing(false).setContentTitle(getString(R.string.dfu_status_error)).setSmallIcon(android.R.drawable.stat_sys_upload_done)
-							.setContentText(getString(R.string.dfu_status_error_msg)).setAutoCancel(true).setColor(Color.RED);
+					builder.setOngoing(false).setContentTitle(getString(R.string.dfu_status_notification_update_failed_title)).setSmallIcon(android.R.drawable.stat_sys_upload_done)
+							.setContentText(getString(R.string.dfu_status_notification_update_failed_title)).setAutoCancel(true).setColor(Color.RED);
 				} else {
 					// progress is in percents
-					final String title = mPartsTotal == 1 ? getString(R.string.dfu_status_uploading) : getString(R.string.dfu_status_uploading_part, mPartCurrent, mPartsTotal);
-					final String text = (mFileType & TYPE_APPLICATION) > 0 ? getString(R.string.dfu_status_uploading_msg, deviceName) : getString(R.string.dfu_status_uploading_components_msg, deviceName);
+					final String title = mPartsTotal == 1 ? getString(R.string.dfu_status_notification_updating_title) : getString(R.string.dfu_status_notification_updating_title);
+					final String text = (mFileType & TYPE_APPLICATION) > 0 ? getString(R.string.dfu_status_notification_updating_msg, progress) : getString(R.string.dfu_status_notification_updating_msg, progress);
 					builder.setOngoing(true).setContentTitle(title).setContentText(text).setProgress(100, progress, false);
 				}
 		}
@@ -2794,7 +2794,7 @@ public abstract class DfuBaseService extends IntentService {
 			final Intent abortIntent = new Intent(BROADCAST_ACTION);
 			abortIntent.putExtra(EXTRA_ACTION, ACTION_ABORT);
 			final PendingIntent pendingAbortIntent = PendingIntent.getBroadcast(this, 1, abortIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			builder.addAction(R.drawable.ic_action_notify_cancel, getString(R.string.dfu_action_abort), pendingAbortIntent);
+			builder.addAction(R.drawable.ic_action_notify_cancel, getString(R.string.dfu_action_cancel), pendingAbortIntent);
 		}
 
 		final NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
