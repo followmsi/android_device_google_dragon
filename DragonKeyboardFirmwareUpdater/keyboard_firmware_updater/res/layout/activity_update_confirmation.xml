@@ -13,33 +13,36 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<LinearLayout
+<com.android.setupwizardlib.SetupWizardLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/update_confirmation_activity_layout"
     android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:orientation="vertical"
-    tools:context="com.android.dragonkeyboardfirmwareupdater.UpdateConfirmationActivity">
-    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout="@layout/suw_template"
+    app:suwHeaderText="@string/app_name"
+    app:suwIllustrationImage="@drawable/bg_keyboard_header"
+    app:suwIllustrationHorizontalTile="@drawable/bg_header_tile"
+    app:suwBackgroundTile="@drawable/bg_tile">
+
+    <FrameLayout
+        android:id="@+id/content_frame"
+        style="@style/SuwContentFrame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_margin="15dp">
+        android:layout_height="match_parent">
         <TextView
             android:id="@+id/confirmation_update_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/confirmation_update_info"
-            android:textSize="15sp"/>
+            style="@style/SuwDescription" />
         <Button
             android:id="@+id/confirmation_install_button"
+            android:layout_gravity="bottom|end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="5dp"
-            android:textSize="15sp"
-            android:text="@string/confirmation_install"/>
-    </LinearLayout>
-</LinearLayout>
+            android:text="@string/confirmation_install"
+            style="@android:style/Widget.Material.Button.Borderless.Colored" />
+    </FrameLayout>
+
+</com.android.setupwizardlib.SetupWizardLayout>

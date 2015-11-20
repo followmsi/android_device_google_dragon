@@ -24,6 +24,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.setupwizardlib.SetupWizardLayout;
+import com.android.setupwizardlib.view.NavigationBar;
+
 public class UpdateConfirmationActivity extends Activity {
     private final static String TAG = UpdateConfirmationActivity.class.getSimpleName();
 
@@ -33,6 +36,10 @@ public class UpdateConfirmationActivity extends Activity {
         Log.d(TAG, "onCreate");
 
         setContentView(R.layout.activity_update_confirmation);
+
+        SetupWizardLayout layout = (SetupWizardLayout) findViewById(R.id.update_confirmation_activity_layout);
+        layout.getNavigationBar().setVisibility(View.GONE);
+        layout.requestLayout();
 
         final Button installButton = (Button) findViewById(R.id.confirmation_install_button);
         installButton.setVisibility(View.VISIBLE);

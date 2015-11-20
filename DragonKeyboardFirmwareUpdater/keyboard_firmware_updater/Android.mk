@@ -26,5 +26,6 @@ LOCAL_STATIC_JAVA_LIBRARIES := dfu-library
 LOCAL_PACKAGE_NAME := DragonKeyboardFirmwareUpdater
 LOCAL_AAPT_FLAGS := --auto-add-overlay
 LOCAL_AAPT_FLAGS += --extra-packages no.nordicsemi.android.dfu
+include frameworks/opt/setupwizard/library/common.mk
 
 include $(BUILD_PACKAGE)
