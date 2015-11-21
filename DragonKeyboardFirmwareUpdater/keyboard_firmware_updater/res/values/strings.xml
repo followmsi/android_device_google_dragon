@@ -19,9 +19,7 @@
          Settings > Apps and when the user activates the Recents view while in the
          installation confirmation screen.
     -->
-    <string name="app_name">
-        <xliff:g id="product_name">Pixel C</xliff:g> Keyboard Firmware Updater
-    </string>
+    <string name="app_name"><xliff:g id="product_name">Pixel C</xliff:g> Keyboard Firmware Updater</string>
 
     <!-- Static information of the target keyboard. (for service use) -->
     <string name="target_keyboard_name" translatable="false">Pixel C Keyboard</string>
@@ -33,31 +31,42 @@
     <string name="target_firmware_init_file_name" translatable="false">init_151104_mp_signed</string>
     <string name="target_firmware_image_file_name" translatable="false">image_151104_mp_signed</string>
 
-    <!-- The notification message title shown when a keyboard update is
+    <!-- The update notification message title shown when a keyboard update is
          available. Users are given the option to install or postpone the update.
     -->
-    <string name="notification_title">Keyboard update available</string>
+    <string name="notification_update_title">Keyboard update available</string>
 
-    <!-- The notification message subtitle shown when a keyboard update is
-         available. It elaborates more on the title of the notification
+    <!-- The update notification message subtitle shown when a keyboard update
+         is available. It elaborates more on the title of the notification
          ("Keyboard update available") by specifying the product name. Users are
          given the option to install or postpone the update.
     -->
-    <string name="notification_text">
-        <xliff:g id="product_name">Pixel C</xliff:g> Keyboard update is ready
-    </string>
+    <string name="notification_update_text"><xliff:g id="product_name">Pixel C</xliff:g> Keyboard update is ready</string>
 
     <!-- One of the two options provided by the "keyboard update available"
          notification. Tapping on this option will dismiss the notification, and
          the notification is expected to resurface again some time later.
     -->
-    <string name="notification_later">LATER</string>
+    <string name="notification_update_later">LATER</string>
 
     <!-- One of the two options provided by the "keyboard update available"
-         notification. Tapping on this option will send users to the installation
-         screen.
+         notification. Tapping on this option will send users to the
+         installation screen.
     -->
-    <string name="notification_install">INSTALL</string>
+    <string name="notification_update_install">INSTALL</string>
+
+    <!-- The battery warning notification message title shown when the battery
+         level of a keyboard is low.
+    -->
+    <string name="notification_battery_warning_title"><xliff:g id="product_name">Pixel C</xliff:g> Keyboard battery low</string>
+
+    <!-- The battery warning notification message subtitle shown when the
+         battery level of a keyboard is low. It gives the users an instruction
+         on how they charge the keyboard. The most important points to convey to
+         the users are that the Pixel C has to be charged face down on the
+         keyboard, otherwise the keyboard won't charge.
+    -->
+    <string name="notification_battery_warning_text">Charge your <xliff:g id="product_name">Pixel C</xliff:g> while it is face down on the keyboard</string>
 
     <!-- The text shown in the installation confirmation screen. The most
          important points to convey to the user are that the keyboard will not work
@@ -70,8 +79,5 @@
          this will begin the installation process.
     -->
     <string name="confirmation_install">INSTALL</string>
-    <!-- Update preference names (for service use) -->
-    <string name="preference_notification_flag" translatable="false">com.android.dragonkeyboardfirmwareupdater.preference_notification_flag</string>
-    <string name="preference_current_version" translatable="false">com.android.dragonkeyboardfirmwareupdater.preference_current_version</string>
 
 </resources>

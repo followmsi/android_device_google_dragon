@@ -22,7 +22,7 @@ LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/res \
     $(LOCAL_PATH)/../dfu/res
 LOCAL_CERTIFICATE := platform
 LOCAL_PRIVILEGED_MODULE := true
-LOCAL_STATIC_JAVA_LIBRARIES := dfu-library
+LOCAL_STATIC_JAVA_LIBRARIES := android-support-v4 dfu-library
 LOCAL_PACKAGE_NAME := DragonKeyboardFirmwareUpdater
 LOCAL_AAPT_FLAGS := --auto-add-overlay
 LOCAL_AAPT_FLAGS += --extra-packages no.nordicsemi.android.dfu

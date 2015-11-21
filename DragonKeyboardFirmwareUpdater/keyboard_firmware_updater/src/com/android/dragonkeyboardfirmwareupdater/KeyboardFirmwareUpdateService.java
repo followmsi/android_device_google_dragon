@@ -36,11 +36,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -123,6 +125,7 @@ public class KeyboardFirmwareUpdateService extends Service {
 
     /* Update notification. */
     private static final int UPDATE_NOTIFICATION_ID = 1248;
+    private static final int BATTERY_WARNING_NOTIFICATION_ID = 8421;
     private Notification mUpdateNotification;
 
     /**
@@ -250,13 +253,13 @@ public class KeyboardFirmwareUpdateService extends Service {
             UUID uuid = characteristic.getUuid();
             if (GattAttributeUUID.UUID_BATTERY_LEVEL_CHARACTERISTIC.equals(uuid)) {
 
-                int batterLevel = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
-                if (batterLevel < Integer.parseInt(getString(R.string.target_battery_level))) {
+                int batteryLevel = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+                if (batteryLevel < Integer.parseInt(getString(R.string.target_battery_level))) {
                     Log.w(TAG, "onCharacteristicRead BATTERY_LEVEL_CHARACTERISTIC: " +getKeyboardString()
-                            + " battery level(" + batterLevel + "%) is too low:");
+                            + " battery level(" + batteryLevel + "%) is too low:");
                     changeDfuStatus(DFU_STATE_INFO_NOT_SUITABLE);
 
-                    // TODO(mcchou): show charging notification if the battery level is too low.
+                    showBatteryWarningNotification();
 
                     return;
                 }
@@ -504,7 +507,7 @@ public class KeyboardFirmwareUpdateService extends Service {
                     return;
                 }
 
-                showNotification();
+                showUpdateNotification();
             } else if (deviceConnectionState == BluetoothAdapter.STATE_DISCONNECTING) {
                 handleGattDisconnection();
             }
@@ -516,6 +519,7 @@ public class KeyboardFirmwareUpdateService extends Service {
             } else if (adapterState == BluetoothAdapter.STATE_TURNING_OFF) {
                 // Terminate update process and disable Bluetooth connectivity.
                 disableBluetoothConnectivity();
+
                 // Since BluetoothAdapter has been disabled, the callback of disconnection would not
                 // be called. Therefore a separate clean-up of GATT connection is need.
                 cleanUpGattConnection();
@@ -537,7 +541,7 @@ public class KeyboardFirmwareUpdateService extends Service {
             }
 
         } else if (ACTION_KEYBOARD_UPDATE_CONFIRMED.equals(action)) {
-            dismissNotification();
+            dismissUpdateNotification();
 
             if (mDfuStatus != DFU_STATE_INFO_READY || mDfuStatus == DFU_STATE_UPDATING) {
                 Log.w(TAG, "onHandleIntent: DFP preparation not ready or DFU is in progress. ");
@@ -558,7 +562,7 @@ public class KeyboardFirmwareUpdateService extends Service {
             changeDfuStatus(DFU_STATE_SWITCHING_TO_DFU_MODE);
 
         } else if (ACTION_KEYBOARD_UPDATE_POSTPONED.equals(action)) {
-            dismissNotification();
+            dismissUpdateNotification();
             // TODO(mcchou): Update the preference when the Settings keyboard entry is available.
         }
     }
@@ -633,9 +637,9 @@ public class KeyboardFirmwareUpdateService extends Service {
         mBroadcastReceiver = null;
     }
 
-    /* Show the update notification. */
-    private void showNotification() {
-        Log.d(TAG, "showNotification: " + getKeyboardString());
+    /* Shows the update notification. */
+    private void showUpdateNotification() {
+        Log.d(TAG, "showUpdateNotification: " + getKeyboardString());
 
         // Intent for triggering the update confirmation page.
         Intent updateConfirmation = new Intent(this, UpdateConfirmationActivity.class);
@@ -654,15 +658,16 @@ public class KeyboardFirmwareUpdateService extends Service {
                 this, 0, updateConfirmation, PendingIntent.FLAG_CANCEL_CURRENT);
 
         // Create a notification object with two buttons (actions)
-        mUpdateNotification = new Notification.Builder(this)
-                .setContentTitle(getString(R.string.notification_title))
-                .setContentText(getString(R.string.notification_text))
+        mUpdateNotification = new NotificationCompat.Builder(this)
+                .setCategory(Notification.CATEGORY_SYSTEM)
+                .setContentTitle(getString(R.string.notification_update_title))
+                .setContentText(getString(R.string.notification_update_text))
                 .setSmallIcon(R.drawable.ic_keyboard)
-                .addAction(new Notification.Action.Builder(
-                        R.drawable.ic_later, getString(R.string.notification_later),
+                .addAction(new NotificationCompat.Action.Builder(
+                        R.drawable.ic_later, getString(R.string.notification_update_later),
                         laterIntent).build())
-                .addAction(new Notification.Action.Builder(
-                        R.drawable.ic_install, getString(R.string.notification_install),
+                .addAction(new NotificationCompat.Action.Builder(
+                        R.drawable.ic_install, getString(R.string.notification_update_install),
                         installIntent).build())
                 .setAutoCancel(true)
                 .setOnlyAlertOnce(true)
@@ -675,13 +680,35 @@ public class KeyboardFirmwareUpdateService extends Service {
     }
 
     /* Dismisses the udpate notification. */
-    private void dismissNotification() {
+    private void dismissUpdateNotification() {
         if (mUpdateNotification == null) return;
-        Log.d(TAG, "dismissNotification");
+        Log.d(TAG, "dismissUpdateNotification");
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(UPDATE_NOTIFICATION_ID);
         mUpdateNotification = null;
+    }
+
+    /* Shows the keyboard battery warning notification. */
+    private void showBatteryWarningNotification() {
+        Log.d(TAG, "showBatteryWarningNotification: " + getKeyboardString());
+
+        Notification batteryWarningNotification = new NotificationCompat.Builder(this)
+                .setContentTitle(getString(R.string.notification_battery_warning_title))
+                .setContentText(getString(R.string.notification_battery_warning_text))
+                .setSmallIcon(R.drawable.ic_battery_warning)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                .setPriority(Notification.PRIORITY_HIGH)
+                .setColor(Color.RED)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(
+                        getString(R.string.notification_battery_warning_text)))
+                .build();
+
+        // Show the notification via notification manager
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(BATTERY_WARNING_NOTIFICATION_ID, batteryWarningNotification);
     }
 
     /* Connects to the GATT server hosted on the given Bluetooth LE device. */
@@ -1098,7 +1125,7 @@ public class KeyboardFirmwareUpdateService extends Service {
                 break;
             case DFU_STATE_UPDATING:
                 abortDfu();
-                dismissNotification();
+                dismissUpdateNotification();
                 break;
             default:
                 break;
