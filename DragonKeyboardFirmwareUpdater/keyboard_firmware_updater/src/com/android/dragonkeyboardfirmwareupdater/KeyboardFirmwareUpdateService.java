@@ -282,11 +282,29 @@ public class KeyboardFirmwareUpdateService extends Service {
                 Log.d(TAG, "onCharacteristicRead DEVICE_INFORMATION_FIRMWARE_VERSION_CHARACTERISTIC: current: "
                         + mKeyboardFirmwareVersion + " new: " + getString(R.string.target_firmware_version));
 
-                // TODO(mcchou): update target_fimware_version
-                if (Float.parseFloat(mKeyboardFirmwareVersion) >= Float.parseFloat(getString(R.string.target_firmware_version))) {
+                Float versionNumber = 0.0f;
+                // Parse the firmware version into Float number for the following checks.
+                try {
+                    versionNumber = Float.parseFloat(mKeyboardFirmwareVersion);
+                } catch(NumberFormatException e) {
+                    Log.w(TAG, "onCharacteristicRead DEVICE_INFORMATION_FIRMWARE_VERSION_CHARACTERISTIC: " +
+                          "firmware version parsing error");
+                    changeDfuStatus(DFU_STATE_INFO_NOT_SUITABLE);
+                    return;
+                }
+
+                // Check if the current firmware is updatable.
+                if (versionNumber < Float.parseFloat(getString(R.string.target_min_updatable_firmware_version))) {
                     Log.d(TAG, "onCharacteristicRead DEVICE_INFORMATION_FIRMWARE_VERSION_CHARACTERISTIC: " +
-                            getKeyboardString() + " firmware(" + mKeyboardFirmwareVersion +
-                            ") is up to date");
+                          "current firmware(" + mKeyboardFirmwareVersion + ") is not updatable");
+                    changeDfuStatus(DFU_STATE_INFO_NOT_SUITABLE);
+                    return;
+                }
+
+                // Check if the current firmware is up to date.
+                if (versionNumber >= Float.parseFloat(getString(R.string.target_firmware_version))) {
+                    Log.d(TAG, "onCharacteristicRead DEVICE_INFORMATION_FIRMWARE_VERSION_CHARACTERISTIC: " +
+                            getKeyboardString() + " firmware(" + mKeyboardFirmwareVersion + ") is up to date");
                     changeDfuStatus(DFU_STATE_INFO_NOT_SUITABLE);
                     return;
                 }
