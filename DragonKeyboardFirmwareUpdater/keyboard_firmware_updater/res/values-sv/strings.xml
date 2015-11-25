@@ -18,10 +18,12 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="305277655681356345">"Uppdatering av <xliff:g id="PRODUCT_NAME">Pixel C</xliff:g>-tangentbordets firmware"</string>
-    <string name="notification_title" msgid="3038955939019422568">"Det finns en uppdatering för tangentbordet"</string>
-    <string name="notification_text" msgid="2315832335022509">"Det finns en uppdateringen för <xliff:g id="PRODUCT_NAME">Pixel C</xliff:g>-tangentbordet"</string>
-    <string name="notification_later" msgid="837498527246923353">"SENARE"</string>
-    <string name="notification_install" msgid="3626632434715578295">"INSTALLERA"</string>
+    <string name="notification_update_title" msgid="3750593986639930">"Det finns en uppdatering för tangentbordet"</string>
+    <string name="notification_update_text" msgid="5242643461253313645">"Det finns en uppdateringen för <xliff:g id="PRODUCT_NAME">Pixel C</xliff:g>-tangentbordet"</string>
+    <string name="notification_update_later" msgid="6413223936294534509">"SENARE"</string>
+    <string name="notification_update_install" msgid="1976027995943750647">"INSTALLERA"</string>
+    <string name="notification_battery_warning_title" msgid="4653060935576328068">"<xliff:g id="PRODUCT_NAME">Pixel C</xliff:g>-tangentbordet har ont om batteri"</string>
+    <string name="notification_battery_warning_text" msgid="8865199311689016634">"Ladda <xliff:g id="PRODUCT_NAME">Pixel C</xliff:g>-tangentbordet genom att placera enheten på det med skärmen nedåt"</string>
     <string name="confirmation_update_info" msgid="8926329741205291059">"Tangentbordet kan inte användas medan det uppdateras.\nUppdateringen tar ungefär tre minuter.\n\nKoppla inte ur tangentbordet förrän uppdateringen har slutförts.\n"</string>
     <string name="confirmation_install" msgid="3670984415228235814">"INSTALLERA"</string>
 </resources>
