@@ -36,16 +36,23 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import java.lang.System;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,18 +68,6 @@ public class KeyboardFirmwareUpdateService extends Service {
             "com.android.dragonkeyboardfirmwareupdater.action.KEYBOARD_UPDATE_CONFIRMED";
     public static final String ACTION_KEYBOARD_UPDATE_POSTPONED =
             "com.android.dragonkeyboardfirmwareupdater.action.KEYBOARD_UPDATE_POSTPONED";
-    public static final String ACTION_KEYBOARD_UPDATE_STARTED =
-            "com.android.dragonkeyboardfirmwareupdater.action.KEYBOARD_UPDATE_STARTED";
-    public static final String ACTION_KEYBOARD_UPDATE_PROGRESS_CHANGED =
-            "com.android.dragonkeyboardfirmwareupdater.action.KEYBOARD_UPDATE_PROGRESS_CHANGED";
-    public static final String ACTION_KEYBOARD_UPDATE_ABORTED =
-            "com.android.dragonkeyboardfirmwareupdater.action.KEYBOARD_UPDATE_ABORTED";
-    public static final String ACTION_KEYBOARD_UPDATE_COMPLETED =
-            "com.android.dragonkeyboardfirmwareupdater.action.KEYBOARD_UPDATE_COMPLETED";
-
-    /* Actions for update notification flag. */
-    public static final String ACTION_KEYBOARD_UPDATE_NOTIFICATION_OFF =
-            "com.android.dragonkeyboardfirmwareupdater.action.KEYBOARD_UPDATE_NOTIFICATION_OFF";
 
     /* Extra information for UpdaterConfirmationActivity. */
     public static final String EXTRA_KEYBOARD_NAME =
@@ -81,6 +76,9 @@ public class KeyboardFirmwareUpdateService extends Service {
             "com.android.dragonkeyboardfirmwareupdater.EXTRA_KEYBOARD_ADDRESS";
     public static final String EXTRA_KEYBOARD_FIRMWARE_VERSION =
             "com.android.dragonkeyboardfirmwareupdater.EXTRA_KEYBOARD_FIRMWARE_VERSION";
+
+    public static final String PREFERENCE_NEXT_UPDATE_TIME =
+            "com.android.dragonkeyboardfirmwareupdater.PREFERENCE_NEXT_UPDATE_TIME";
 
     /**
      * Bluetooth connectivity. The Bluetooth LE connection maintained in this service is for
@@ -221,7 +219,6 @@ public class KeyboardFirmwareUpdateService extends Service {
                     if (mGattConnectionState != GATT_STATE_DISCONNECTED) {
                         changeGattState(GATT_STATE_DISCONNECTED);
                     }
-                    cleanUpGattConnection();
                     break;
             }
         }
@@ -394,7 +391,6 @@ public class KeyboardFirmwareUpdateService extends Service {
             Log.d(TAG, "DfuProgressListener: onDfuCompleted");
             cancelDfuServiceNotification();
             changeDfuStatus(DFU_STATE_UPDATE_COMPLETE);
-            mWakeLock.release();
         }
 
         @Override
@@ -402,7 +398,6 @@ public class KeyboardFirmwareUpdateService extends Service {
             Log.e(TAG, "DfuProgressListener: onDfuAborted");
             cancelDfuServiceNotification();
             changeDfuStatus(DFU_STATE_UPDATE_ABORTED);
-            mWakeLock.release();
         }
 
         @Override
@@ -410,7 +405,6 @@ public class KeyboardFirmwareUpdateService extends Service {
             Log.e(TAG, "DfuProgressListener: onError: " + message);
             cancelDfuServiceNotification();
             changeDfuStatus(DFU_STATE_UPDATE_ABORTED);
-            mWakeLock.release();
         }
     };
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -448,6 +442,43 @@ public class KeyboardFirmwareUpdateService extends Service {
         registerReceiver(mBroadcastReceiver, makeIntentFilter());
         mHandler = new Handler();
 
+        final String deviceName = intent.getStringExtra(EXTRA_KEYBOARD_NAME);
+        final String deviceAddress = intent.getStringExtra(EXTRA_KEYBOARD_ADDRESS);
+
+        Log.d(TAG, "onStartCommand: device " + deviceName + "[" + deviceAddress + "]");
+
+        if (isUpdateServiceInUse() || deviceAddress == null ||
+                !getString(R.string.target_keyboard_name).equals(deviceName)) {
+            terminateSelf();
+            return START_NOT_STICKY;
+        }
+
+        // Check the next update time.
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final long nextUpdateTime = preferences.getLong(PREFERENCE_NEXT_UPDATE_TIME + deviceAddress, 0);
+        if (nextUpdateTime != 0 && System.currentTimeMillis() < nextUpdateTime) {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(nextUpdateTime);
+            Log.d(TAG, "onStartCommand: next update time: " + formatter.format(calendar.getTime()));
+            terminateSelf();
+            return START_NOT_STICKY;
+        }
+
+        if (nextUpdateTime != 0) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.remove(PREFERENCE_NEXT_UPDATE_TIME + deviceAddress);
+            editor.apply();
+        }
+
+        obtainKeyboardInfo(deviceName, deviceAddress);
+
+        if (mDfuStatus != DFU_STATE_INFO_READY) {
+            Log.w(TAG, "onHandleIntent: DFU preparation failed");
+            changeDfuStatus(DFU_STATE_OBTAIN_INFO_ERROR);
+            return START_NOT_STICKY;
+        }
+
         // TODO(mcchou): Return proper flag.
         return START_NOT_STICKY;
     }
@@ -459,11 +490,20 @@ public class KeyboardFirmwareUpdateService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy" + getString(R.string.app_name));
-
+        dismissUpdateNotification();
+        handleGattAndDfuCleanup();
+        cleanUpGattConnection();
         disableBluetoothConnectivity();
         DfuServiceListenerHelper.unregisterProgressListener(this, mDfuProgressListener);
         unregisterReceiver(mBroadcastReceiver);
+
+        Log.d(TAG, "onDestroy: " + getString(R.string.app_name));
+    }
+
+    /* Terminates the service. */
+    private void terminateSelf() {
+        Log.d(TAG, "terminateSelf: DFU status: " + getDfuStateString(mDfuStatus));
+        stopSelf();
     }
 
     /**
@@ -510,37 +550,22 @@ public class KeyboardFirmwareUpdateService extends Service {
             Log.d(TAG, "onHandleIntent: " + device.getName() + " [" + device.getAddress() +
                     "] change to state: " + deviceConnectionState);
 
-            // Match the name of the target keyboard.
             if (!isTargetKeyboard(device)) return;
 
-            if (deviceConnectionState == BluetoothAdapter.STATE_CONNECTED) {
-                // Prevent the second keyboard from using the service.
-                if (isUpdateServiceInUse()) return;
-
-                obtainKeyboardInfo(device.getName(), device.getAddress());
-
-                if (mDfuStatus != DFU_STATE_INFO_READY) {
-                    Log.w(TAG, "onHandleIntent: DFU preparation failed");
-                    changeDfuStatus(DFU_STATE_OBTAIN_INFO_ERROR);
-                    return;
+            if (deviceConnectionState == BluetoothAdapter.STATE_DISCONNECTED) {
+                if (mDfuStatus != DFU_STATE_SWITCHING_TO_DFU_MODE && mDfuStatus != DFU_STATE_MODE_SWITCHED) {
+                    terminateSelf();
                 }
-
-                showUpdateNotification();
-            } else if (deviceConnectionState == BluetoothAdapter.STATE_DISCONNECTING) {
-                handleGattDisconnection();
             }
 
         } else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
             final int adapterState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
-            if (adapterState == BluetoothAdapter.STATE_ON) {
-                if (!isBluetoothEnabled()) enableBluetoothConnectivity();
-            } else if (adapterState == BluetoothAdapter.STATE_TURNING_OFF) {
-                // Terminate update process and disable Bluetooth connectivity.
-                disableBluetoothConnectivity();
 
+            if (adapterState == BluetoothAdapter.STATE_TURNING_OFF) {
+                // Terminate update process and disable Bluetooth connectivity.
                 // Since BluetoothAdapter has been disabled, the callback of disconnection would not
                 // be called. Therefore a separate clean-up of GATT connection is need.
-                cleanUpGattConnection();
+                terminateSelf();
             }
 
         } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
@@ -554,24 +579,26 @@ public class KeyboardFirmwareUpdateService extends Service {
 
             if (!isTargetKeyboard(device)) return;
 
+
             if (deviceBondState == BluetoothDevice.BOND_NONE) {
-                handleGattDisconnection();
+                terminateSelf();
             }
 
         } else if (ACTION_KEYBOARD_UPDATE_CONFIRMED.equals(action)) {
             dismissUpdateNotification();
 
-            if (mDfuStatus != DFU_STATE_INFO_READY || mDfuStatus == DFU_STATE_UPDATING) {
-                Log.w(TAG, "onHandleIntent: DFP preparation not ready or DFU is in progress. ");
-                changeDfuStatus(DFU_STATE_UPDATE_ABORTED);
-                return;
-            }
-
+            // Check if the incoming update confirmation is associated with the current keyboard.
             String keyboardName = intent.getStringExtra(EXTRA_KEYBOARD_NAME);
             String keyboardAddress = intent.getStringExtra(EXTRA_KEYBOARD_ADDRESS);
             if (!mKeyboardName.equals(keyboardName) || !mKeyboardAddress.equals(keyboardAddress)) {
                 Log.w(TAG, "onHandleIntent: No DFU service associated with " + keyboardName + " [" +
                         keyboardAddress + "]");
+                return;
+            }
+
+            if (mDfuStatus != DFU_STATE_INFO_READY || mDfuStatus == DFU_STATE_UPDATING) {
+                Log.w(TAG, "onHandleIntent: DFP preparation not ready or DFU is in progress.");
+                changeDfuStatus(DFU_STATE_UPDATE_ABORTED);
                 return;
             }
 
@@ -582,6 +609,12 @@ public class KeyboardFirmwareUpdateService extends Service {
         } else if (ACTION_KEYBOARD_UPDATE_POSTPONED.equals(action)) {
             dismissUpdateNotification();
             // TODO(mcchou): Update the preference when the Settings keyboard entry is available.
+            Log.d(TAG, "onHandleIntent: Postpone the update");
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putLong(PREFERENCE_NEXT_UPDATE_TIME + mKeyboardAddress,
+                    System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS));
+            editor.apply();
         }
     }
 
@@ -600,8 +633,10 @@ public class KeyboardFirmwareUpdateService extends Service {
         return mKeyboardName + " [" + mKeyboardAddress + "]";
     }
 
+    /* Checks if the device is the keyboard associated with the service. */
     private boolean isTargetKeyboard(BluetoothDevice device) {
-        return (device != null && getString(R.string.target_keyboard_name).equals(device.getName()));
+        if (device == null) return false;
+        return (mKeyboardName.equals(device.getName()) && mKeyboardAddress.equals(device.getAddress()));
     }
 
     /* Retrieves Bluetooth manager, adapter and scanner. */
@@ -627,32 +662,15 @@ public class KeyboardFirmwareUpdateService extends Service {
             return false;
         }
 
-        // The first auto-connection after boot might be missed due to starting time of the updater service.
-        List<BluetoothDevice> connectedDevices = mBluetoothManager.getConnectedDevices(BluetoothProfile.GATT);
-        for (BluetoothDevice device : connectedDevices) {
-            if (isTargetKeyboard(device) && !isUpdateServiceInUse()) {
-                Log.d(TAG, "enableBluetoothConnectivity: Found keyboard " + device.getName() + " [" +
-                        device.getAddress() + "] connected");
-                obtainKeyboardInfo(device.getName(), device.getAddress());
-                break;
-            }
-        }
-
         return true;
     }
 
     /* Disables Bluetooth connectivity if exists. */
     private void disableBluetoothConnectivity() {
         Log.d(TAG, "disableBluetoothConnectivity");
-        handleGattDisconnection();
-        try {
-            Thread.sleep(3000);  // 3 seconds
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         mBluetoothManager = null;
         mBluetoothAdapter = null;
-        mBroadcastReceiver = null;
+        mBluetoothLeScanner = null;
     }
 
     /* Shows the update notification. */
@@ -763,6 +781,14 @@ public class KeyboardFirmwareUpdateService extends Service {
         mBluetoothGattClient.disconnect();
         changeGattState(GATT_STATE_DISCONNECTING);
         mGattOperationStatus = BluetoothGatt.GATT_SUCCESS;
+
+        // Wait 2 seconds for GATT disconnection request to finish.
+        try {
+            Thread.sleep(2000);  // 2 seconds
+            Log.d(TAG, "disconnectFromKeyboard: Wait for GATT disconnection");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -771,8 +797,6 @@ public class KeyboardFirmwareUpdateService extends Service {
      */
     private void cleanUpGattConnection() {
         Log.d(TAG, "cleanUpGattConnection");
-        mKeyboardName = null;
-        mKeyboardAddress = null;
         mKeyboardFirmwareVersion = null;
         mBluetoothGattClient = null;
         mBatteryService = null;
@@ -971,10 +995,6 @@ public class KeyboardFirmwareUpdateService extends Service {
 
         changeDfuStatus(DFU_STATE_UPDATING);
 
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
-        mWakeLock.acquire();
-
         String packageName = getApplicationContext().getPackageName();
         int initResourceId = getResources().getIdentifier(
             getString(R.string.target_firmware_init_file_name), "raw", packageName);
@@ -1006,6 +1026,14 @@ public class KeyboardFirmwareUpdateService extends Service {
         final Intent pauseAction = new Intent(DfuService.BROADCAST_ACTION);
         pauseAction.putExtra(DfuService.EXTRA_ACTION, DfuService.ACTION_ABORT);
         LocalBroadcastManager.getInstance(this).sendBroadcast(pauseAction);
+
+        // Wait 2 seconds for DFU abort request to finish.
+        try {
+            Thread.sleep(2000);  // 2 seconds
+            Log.d(TAG, "abortDfu: Wait for DFU to abort");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /* State setter of GATT connection. */
@@ -1034,7 +1062,6 @@ public class KeyboardFirmwareUpdateService extends Service {
 
     /* State flow for the updater service. */
     private void changeDfuStatus(int newStatus) {
-        int nextStatus = newStatus;
         switch (newStatus) {
             case DFU_STATE_NOT_STARTED:
                 break;
@@ -1042,10 +1069,9 @@ public class KeyboardFirmwareUpdateService extends Service {
                 connectToKeyboard();
                 break;
             case DFU_STATE_INFO_READY:
-                // TODO(mcchou): Send info intent to Settings.
+                showUpdateNotification();
                 break;
             case DFU_STATE_SWITCHING_TO_DFU_MODE:
-                // TODO(mcchou): Send update in progress to Settings.
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -1059,36 +1085,32 @@ public class KeyboardFirmwareUpdateService extends Service {
                 scanLeDevice(true);
                 break;
             case DFU_STATE_UPDATING:
-                // TODO(mcchou): Send progress intent to Settings.
+                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+                mWakeLock.acquire();
                 break;
             case DFU_STATE_UPDATE_COMPLETE:
-                // TODO(mcchou): Send update complete to Settings.
-                nextStatus = DFU_STATE_NOT_STARTED;
+                mWakeLock.release();
+                terminateSelf();
                 break;
             case DFU_STATE_INFO_NOT_SUITABLE:
-                // TODO(mcchou): Send fail intent to Settings.
-                disconnectFromKeyboard();
-                nextStatus = DFU_STATE_NOT_STARTED;
+                terminateSelf();
                 break;
             case DFU_STATE_OBTAIN_INFO_ERROR:
-                // TODO(mcchou): Send fail intent to Settings.
-                disconnectFromKeyboard();
-                nextStatus = DFU_STATE_NOT_STARTED;
+                terminateSelf();
                 break;
             case DFU_STATE_SWITCH_TO_DFU_MODE_ERROR:
-                // TODO(mcchou): Send abort intent to Settings.
-                nextStatus = DFU_STATE_INFO_READY;
+                terminateSelf();
                 break;
             case DFU_STATE_UPDATE_ABORTED:
-                // TODO(mcchou): Send abort intent to Settings.
-                nextStatus = DFU_STATE_NOT_STARTED;
+                mWakeLock.release();
+                terminateSelf();
                 break;
             default:
                 break;
         }
         mDfuStatus = newStatus;
         Log.d(TAG, "---- changeDfuStatus: " + getDfuStateString(mDfuStatus));
-        if (nextStatus != newStatus) changeDfuStatus(nextStatus);
     }
 
     /* Helper function for logging DFU state change. */
@@ -1121,12 +1143,11 @@ public class KeyboardFirmwareUpdateService extends Service {
         }
     }
 
-    /* Handles GATT disconnection. */
-    private void handleGattDisconnection() {
-        Log.d(TAG, "handleGattDisconnection");
+    /* Handles GATT disconnection and DFU aborting before the service terminate itself. */
+    private void handleGattAndDfuCleanup() {
+        Log.d(TAG, "handleGattAndDfuCleanup");
         if (mGattConnectionState == GATT_STATE_DISCONNECTED) return;
 
-        // TODO(mcchou): add fall through comment
         // Handle update process termination based on the current DFU state.
         switch (mDfuStatus) {
             case DFU_STATE_SWITCHING_TO_DFU_MODE:

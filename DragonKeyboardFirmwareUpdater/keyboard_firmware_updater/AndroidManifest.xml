@@ -14,7 +14,8 @@
    limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.android.dragonkeyboardfirmwareupdater" >
+    package="com.android.dragonkeyboardfirmwareupdater"
+    android:sharedUserId="android.uid.system" >
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -23,18 +24,16 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:persistent="true">
+        android:supportsRtl="true">
 
-        <receiver android:name=".BootCompletedBroadcastReceiver">
+        <receiver android:name=".BluetoothConnectionBroadcastReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED" />
             </intent-filter>
         </receiver>
 
