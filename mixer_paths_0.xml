@@ -6,8 +6,8 @@
 
   <ctl name="Sidetone Volume" value="0"/>
   <ctl name="DAC1 Playback Volume" value="87"/>
-  <ctl name="STO1 ADC Boost Volume" value="1"/>
-  <ctl name="STO2 ADC Boost Volume" value="1"/>
+  <ctl name="STO1 ADC Boost Volume" value="2"/>
+  <ctl name="STO2 ADC Boost Volume" value="2"/>
   <ctl name="STO3 ADC Boost Volume" value="0"/>
   <ctl name="Mono ADC Boost Volume" value="2"/>
   <ctl name="ADC1 Capture Volume" value="23"/>
@@ -111,7 +111,7 @@
 
   <path name="voice-rec-mic">
       <path name="speaker-mic" />
-      <ctl name="STO1 ADC Boost Volume" value="0"/>
+      <ctl name="STO1 ADC Boost Volume" value="2"/>
       <ctl name="ADC1 Capture Volume" value="31"/>
   </path>
 
