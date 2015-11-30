@@ -503,6 +503,11 @@ int sound_trigger_open_for_streaming()
         ret = -EBUSY;
         goto exit;
     }
+    if (!stdev->pcm) {
+        ALOGE("%s: PCM is not open", __func__);
+        ret = -EINVAL;
+        goto exit;
+    }
     // TODO: Probably want to get something from whoever called us to bind to it/assert that it's a
     // valid connection. Perhaps returning a more
     // meaningful handle would be a good idea as well.
@@ -542,6 +547,12 @@ size_t sound_trigger_read_samples(int audio_handle, void *buffer, size_t  buffer
         ret = -EINVAL;
         goto exit;
     }
+    if (!stdev->pcm) {
+        ALOGE("%s: PCM has closed", __func__);
+        ret = -EINVAL;
+        goto exit;
+    }
+
 
 read_again:
     frames = pcm_mmap_avail(stdev->pcm);
