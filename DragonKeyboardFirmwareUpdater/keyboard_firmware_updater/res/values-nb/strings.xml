@@ -17,7 +17,7 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name" msgid="305277655681356345">"Oppdateringstjeneste for fastvare for tastaturet <xliff:g id="PRODUCT_NAME">Pixel C</xliff:g>"</string>
+    <string name="app_name" msgid="305277655681356345">"Oppdateringstjeneste for fastvare for <xliff:g id="PRODUCT_NAME">Pixel C</xliff:g>-tastaturet"</string>
     <string name="notification_update_title" msgid="3750593986639930">"Oppdatering for tastaturet er klart"</string>
     <string name="notification_update_text" msgid="5242643461253313645">"Oppdateringen for <xliff:g id="PRODUCT_NAME">Pixel C</xliff:g>-tastaturet er klar"</string>
     <string name="notification_update_later" msgid="6413223936294534509">"SENERE"</string>
