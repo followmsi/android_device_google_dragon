@@ -385,7 +385,10 @@ int cros_ec_sysfs_get_attr(const char *path, const char *attr, char *output)
     close(fd);
     if (size == 0)
         return -EINVAL;
-    output[size - 1] = 0;
+    if (output[size - 1] == '\n')
+        output[size - 1] = 0;
+    else
+        output[size] = 0;
     return 0;
 }
 
