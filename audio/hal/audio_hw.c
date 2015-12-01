@@ -1201,6 +1201,20 @@ error_config:
     return ret;
 }
 
+static void lock_input_stream(struct stream_in *in)
+{
+    pthread_mutex_lock(&in->pre_lock);
+    pthread_mutex_lock(&in->lock);
+    pthread_mutex_unlock(&in->pre_lock);
+}
+
+static void lock_output_stream(struct stream_out *out)
+{
+    pthread_mutex_lock(&out->pre_lock);
+    pthread_mutex_lock(&out->lock);
+    pthread_mutex_unlock(&out->pre_lock);
+}
+
 static int uc_release_pcm_devices(struct audio_usecase *usecase)
 {
     struct stream_out *out = (struct stream_out *)usecase->stream;
@@ -1579,7 +1593,7 @@ static int out_standby(struct audio_stream *stream)
 
     ALOGV("%s: enter: usecase(%d: %s)", __func__,
           out->usecase, use_case_table[out->usecase]);
-    pthread_mutex_lock(&out->lock);
+    lock_output_stream(out);
     if (!out->standby) {
         pthread_mutex_lock(&adev->lock);
         do_out_standby_l(out);
@@ -1619,7 +1633,7 @@ static int out_set_parameters(struct audio_stream *stream, const char *kvpairs)
     if (ret >= 0) {
         val = atoi(value);
         pthread_mutex_lock(&adev->lock_inputs);
-        pthread_mutex_lock(&out->lock);
+        lock_output_stream(out);
         pthread_mutex_lock(&adev->lock);
         if (val != 0) {
             out->devices = val;
@@ -1765,7 +1779,7 @@ static ssize_t out_write(struct audio_stream_out *stream, const void *buffer,
     unsigned char *data = NULL;
     struct pcm_config config;
 
-    pthread_mutex_lock(&out->lock);
+    lock_output_stream(out);
     if (out->standby) {
         pthread_mutex_lock(&adev->lock);
         ret = start_output_stream(out);
@@ -1882,7 +1896,7 @@ static int out_get_presentation_position(const struct audio_stream_out *stream,
     int ret = -1;
     unsigned long dsp_frames;
 
-    pthread_mutex_lock(&out->lock);
+    lock_output_stream(out);
 
     /* FIXME: which device to read from? */
     if (!list_empty(&out->pcm_dev_list)) {
@@ -2001,7 +2015,7 @@ static int in_standby_l(struct stream_in *in)
 {
     struct audio_device *adev = in->dev;
     int status = 0;
-    pthread_mutex_lock(&in->lock);
+    lock_input_stream(in);
     if (!in->standby) {
         pthread_mutex_lock(&adev->lock);
         status = do_in_standby_l(in);
@@ -2052,7 +2066,7 @@ static int in_set_parameters(struct audio_stream *stream, const char *kvpairs)
     ret = str_parms_get_str(parms, AUDIO_PARAMETER_STREAM_INPUT_SOURCE, value, sizeof(value));
 
     pthread_mutex_lock(&adev->lock_inputs);
-    pthread_mutex_lock(&in->lock);
+    lock_input_stream(in);
     pthread_mutex_lock(&adev->lock);
     if (ret >= 0) {
         val = atoi(value);
@@ -2128,11 +2142,11 @@ static ssize_t in_read(struct audio_stream_in *stream, void *buffer,
     size_t frames_rq = bytes / audio_stream_in_frame_size(stream);
 
     /* no need to acquire adev->lock_inputs because API contract prevents a close */
-    pthread_mutex_lock(&in->lock);
+    lock_input_stream(in);
     if (in->standby) {
         pthread_mutex_unlock(&in->lock);
         pthread_mutex_lock(&adev->lock_inputs);
-        pthread_mutex_lock(&in->lock);
+        lock_input_stream(in);
         if (!in->standby) {
             pthread_mutex_unlock(&adev->lock_inputs);
             goto false_alarm;
@@ -2278,6 +2292,7 @@ static int adev_open_output_stream(struct audio_hw_device *dev,
     /* out->written = 0; by calloc() */
 
     pthread_mutex_init(&out->lock, (const pthread_mutexattr_t *) NULL);
+    pthread_mutex_init(&out->pre_lock, (const pthread_mutexattr_t *) NULL);
     pthread_cond_init(&out->cond, (const pthread_condattr_t *) NULL);
 
     config->format = out->stream.common.get_format(&out->stream.common);
@@ -2306,6 +2321,7 @@ static void adev_close_output_stream(struct audio_hw_device *dev,
     out_standby(&stream->common);
     pthread_cond_destroy(&out->cond);
     pthread_mutex_destroy(&out->lock);
+    pthread_mutex_destroy(&out->pre_lock);
     free(stream);
     ALOGV("%s: exit", __func__);
 }
@@ -2574,6 +2590,9 @@ static int adev_open_input_stream(struct audio_hw_device *dev,
     /* Update config params with the requested sample rate and channels */
     in->usecase = USECASE_AUDIO_CAPTURE;
 
+    pthread_mutex_init(&in->lock, (const pthread_mutexattr_t *) NULL);
+    pthread_mutex_init(&in->pre_lock, (const pthread_mutexattr_t *) NULL);
+
     *stream_in = &in->stream;
     ALOGV("%s: exit", __func__);
     return 0;
@@ -2590,6 +2609,8 @@ static void adev_close_input_stream(struct audio_hw_device *dev,
     pthread_mutex_lock(&adev->lock_inputs);
 
     in_standby_l(in);
+    pthread_mutex_destroy(&in->lock);
+    pthread_mutex_destroy(&in->pre_lock);
     free(stream);
 
     pthread_mutex_unlock(&adev->lock_inputs);
