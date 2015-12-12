@@ -25,12 +25,12 @@
     <string name="target_keyboard_name" translatable="false">Pixel C Keyboard</string>
     <string name="target_manufacturer" translatable="false">Google</string>
     <string name="target_battery_level" translatable="false">20</string>
-    <string name="target_firmware_version" translatable="false">0.151104</string>
+    <string name="target_firmware_version" translatable="false">0.151210</string>
     <string name="target_min_updatable_firmware_version" translatable="false">0.151020</string>
 
     <!-- File names of the firmware images in raw resource (for service use)-->
-    <string name="target_firmware_init_file_name" translatable="false">init_151104_mp_signed</string>
-    <string name="target_firmware_image_file_name" translatable="false">image_151104_mp_signed</string>
+    <string name="target_firmware_init_file_name" translatable="false">init_151210_mp_signed</string>
+    <string name="target_firmware_image_file_name" translatable="false">image_151210_mp_signed</string>
 
     <!-- The update notification message title shown when a keyboard update is
          available. Users are given the option to install or postpone the update.
