@@ -48,3 +48,4 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/dragon_featu
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/android.hardware.camera.raw.xml)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/android.hardware.location.gps.xml)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/android.hardware.camera.full.xml)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/android.hardware.camera.manual_sensor.xml)
