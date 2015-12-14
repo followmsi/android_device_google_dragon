@@ -172,7 +172,7 @@ ssize_t CoredumpWriter::WriteCoredumpToFD(int fd_dest) {
   expected_coredump_size_ = program_headers_filtered.back().p_offset +
       program_headers_filtered.back().p_filesz;
   if (expected_coredump_size_ > coredump_size_limit_) {
-    ALOGE("Coredump too large: %d", expected_coredump_size_);
+    ALOGE("Coredump too large: %zu", expected_coredump_size_);
     return -1;
   }
 
@@ -194,7 +194,7 @@ ssize_t CoredumpWriter::WriteCoredumpToFD(int fd_dest) {
     if (!Seek(fd_dest, offset) ||
         !android::base::WriteFully(fd_dest, &program_header,
                                    sizeof(program_header))) {
-      ALOGE("Failed to write program header: i = %d", i);
+      ALOGE("Failed to write program header: i = %zu", i);
       return -1;
     }
   }
@@ -210,12 +210,12 @@ ssize_t CoredumpWriter::WriteCoredumpToFD(int fd_dest) {
     if (program_header.p_filesz > 0) {
       const Phdr& program_header_original = program_headers[i];
       if (!reader.Seek(program_header_original.p_offset)) {
-        ALOGE("Failed to seek segment: i = %d", i);
+        ALOGE("Failed to seek segment: i = %zu", i);
         return -1;
       }
       if (!Seek(fd_dest, program_header.p_offset) ||
           !reader.CopyTo(fd_dest, program_header.p_filesz)) {
-        ALOGE("Failed to write segment: i = %d", i);
+        ALOGE("Failed to write segment: i = %zu", i);
         return -1;
       }
     }
