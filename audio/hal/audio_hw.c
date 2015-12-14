@@ -920,13 +920,15 @@ static ssize_t read_and_process_frames(struct stream_in *in, void* buffer, ssize
 
     if (has_additional_channels)
     {
+        // TODO do not hardcode 16-bit encoding, use audio_stream_out_frame_size() instead
         int16_t* src_buffer = (int16_t *)proc_buf_out;
         int16_t* dst_buffer = (int16_t *)buffer;
 
         if (dst_channels == 1) {
             for (i = frames_wr; i > 0; i--)
             {
-                *dst_buffer++ = *src_buffer;
+                *dst_buffer = *src_buffer;
+                dst_buffer += 1;
                 src_buffer += src_channels;
             }
         } else {
@@ -1533,7 +1535,7 @@ static int check_input_parameters(uint32_t sample_rate,
 {
     if (format != AUDIO_FORMAT_PCM_16_BIT) return -EINVAL;
 
-    if ((channel_count < 1) || (channel_count > 2)) return -EINVAL;
+    if ((channel_count < 1) || (channel_count > 4)) return -EINVAL;
 
     switch (sample_rate) {
     case 8000:
@@ -1829,6 +1831,10 @@ static ssize_t out_write(struct audio_stream_out *stream, const void *buffer,
     unsigned char *data = NULL;
     struct pcm_config config;
 
+    size_t src_channels = audio_channel_count_from_out_mask(out->channel_mask);
+    size_t dst_channels = out->config.channels;
+    bool channel_remapping_needed = (dst_channels != src_channels);
+
     lock_output_stream(out);
     if (out->standby) {
         pthread_mutex_lock(&adev->lock);
@@ -1869,7 +1875,7 @@ false_alarm:
             unsigned audio_bytes;
             const void *audio_data;
 
-            ALOGVV("%s: writing buffer (%d bytes) to pcm device", __func__, bytes);
+            ALOGVV("%s: writing buffer (%zd bytes) to pcm device", __func__, bytes);
             if (pcm_device->resampler && pcm_device->res_buffer) {
                 audio_data = pcm_device->res_buffer;
                 audio_bytes = frames_wr * frame_size;
@@ -1883,6 +1889,37 @@ false_alarm:
              * 4 bytes per frame.
              */
             apply_dsp(pcm_device, audio_data, audio_bytes/4);
+
+            if (channel_remapping_needed) {
+                unsigned remapped_audio_bytes;
+                const void *remapped_audio_data;
+                int i;
+                int frames_num = audio_bytes / frame_size;
+
+                audio_bytes = audio_bytes * dst_channels / src_channels;
+
+                /* With additional channels, we cannot use original buffer */
+                if (out->proc_buf_size < audio_bytes) {
+                    out->proc_buf_size = audio_bytes;
+                    out->proc_buf_out = (int16_t *)realloc(out->proc_buf_out, audio_bytes);
+                    ALOG_ASSERT((out->proc_buf_out != NULL),
+                                "out_write() failed to reallocate proc_buf_out");
+                }
+                remapped_audio_data = out->proc_buf_out;
+
+                // TODO do not hardcode 16-bit encoding, use audio_stream_out_frame_size() instead
+                int16_t* src_buffer = (int16_t *)audio_data;
+                int16_t* dst_buffer = (int16_t *)remapped_audio_data;
+
+                for (i = frames_num; i > 0; i--)
+                {
+                    memcpy(dst_buffer, src_buffer, src_channels*sizeof(int16_t));
+                    dst_buffer += dst_channels;
+                    src_buffer += src_channels;
+                }
+
+                audio_data = remapped_audio_data;
+            }
 
             pcm_device->status = pcm_write(pcm_device->pcm, audio_data, audio_bytes);
             if (pcm_device->status != 0)
@@ -2660,6 +2697,7 @@ static int adev_open_input_stream(struct audio_hw_device *dev,
     in->source = source;
     in->dev = adev;
     in->standby = 1;
+    config->channel_mask = AUDIO_CHANNEL_INDEX_MASK_2;
     in->main_channels = config->channel_mask;
     in->requested_rate = config->sample_rate;
     if (config->sample_rate != CAPTURE_DEFAULT_SAMPLING_RATE)

@@ -109,7 +109,7 @@ enum {
  */
 #define PLAYBACK_PERIOD_SIZE 512
 #define PLAYBACK_PERIOD_COUNT 2
-#define PLAYBACK_DEFAULT_CHANNEL_COUNT 2
+#define PLAYBACK_DEFAULT_CHANNEL_COUNT 4
 #define PLAYBACK_DEFAULT_SAMPLING_RATE 48000
 #define PLAYBACK_START_THRESHOLD ((PLAYBACK_PERIOD_SIZE * PLAYBACK_PERIOD_COUNT) - 1)
 #define PLAYBACK_STOP_THRESHOLD (PLAYBACK_PERIOD_SIZE * PLAYBACK_PERIOD_COUNT)
@@ -129,7 +129,7 @@ enum {
 #define CAPTURE_PERIOD_SIZE 1024
 #define CAPTURE_PERIOD_SIZE_LOW_LATENCY 512
 #define CAPTURE_PERIOD_COUNT 2
-#define CAPTURE_DEFAULT_CHANNEL_COUNT 2
+#define CAPTURE_DEFAULT_CHANNEL_COUNT 4
 #define CAPTURE_DEFAULT_SAMPLING_RATE 48000
 #define CAPTURE_START_THRESHOLD 1
 
@@ -229,7 +229,8 @@ struct stream_out {
     int                         send_new_metadata;
 
     struct audio_device*        dev;
-
+    int16_t *proc_buf_out;
+    size_t proc_buf_size;
 };
 
 struct stream_in {
