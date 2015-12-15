@@ -32,9 +32,10 @@
 #include <hardware/sound_trigger.h>
 #include <tinyalsa/asoundlib.h>
 
-#define DRAGON_MIXER_VAD	0
-#define DRAGON_MIC_CTRL		"Int Mic Switch"
-#define UEVENT_MSG_LEN		1024
+#define DRAGON_MIXER_VAD          0
+#define DRAGON_MIC_CTRL           "Int Mic Switch"
+#define DRAGON_HOTWORD_MODEL_CTRL "Hotword Model"
+#define UEVENT_MSG_LEN            1024
 
 #define DRAGON_ST_CARD_NUM 0
 #define DRAGON_ST_DEV_NUM 87
@@ -69,6 +70,7 @@ struct dragon_sound_trigger_device {
     int term_sock;
     struct mixer *mixer;
     struct mixer_ctl *int_mic_sw;
+    struct mixer_ctl *hotword_model;
     struct sound_trigger_recognition_config *config;
     struct pcm *pcm;
     int is_streaming;
@@ -109,6 +111,11 @@ static int stdev_init_mixer(struct dragon_sound_trigger_device *stdev)
     if (!stdev->int_mic_sw)
         goto err;
 
+    stdev->hotword_model = mixer_get_ctl_by_name(stdev->mixer,
+                                                 DRAGON_HOTWORD_MODEL_CTRL);
+    if (!stdev->hotword_model)
+        ALOGE("No hotword model mixer control\n");
+
     stdev_dsp_set_power(stdev, 0); // Disable DSP at the beginning
 
     return 0;
@@ -143,11 +150,11 @@ static void stdev_close_mixer(struct dragon_sound_trigger_device *stdev)
 static int vad_load_sound_model(struct dragon_sound_trigger_device *stdev,
                                 char *buf, size_t len)
 {
-    (void)stdev;
-    (void)buf;
-    (void)len;
-    /* TODO(dgreid) - implement with kcontrol TLV value. */
-    return 0;
+    int ret;
+    ret = mixer_ctl_set_array(stdev->hotword_model, buf, len);
+    if (ret)
+        ALOGE("Failed hotword model write %d\n", ret);
+    return ret;
 }
 
 static char *sound_trigger_event_alloc(struct dragon_sound_trigger_device *
