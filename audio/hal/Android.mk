@@ -41,7 +41,6 @@ LOCAL_C_INCLUDES += \
 	$(call include-path-for, audio-route) \
 	$(call include-path-for, audio-effects)
 
-
 LOCAL_MODULE := audio.primary.dragon
 
 LOCAL_MODULE_RELATIVE_PATH := hw

@@ -25,11 +25,22 @@
 #include <audio_utils/resampler.h>
 #include <audio_route/audio_route.h>
 
+#define PREPROCESSING_ENABLED
+
 #define SOUND_TRIGGER_HAL_LIBRARY_PATH "/system/lib/hw/sound_trigger.primary.dragon.so"
 
 /* Retry for delay in FW loading*/
 #define RETRY_NUMBER 10
 #define RETRY_US 500000
+
+#ifdef PREPROCESSING_ENABLED
+#define MAX_PREPROCESSORS 3
+struct effect_info_s {
+    effect_handle_t effect_itfe;
+    size_t num_channel_configs;
+    channel_config_t *channel_configs;
+};
+#endif
 
 #define TTY_MODE_OFF    1
 #define TTY_MODE_FULL   2
@@ -258,8 +269,19 @@ struct stream_in {
     size_t                              read_buf_size;
     size_t                              read_buf_frames;
 
-    void *proc_buf_in;
+    void *proc_buf_out;
     size_t proc_buf_size;
+
+#ifdef PREPROCESSING_ENABLED
+    void *proc_buf_in;
+    size_t proc_buf_frames;
+
+    int num_preprocessors;
+    struct effect_info_s preprocessors[MAX_PREPROCESSORS];
+
+    bool aux_channels_changed;
+    uint32_t aux_channels;
+#endif
 
     struct audio_device*                dev;
 };
