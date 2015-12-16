@@ -698,6 +698,7 @@ public class KeyboardFirmwareUpdateService extends Service {
                 .setCategory(Notification.CATEGORY_SYSTEM)
                 .setContentTitle(getString(R.string.notification_update_title))
                 .setContentText(getString(R.string.notification_update_text))
+                .setContentIntent(installIntent)
                 .setSmallIcon(R.drawable.ic_keyboard)
                 .addAction(new NotificationCompat.Action.Builder(
                         R.drawable.ic_later, getString(R.string.notification_update_later),
