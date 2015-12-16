@@ -2697,7 +2697,6 @@ static int adev_open_input_stream(struct audio_hw_device *dev,
     in->source = source;
     in->dev = adev;
     in->standby = 1;
-    config->channel_mask = AUDIO_CHANNEL_INDEX_MASK_2;
     in->main_channels = config->channel_mask;
     in->requested_rate = config->sample_rate;
     if (config->sample_rate != CAPTURE_DEFAULT_SAMPLING_RATE)
