@@ -31,12 +31,6 @@ public class BluetoothConnectionBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        // Only process if the current user is the primary user in order to avoid starting the
-        // update process on the work profile.
-        if (!UserManager.get(context).isSystemUser()) {
-            return;
-        }
-
         if (!BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(intent.getAction())) return;
 
         Bundle extras = intent.getExtras();
