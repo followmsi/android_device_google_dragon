@@ -6,9 +6,10 @@
 
   <ctl name="Sidetone Volume" value="0"/>
   <ctl name="DAC1 Playback Volume" value="87"/>
-  <ctl name="STO1 ADC Boost Volume" value="1"/>
-  <ctl name="STO2 ADC Boost Volume" value="1"/>
+  <ctl name="STO1 ADC Boost Volume" value="2"/>
+  <ctl name="STO2 ADC Boost Volume" value="2"/>
   <ctl name="STO3 ADC Boost Volume" value="0"/>
+  <ctl name="Mono ADC Boost Volume" value="2"/>
   <ctl name="ADC1 Capture Volume" value="23"/>
   <ctl name="ADC2 Capture Volume" value="23"/>
   <ctl name="ADC3 Capture Volume" value="23"/>
@@ -35,6 +36,13 @@
   <ctl name="DD1 MIXR DAC3 R Switch" value="1"/>
   <ctl name="DACL Mux" value="DACL"/>
   <ctl name="DACR Mux" value="DACR"/>
+
+  <!--
+    Needed for DSP-based hotwording
+  -->
+  <ctl name="Mono ADC MIXL ADC2 Switch" value="1"/>
+  <ctl name="VAD ADC Mux" value="MONO ADC MIX L"/>
+  <ctl name="IB01 Mux" value="VAD ADC/DAC1 FS"/>
 
   <!--
     Stereo1 and Stereo2 rt5677 datapaths are used for capture
@@ -103,7 +111,7 @@
 
   <path name="voice-rec-mic">
       <path name="speaker-mic" />
-      <ctl name="STO1 ADC Boost Volume" value="0"/>
+      <ctl name="STO1 ADC Boost Volume" value="2"/>
       <ctl name="ADC1 Capture Volume" value="31"/>
   </path>
 

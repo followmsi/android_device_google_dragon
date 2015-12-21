@@ -20,6 +20,11 @@ on init
     setprop ro.radio.noril yes
     setprop persist.tegra.nvblit.engine gpu
 
+    # GL driver parameters for tiled cache size and efficient tex fetch
+    setprop persist.tegra.0x523dc5 0x3f000000
+    setprop persist.tegra.58027529 0x00000002
+    setprop persist.tegra.a3456abe 0x087f6080
+
     # fix navigation bar not showing
     setprop qemu.hw.mainkeys 0
     start watchdogd
@@ -31,6 +36,10 @@ on late-init
 
     # enable rcu_expedited
     write /sys/kernel/rcu_expedited 1
+
+on early-boot
+    # Update dm-verity state and set partition.*.verified properties
+    verity_update_state
 
 # Set watchdog timer to 30 seconds and pet it every 10 seconds to get a 20 second margin
 service watchdogd /sbin/watchdogd 10 20
@@ -61,20 +70,6 @@ on post-fs-data
     # secure os storage
     mkdir /data/ss 0700 system system
     mkdir /data/ss/tlk 0700 system system
-
-    # for GPS files
-    mkdir /data/gps 0770 gps system
-    mkdir /data/gps/log 0770 gps system
-    mkdir /data/system/gps 770 gps system
-    chown gps system /system/bin/glgps
-    chown gps system /system/etc/gpsconfig.xml
-    chmod 0660 /system/etc/gpsconfig.xml
-    write /sys/class/gpio/export 66
-    write /sys/class/gpio/gpio66/direction out
-    chmod 0770 /sys/class/gpio/gpio66
-    chown gps system /sys/class/gpio/gpio66
-    chmod 0660 /sys/class/gpio/gpio66/value
-    chown gps system /sys/class/gpio/gpio66/value
 
     # secure os storage
     mkdir /data/ss 0700 system system
@@ -149,9 +144,9 @@ on boot
     write /dev/cpuset/background/cpus 0
     write /dev/cpuset/system-background/cpus 0-1
 
-    # for cpuquiet nr_min_cpus
-    chown system system /sys/devices/system/cpu/cpuquiet/nr_min_cpus
-    chmod 0660 /sys/devices/system/cpu/cpuquiet/nr_min_cpus
+    # for gpu cap in battery saver mode
+    chown system system /sys/kernel/debug/system_edp/capping/force_gpu
+    chmod 0660 /sys/kernel/debug/system_edp/capping/force_gpu
 
     # for lightbar
     chown system system /sys/class/chromeos/cros_ec/lightbar/userspace_control
@@ -187,9 +182,6 @@ on boot
 
     # set GPU auto suspend
     write /sys/devices/57000000.gpu/power/autosuspend_delay_ms 520
-
-    # set the governor of cpuquiet
-    write /sys/devices/system/cpu/cpuquiet/current_governor runnable
 
 on fs
     # Enable verity notification
@@ -288,13 +280,6 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
     class main
     disabled
     oneshot
-
-service gpsd /system/bin/glgps -c /system/etc/gpsconfig.xml
-    class late_start
-    user gps
-    socket gps seqpacket 0660 gps system
-    group system inet net_raw sdcard_rw sdcard_r
-    ioprio be 0
 
 service kickstart /vendor/bin/qcks -i /vendor/firmware/mdm/image/ -r /data/qcks/mdm/
     class late_start

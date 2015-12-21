@@ -18,21 +18,21 @@
 -->
 <device name="Android">
     <!-- All values are in mAh except as noted -->
-    <item name="none">3.5</item>
-    <item name="screen.on">-544.44</item>
-    <item name="screen.full">769.5</item>
-    <item name="bluetooth.active">25.2</item> <!-- dummy -->
-    <item name="bluetooth.on">3.6</item>
-    <item name="wifi.on">2.16</item>
-    <item name="wifi.active">189.9</item>
-    <item name="wifi.scan">105.35</item>
-    <item name="dsp.audio">23.44</item>
-    <item name="dsp.video">37.51</item>
-    <item name="gps.on">30</item> <!-- dummy -->
+    <item name="none">2.18</item>
+    <item name="screen.on">184.86</item>
+    <item name="screen.full">609.72</item>
+    <item name="bluetooth.active">26.47</item>
+    <item name="bluetooth.on">6.29</item>
+    <item name="wifi.on">4.07</item>
+    <item name="wifi.active">79.06</item>
+    <item name="wifi.scan">128.80</item>
+    <item name="dsp.audio">22.93</item>
+    <item name="dsp.video">137.57</item>
+    <item name="camera.avg">997.50</item>
 
     <!-- Different CPU speeds as reported in
          /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state -->
-    <array name="cpu.speeds">
+    <array name="cpu.speeds.cluster0">
         <value>204000</value>
         <value>306000</value>
         <value>408000</value>
@@ -53,36 +53,40 @@
         <value>1912500</value>
     </array>
     <!-- Power consumption when CPU is idle -->
-    <item name="cpu.idle">38.85</item>  <!-- suspend power 168.93 mW -->
-    <item name="cpu.awake">90.35</item> <!-- idle screen off 541.24 mW -->
+    <item name="cpu.idle">7.62</item>  <!-- suspend power 32.00 mW -->
+    <item name="cpu.awake">94.31</item> <!-- idle screen off 428.10 mW -->
+    <array name="cpu.active.cluster0">
     <!-- Power consumption at different speeds -->
-        <value>172.13</value> <!-- 204000 -->
-        <value>234.29</value> <!-- 306000 -->
-        <value>292.56</value> <!-- 408000 -->
-        <value>354.42</value> <!-- 510000 -->
-        <value>411.50</value> <!-- 612000 -->
-        <value>467.38</value> <!-- 714000 -->
-        <value>525.65</value> <!-- 816000 -->
-        <value>584.82</value> <!-- 918000 -->
-        <!-- Don't know why but power stop raising here. Tested multiple times  -->
-        <value>573.17</value> <!-- 1020000 -->
-        <value>581.54</value> <!-- 1122000 -->
-        <value>657.44</value> <!-- 1224000 -->
-        <value>773.39</value> <!-- 1326000 -->
-        <value>896.81</value> <!-- 1428000 -->
-        <value>1048.62</value> <!-- 1530000 -->
-        <value>1235.10</value> <!-- 1632000 -->
-        <value>1359.41</value> <!-- 1734000 -->
-        <value>1375.25</value> <!-- 1836000 -->
-        <value>1426.05</value> <!-- 1912500 -->
+        <value>36.95</value> <!-- 204000 -->
+        <value>60.08</value> <!-- 306000 -->
+        <value>80.32</value> <!-- 408000 -->
+        <value>103.28</value> <!-- 510000 -->
+        <value>121.55</value> <!-- 612000 -->
+        <value>147.79</value> <!-- 714000 -->
+        <value>174.06</value> <!-- 816000 -->
+        <value>173.26</value> <!-- 918000 -->
+        <value>181.49</value> <!-- 1020000 -->
+        <value>180.85</value> <!-- 1122000 -->
+        <value>179.45</value> <!-- 1224000 -->
+        <value>334.99</value> <!-- 1326000 -->
+        <value>373.08</value> <!-- 1428000 -->
+        <value>404.53</value> <!-- 1530000 -->
+        <value>454.39</value> <!-- 1632000 -->
+        <value>483.34</value> <!-- 1734000 -->
+        <value>533.69</value> <!-- 1836000 -->
+        <value>531.57</value> <!-- 1912500 -->
+    </array>
+    <array name="cpu.clusters.cores">
+        <value>4</value> <!-- Cluster 0 has 4 cores (cpu0, cpu1, cpu2, cpu3) -->
+    </array>
     <!-- This is the battery capacity in mAh -->
     <item name="battery.capacity">9000</item>
 
-    <array name="wifi.batchedscan"> <!-- mA. Dummy -->
+    <array name="wifi.batchedscan">
         <value>.0003</value> <!-- 1-8/hr -->
         <value>.003</value>  <!-- 9-64/hr -->
         <value>.03</value>   <!-- 65-512/hr -->
         <value>.3</value>    <!-- 513-4,096/hr -->
-        <value>3</value>    <!-- 4097-/hr -->
+        <value>3</value>     <!-- 4097-/hr -->
     </array>
 </device>

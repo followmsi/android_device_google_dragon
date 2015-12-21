@@ -25,6 +25,8 @@
 #include <audio_utils/resampler.h>
 #include <audio_route/audio_route.h>
 
+#define SOUND_TRIGGER_HAL_LIBRARY_PATH "/system/lib/hw/sound_trigger.primary.dragon.so"
+
 /* Retry for delay in FW loading*/
 #define RETRY_NUMBER 10
 #define RETRY_US 500000
@@ -107,7 +109,7 @@ enum {
  */
 #define PLAYBACK_PERIOD_SIZE 512
 #define PLAYBACK_PERIOD_COUNT 2
-#define PLAYBACK_DEFAULT_CHANNEL_COUNT 2
+#define PLAYBACK_DEFAULT_CHANNEL_COUNT 4
 #define PLAYBACK_DEFAULT_SAMPLING_RATE 48000
 #define PLAYBACK_START_THRESHOLD ((PLAYBACK_PERIOD_SIZE * PLAYBACK_PERIOD_COUNT) - 1)
 #define PLAYBACK_STOP_THRESHOLD (PLAYBACK_PERIOD_SIZE * PLAYBACK_PERIOD_COUNT)
@@ -125,9 +127,9 @@ enum {
 #define PLAYBACK_HDMI_DEFAULT_CHANNEL_COUNT   2
 
 #define CAPTURE_PERIOD_SIZE 1024
-#define CAPTURE_PERIOD_SIZE_LOW_LATENCY 256
+#define CAPTURE_PERIOD_SIZE_LOW_LATENCY 512
 #define CAPTURE_PERIOD_COUNT 2
-#define CAPTURE_DEFAULT_CHANNEL_COUNT 2
+#define CAPTURE_DEFAULT_CHANNEL_COUNT 4
 #define CAPTURE_DEFAULT_SAMPLING_RATE 48000
 #define CAPTURE_START_THRESHOLD 1
 
@@ -198,6 +200,7 @@ struct pcm_device {
     int16_t*                   res_buffer;
     size_t                     res_byte_count;
     struct cras_dsp_context*   dsp_context;
+    int                        sound_trigger_handle;
 };
 
 struct stream_out {
@@ -226,7 +229,8 @@ struct stream_out {
     int                         send_new_metadata;
 
     struct audio_device*        dev;
-
+    int16_t *proc_buf_out;
+    size_t proc_buf_size;
 };
 
 struct stream_in {
@@ -241,6 +245,7 @@ struct stream_in {
     audio_devices_t                     devices;
     uint32_t                            main_channels;
     audio_usecase_t                     usecase;
+    usecase_type_t                      usecase_type;
     bool                                enable_aec;
     audio_input_flags_t                 input_flags;
 
@@ -300,6 +305,11 @@ struct audio_device {
     unsigned int            cur_hdmi_channels;
     int                     dualmic_config;
     bool                    ns_in_voice_rec;
+
+    void*                   sound_trigger_lib;
+    int                     (*sound_trigger_open_for_streaming)();
+    size_t                  (*sound_trigger_read_samples)(int, void*, size_t);
+    int                     (*sound_trigger_close_for_streaming)(int);
 
     int                     dummybuf_thread_timeout;
     int                     dummybuf_thread_cancel;

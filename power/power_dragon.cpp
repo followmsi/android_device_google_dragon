@@ -36,7 +36,6 @@
 
 #define BOOSTPULSE_PATH "/sys/devices/system/cpu/cpufreq/interactive/boostpulse"
 #define CPU_MAX_FREQ_PATH "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq"
-#define CPU_QUIET_NR_MIN_CPUS_PATH "/sys/devices/system/cpu/cpuquiet/nr_min_cpus"
 #define IO_IS_BUSY_PATH "/sys/devices/system/cpu/cpufreq/interactive/io_is_busy"
 #define LIGHTBAR_SEQUENCE_PATH "/sys/class/chromeos/cros_ec/lightbar/sequence"
 #define IIO_ACTIVITY_DEVICE_PATH "/sys/class/chromeos/cros_ec/device/cros-ec-activity.0"
@@ -46,6 +45,9 @@
 #define EC_POWER_LIMIT_NONE "0xffff"
 #define LOW_POWER_MAX_FREQ "1020000"
 #define NORMAL_MAX_FREQ "1912500"
+#define GPU_CAP_PATH "/sys/kernel/debug/system_edp/capping/force_gpu"
+#define LOW_POWER_GPU_CAP "3000"
+#define NORMAL_GPU_CAP "0"
 #define GPU_BOOST_PATH "/sys/devices/57000000.gpu/pstate"
 #define GPU_BOOST_ENTER_CMD "06,0C"    // boost GPU to work at least on 06 - 460MHz
 #define GPU_BOOST_DURATION_MS 2000
@@ -66,6 +68,9 @@ static char *iio_activity_device = NULL;
 
 static const char *max_cpu_freq = NORMAL_MAX_FREQ;
 static const char *low_power_max_cpu_freq = LOW_POWER_MAX_FREQ;
+
+static const char *normal_gpu_cap = NORMAL_GPU_CAP;
+static const char *low_power_gpu_cap = LOW_POWER_GPU_CAP;
 
 
 void sysfs_write(const char *path, const char *s)
@@ -148,7 +153,6 @@ static void power_set_interactive(struct power_module __unused *module, int on)
     sysfs_write(LIGHTBAR_SEQUENCE_PATH, on ? "s3s0" : "s0s3");
     /* limit charging voltage to 5V when interactive otherwise no limit */
     sysfs_write(EXT_VOLTAGE_LIM_PATH, on ? "5000" : EC_POWER_LIMIT_NONE);
-    sysfs_write(CPU_QUIET_NR_MIN_CPUS_PATH, on ? "2" : "1");
     if (iio_activity_device != NULL) {
         char buf[128];
         snprintf(buf, sizeof(buf), "%s/%s/%s", IIO_ACTIVITY_DEVICE_PATH,
@@ -211,8 +215,10 @@ static void dragon_power_hint(struct power_module *module, power_hint_t hint,
         pthread_mutex_lock(&dragon->low_power_lock);
         if (data) {
             sysfs_write(CPU_MAX_FREQ_PATH, low_power_max_cpu_freq);
+            sysfs_write(GPU_CAP_PATH, low_power_gpu_cap);
         } else {
             sysfs_write(CPU_MAX_FREQ_PATH, max_cpu_freq);
+            sysfs_write(GPU_CAP_PATH, normal_gpu_cap);
         }
         low_power_mode = data;
         pthread_mutex_unlock(&dragon->low_power_lock);
