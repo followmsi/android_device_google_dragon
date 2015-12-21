@@ -20,16 +20,6 @@
             androidprv:vendorId="0x18d1"
             androidprv:productId="0x5018"
             androidprv:locale="en" />
-    <keyboard-layout android:name="keyboard_layout_dragon_english_us_colemak"
-            android:label="@string/keyboard_layout_dragon_english_us_colemak_label"
-            android:keyboardLayout="@raw/keyboard_layout_dragon_english_us_colemak"
-            androidprv:vendorId="0x18d1"
-            androidprv:productId="0x5018" />
-    <keyboard-layout android:name="keyboard_layout_dragon_english_us_dvorak"
-            android:label="@string/keyboard_layout_dragon_english_us_dvorak_label"
-            android:keyboardLayout="@raw/keyboard_layout_dragon_english_us_dvorak"
-            androidprv:vendorId="0x18d1"
-            androidprv:productId="0x5018" />
     <keyboard-layout android:name="keyboard_layout_dragon_english_us_intl"
             android:label="@string/keyboard_layout_dragon_english_us_intl_label"
             android:keyboardLayout="@raw/keyboard_layout_dragon_english_us_intl"
