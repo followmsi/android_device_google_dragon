@@ -111,7 +111,7 @@ EXTENDED_FONT_FOOTPRINT := true
 # let charger mode enter suspend
 BOARD_CHARGER_ENABLE_SUSPEND := true
 
-MALLOC_IMPL := dlmalloc
+MALLOC_SVELTE := true
 
 BOARD_SEPOLICY_DIRS += \
        device/google/dragon/sepolicy
