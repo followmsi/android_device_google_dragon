@@ -122,3 +122,6 @@ ifeq ($(SECURE_OS_BUILD),tlk)
 endif
 
 BOARD_HAL_STATIC_LIBRARIES := libdumpstate.dragon
+
+# device/google/dragon code do not compile with clang yet.
+USE_CLANG_PLATFORM_BUILD := false
