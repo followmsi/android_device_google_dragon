@@ -91,7 +91,7 @@ static const struct sensor_t sSensorListTemplate[] = {
         maxRange:           UNSET_FIELD,
         resolution:         UNSET_FIELD,
         power:              0.18f,    /* Based on BMI160 */
-        minDelay:           5000,
+        minDelay:           1250,
         fifoReservedEventCount: 0,
         fifoMaxEventCount:  2048,
         stringType:         SENSOR_STRING_TYPE_ACCELEROMETER,
@@ -113,7 +113,7 @@ static const struct sensor_t sSensorListTemplate[] = {
         maxRange:           UNSET_FIELD,
         resolution:         UNSET_FIELD,
         power:              0.85f,
-        minDelay:           5000,
+        minDelay:           625,
         fifoReservedEventCount: 0,
         fifoMaxEventCount:  2048,
         stringType:         SENSOR_STRING_TYPE_GYROSCOPE,
