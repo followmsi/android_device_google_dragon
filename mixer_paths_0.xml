@@ -73,6 +73,8 @@
   <ctl name="IF2 ADC3 Mux" value="OB45"/>
   <ctl name="IF2 ADC TDM Swap Mux" value="2/3/1/4"/>
 
+  <ctl name="IF3 ADC Mux" value="OB01"/>
+
   <path name="speaker">
     <ctl name="Headphone Jack Switch" value="0"/>
     <ctl name="ADC3 Capture Volume" value="28"/>
