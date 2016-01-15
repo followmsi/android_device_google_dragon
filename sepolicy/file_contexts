@@ -15,7 +15,7 @@
 /dev/sw_sync                                    u:object_r:sw_sync_device:s0
 /dev/ttyTHS2                                    u:object_r:gps_device:s0
 /dev/ttyTHS3                                    u:object_r:hci_attach_dev:s0
-/dev/focuser                                    u:object_r:camera_device:s0
+/dev/focuser                                    u:object_r:video_device:s0
 /dev/cros_ec                                    u:object_r:cros_ec_device:s0
 /dev/hidraw0                                    u:object_r:hidraw_device:s0
 
@@ -38,8 +38,8 @@
 /data/system/crash_reports(/.*)?                u:object_r:crash_reports_data_file:s0
 
 # camera
-/dev/imx219                                     u:object_r:camera_device:s0
-/dev/imx208                                     u:object_r:camera_device:s0
+/dev/imx219                                     u:object_r:video_device:s0
+/dev/imx208                                     u:object_r:video_device:s0
 
 # /sys/class/rfkill/rfkill0/state
 /sys/devices/bt_bcm4354(/.*)?                   u:object_r:sysfs_bluetooth:s0
