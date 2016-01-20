@@ -39,10 +39,6 @@ static int min(int a, int b) {
     return (a < b) ? a : b;
 }
 
-static int max(int a, int b) {
-    return (a < b) ? b : a;
-}
-
 /*
  * Constructor.
  *
@@ -169,12 +165,10 @@ int CrosECSensor::activate(int handle, int enabled)
 
         long ec_period = nanoseconds_to_milliseconds(info->max_report_latency_ns);
 
-        if (enabled) {
+        if (enabled)
             ec_period = min(CROS_EC_MAX_SAMPLING_PERIOD, ec_period);
-            ec_period = max(CROS_EC_MIN_SAMPLING_PERIOD, ec_period);
-        } else {
+        else
             ec_period = 0;
-        }
 
         /* Sampling is encoded on a 16bit so, so the maximal period is ~65s. */
         err = cros_ec_sysfs_set_input_attr_by_int(

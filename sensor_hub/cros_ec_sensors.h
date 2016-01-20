@@ -34,9 +34,6 @@
 
 #define CROS_EC_MAX_SAMPLING_PERIOD ((1 << 16) - 2)
 
-// Prevent EC interrupt to happen to often.
-#define CROS_EC_MIN_SAMPLING_PERIOD 20
-
 enum {X, Y, Z, MAX_AXIS};
 
 extern const char *cros_ec_sensor_names[];
