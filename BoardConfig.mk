@@ -123,5 +123,5 @@ endif
 
 BOARD_HAL_STATIC_LIBRARIES := libdumpstate.dragon
 
-# device/google/dragon code do not compile with clang yet.
+# b/26685221, link error in dragon-tlk/lib when compiled with clang.
 USE_CLANG_PLATFORM_BUILD := false
