@@ -174,6 +174,32 @@ struct fmap *fmap_load(struct flash_device *dev, off_t offset)
 	return fmap;
 }
 
+int fmap_get_section_offset(struct flash_device *dev, const char *name,
+			    off_t *offset)
+{
+	int i;
+	struct fmap *fmap = flash_get_fmap(dev);
+	if (!fmap)
+		return -1;
+
+	if (name) {
+		for (i = 0; i < fmap->nareas; i++)
+			if (!strcmp(name, (const char*)fmap->areas[i].name))
+				break;
+
+		if (i == fmap->nareas) {
+			ALOGD("Cannot find section '%s'\n", name);
+			return -1;
+		}
+
+		*offset = fmap->areas[i].offset;
+	} else {
+		*offset = 0;
+	}
+
+	return 0;
+}
+
 void *fmap_read_section(struct flash_device *dev,
 			const char *name, size_t *size, off_t *offset)
 {
