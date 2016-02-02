@@ -14,9 +14,18 @@
 # limitations under the License.
 #
 
-# By default build TLK from source if it is available, otherwise use
-# prebuilts.  To force using the prebuilt while having the source, set:
-SECURE_OS_BUILD=false
+# There are three modes for TLK components, controlled by SECURE_OS_BUILD:
+#
+# "SECURE_OS_BUILD = tlk" will build everything from source.
+# "SECURE_OS_BUILD = client_only" will build TLK client components from
+#                    source but use a prebuilt version of the secure OS.
+# "SECURE_OS_BUILD = false" will will use prebuilts for TLK and client
+#                    components.
+#
+# This is currently set to "client_only", which isn't what we really
+# want.  Set b/26853961
+
+SECURE_OS_BUILD=client_only
 #ifeq ($(wildcard vendor/nvidia/dragon-tlk/tlk),vendor/nvidia/dragon-tlk/tlk)
 #    SECURE_OS_BUILD ?= tlk
 #endif
