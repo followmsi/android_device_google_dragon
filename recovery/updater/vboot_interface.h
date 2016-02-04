@@ -31,6 +31,8 @@ off_t fmap_scan_offset(struct flash_device *dev, off_t end);
 struct fmap *fmap_load(struct flash_device *dev, off_t offset);
 void *fmap_read_section(struct flash_device *dev,
 			const char *name, size_t *size, off_t *offset);
+int fmap_get_section_offset(struct flash_device *dev, const char *name,
+			    off_t *offset);
 
 uint8_t *gbb_get_rootkey(struct flash_device *dev, size_t *size);
 

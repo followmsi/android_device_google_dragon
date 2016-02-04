@@ -1,5 +1,0 @@
-DragonKeyboardFirmwareUpdater is a firmware OTA update service serving the
-combination of Pixel C and Pixel C Keyboard. DragonKeyboardFrimwareUpdater makes
-use of Android-DFU-Library, which is an open source project initiated by Nordic
-Semiconductor Co.. The license is included in dfu folder. See
-https://github.com/NordicSemiconductor/Android-DFU-Library for more information.

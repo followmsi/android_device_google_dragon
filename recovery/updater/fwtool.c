@@ -173,6 +173,107 @@ static int cmd_vbnv_write(int argc, const char **argv)
 	return 0;
 }
 
+static void sync_slots(void)
+{
+	static struct {
+		char part;
+		const char *name_str;
+		const char *id_str;
+	} part_list[] = {
+		{'A', "RW_SECTION_A", "RW_FWID_A"},
+		{'B', "RW_SECTION_B", "RW_FWID_B"},
+	};
+
+
+	char cur_part = vboot_get_mainfw_act();
+	int cur_index;
+
+	if (cur_part == 'A')
+		cur_index = 0;
+	else if (cur_part == 'B')
+		cur_index = 1;
+	else {
+		ALOGW("ERROR: Unexpected cur_part value\n");
+		return;
+	}
+
+	int old_index = cur_index ^ 1;
+
+	if (!get_spi()) {
+		ALOGW("ERROR: get_spi failed.\n");
+		return;
+	}
+
+	size_t cur_id_size;
+	char *cur_fwid = fmap_read_section(spi,
+					   part_list[cur_index].id_str,
+					   &cur_id_size, NULL);
+
+	if ((cur_fwid == NULL) || (cur_id_size == 0)) {
+		ALOGW("ERROR: Current FWID read error.\n");
+		return;
+	}
+
+	ALOGD("Cur fwid: %s\n", cur_fwid);
+
+	size_t old_id_size;
+	char *old_fwid = fmap_read_section(spi,
+					   part_list[old_index].id_str,
+					   &old_id_size, NULL);
+
+	if ((old_fwid == NULL) || (old_id_size == 0))
+		ALOGD("Old FWID read error or FW slot damaged.\n");
+	else {
+		ALOGD("Old fwid: %s\n", old_fwid);
+
+		if ((cur_id_size == old_id_size) &&
+		    !strncmp(cur_fwid, old_fwid, cur_id_size)) {
+			ALOGD("Slots already synced.\n");
+			free(cur_fwid);
+			free(old_fwid);
+			return;
+		}
+	}
+
+	free(cur_fwid);
+	free(old_fwid);
+
+	size_t sec_size;
+	ALOGD("Reading current firmware slot.\n");
+	uint8_t *cur_section = fmap_read_section(spi,
+						 part_list[cur_index].name_str,
+						 &sec_size, NULL);
+	if (cur_section == NULL) {
+		ALOGW("Error: Could not read current firmware slot.\n");
+		return;
+	}
+
+	off_t old_offset;
+	ALOGD("Reading old firmware slot offset.\n");
+	if (fmap_get_section_offset(spi,
+				    part_list[old_index].name_str,
+				    &old_offset) == -1) {
+		ALOGW("Error: Could not read old firmware slot offset.\n");
+		free(cur_section);
+		return;
+	}
+
+	ALOGD("Erasing old firmware slot.\n");
+	if (flash_erase(spi, old_offset, sec_size)) {
+		ALOGW("Error: Could not erase old firmware slot.\n");
+		free(cur_section);
+		return;
+	}
+
+	ALOGD("Updating old firmware slot.\n");
+	if (flash_write(spi, old_offset, cur_section, sec_size))
+		ALOGW("Error: Could not update old firmware slot.\n");
+	else
+		ALOGD("Slot sync complete.\n");
+
+	free(cur_section);
+}
+
 static int cmd_mark_boot(int argc, const char **argv)
 {
 	if (argc != 2) {
@@ -188,6 +289,7 @@ static int cmd_mark_boot(int argc, const char **argv)
 	if (strcmp(argv[1], "success") == 0) {
 		vbnv_set_flag(spi, "boot_result", VB2_FW_RESULT_SUCCESS);
 		vbnv_set_flag(spi, "try_count", 0);
+		sync_slots();
 	} else {
 		printf("Invalid arg\n");
 		return -EINVAL;

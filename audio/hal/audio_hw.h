@@ -229,7 +229,7 @@ struct stream_out {
     int                         send_new_metadata;
 
     struct audio_device*        dev;
-    int16_t *proc_buf_out;
+    void *proc_buf_out;
     size_t proc_buf_size;
 };
 
@@ -258,10 +258,8 @@ struct stream_in {
     size_t                              read_buf_size;
     size_t                              read_buf_frames;
 
-    int16_t *proc_buf_in;
-    int16_t *proc_buf_out;
+    void *proc_buf_in;
     size_t proc_buf_size;
-    size_t proc_buf_frames;
 
     struct audio_device*                dev;
 };

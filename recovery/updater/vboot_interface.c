@@ -174,6 +174,32 @@ struct fmap *fmap_load(struct flash_device *dev, off_t offset)
 	return fmap;
 }
 
+int fmap_get_section_offset(struct flash_device *dev, const char *name,
+			    off_t *offset)
+{
+	int i;
+	struct fmap *fmap = flash_get_fmap(dev);
+	if (!fmap)
+		return -1;
+
+	if (name) {
+		for (i = 0; i < fmap->nareas; i++)
+			if (!strcmp(name, (const char*)fmap->areas[i].name))
+				break;
+
+		if (i == fmap->nareas) {
+			ALOGD("Cannot find section '%s'\n", name);
+			return -1;
+		}
+
+		*offset = fmap->areas[i].offset;
+	} else {
+		*offset = 0;
+	}
+
+	return 0;
+}
+
 void *fmap_read_section(struct flash_device *dev,
 			const char *name, size_t *size, off_t *offset)
 {
@@ -370,9 +396,15 @@ static uint8_t crc8(const uint8_t *data, int len)
 	return (uint8_t)(crc >> 8);
 }
 
+static inline int can_overwrite(uint8_t current, uint8_t new)
+{
+	return (current & new) == new;
+}
+
 int vbnv_readwrite(struct flash_device *spi, const vbnv_param_t *param,
 		   uint8_t *value, int write)
 {
+	int i;
 	int res;
 	size_t size;
 	off_t offset;
@@ -417,15 +449,34 @@ int vbnv_readwrite(struct flash_device *spi, const vbnv_param_t *param,
 
 	if (write) {
 		uint8_t flag_value = (*value & param->mask) << param->shift;
-		block[off] = (block[off] & ~mask) | (flag_value & mask);
-		block[VB_CRC_OFFSET] = crc8(block, VB_CRC_OFFSET);
 
-		if (flash_erase(spi, offset, size)) {
-			ALOGW("ERROR: Cannot erase flash\n");
-			return -EIO;
+		/* Copy last used block to make modifications. */
+		memcpy(dummy, block, VB_NVDATA_SIZE);
+
+		dummy[off] = (dummy[off] & ~mask) | (flag_value & mask);
+		dummy[VB_CRC_OFFSET] = crc8(dummy, VB_CRC_OFFSET);
+
+		/* Check if new block can be overwritten */
+		for (i = 0; i < VB_NVDATA_SIZE; i++) {
+			if (!can_overwrite(block[i], dummy[i])) {
+				if (curr != end)
+					offset += (curr - nvram);
+				else if (flash_erase(spi, offset, size)) {
+					ALOGW("ERROR: Cannot erase flash\n");
+					return -EIO;
+				}
+				break;
+			}
 		}
 
-		if (flash_write(spi, offset, nvram, size)) {
+		/* Block can be overwritten. */
+		if (i == VB_NVDATA_SIZE)
+			offset += (block - nvram);
+
+		ALOGI("Writing new entry into NVRAM @ 0x%lx\n", offset);
+
+		/* Write new entry into NVRAM. */
+		if (flash_write(spi, offset, dummy, VB_NVDATA_SIZE)) {
 			ALOGW("ERROR: Cannot update NVRAM\n");
 			return -EIO;
 		}

@@ -43,6 +43,7 @@
 #include <system/thread_defs.h>
 #include <audio_effects/effect_aec.h>
 #include <audio_effects/effect_ns.h>
+#include <audio_utils/channels.h>
 #include "audio_hw.h"
 #include "cras_dsp.h"
 
@@ -866,82 +867,45 @@ static int do_in_standby_l(struct stream_in *in);
  * - process if pre-processors are attached
  * - discard unwanted channels
  */
-static ssize_t read_and_process_frames(struct stream_in *in, void* buffer, ssize_t frames)
+static ssize_t read_and_process_frames(struct audio_stream_in *stream, void* buffer, ssize_t frames_num)
 {
-    ssize_t frames_wr = 0;
-    audio_buffer_t in_buf;
-    audio_buffer_t out_buf;
-    size_t src_channels = in->config.channels;
-    size_t dst_channels = audio_channel_count_from_in_mask(in->main_channels);
-    int i;
-    void *proc_buf_out;
-    struct pcm_device *pcm_device;
-    bool has_additional_channels = (dst_channels != src_channels) ? true : false;
+    struct stream_in *in = (struct stream_in *)stream;
+    ssize_t frames_rd = 0; /* Number of frames actually read */
+    size_t bytes_per_sample = audio_bytes_per_sample(stream->common.get_format(&stream->common));
+    void *proc_buf_in = buffer;
 
     /* Additional channels might be added on top of main_channels:
     * - aux_channels (by processing effects)
     * - extra channels due to HW limitations
     * In case of additional channels, we cannot work inplace
     */
-    if (has_additional_channels)
-        proc_buf_out = in->proc_buf_out;
-    else
-        proc_buf_out = buffer;
+    size_t src_channels = in->config.channels;
+    size_t dst_channels = audio_channel_count_from_in_mask(in->main_channels);
+    bool channel_remapping_needed = (dst_channels != src_channels);
 
-    if (list_empty(&in->pcm_dev_list)) {
-        ALOGE("%s: pcm device list empty", __func__);
-        return -EINVAL;
-    }
+    /* No processing effects attached */
+    if (channel_remapping_needed) {
+        size_t src_buffer_size = frames_num * src_channels * bytes_per_sample;
 
-    pcm_device = node_to_item(list_head(&in->pcm_dev_list),
-                              struct pcm_device, stream_list_node);
-
-    {
-        /* No processing effects attached */
-        if (has_additional_channels) {
-            /* With additional channels, we cannot use original buffer */
-            if (in->proc_buf_size < (size_t)frames) {
-                size_t size_in_bytes = pcm_frames_to_bytes(pcm_device->pcm, frames);
-                in->proc_buf_size = (size_t)frames;
-                in->proc_buf_out = (int16_t *)realloc(in->proc_buf_out, size_in_bytes);
-                ALOG_ASSERT((in->proc_buf_out != NULL),
-                            "process_frames() failed to reallocate proc_buf_out");
-                proc_buf_out = in->proc_buf_out;
-            }
+        /* With additional channels, we cannot use original buffer */
+        if (in->proc_buf_size < src_buffer_size) {
+            in->proc_buf_size = src_buffer_size;
+            in->proc_buf_in = realloc(in->proc_buf_in, src_buffer_size);
+            ALOG_ASSERT((in->proc_buf_in != NULL),
+                        "process_frames() failed to reallocate proc_buf_in");
         }
-        frames_wr = read_frames(in, proc_buf_out, frames);
+        proc_buf_in = in->proc_buf_in;
+    }
+    frames_rd = read_frames(in, proc_buf_in, frames_num);
+    ALOG_ASSERT(frames_rd <= frames_num, "read more frames than requested");
+
+    if (channel_remapping_needed) {
+        size_t ret = adjust_channels(proc_buf_in, src_channels, buffer, dst_channels,
+            bytes_per_sample, frames_rd * src_channels * bytes_per_sample);
+        ALOG_ASSERT(ret == (frames_rd * dst_channels * bytes_per_sample));
     }
 
-    /* Remove all additional channels that have been added on top of main_channels:
-     * - aux_channels
-     * - extra channels from HW due to HW limitations
-     * Assumption is made that the channels are interleaved and that the main
-     * channels are first. */
-
-    if (has_additional_channels)
-    {
-        // TODO do not hardcode 16-bit encoding, use audio_stream_out_frame_size() instead
-        int16_t* src_buffer = (int16_t *)proc_buf_out;
-        int16_t* dst_buffer = (int16_t *)buffer;
-
-        if (dst_channels == 1) {
-            for (i = frames_wr; i > 0; i--)
-            {
-                *dst_buffer = *src_buffer;
-                dst_buffer += 1;
-                src_buffer += src_channels;
-            }
-        } else {
-            for (i = frames_wr; i > 0; i--)
-            {
-                memcpy(dst_buffer, src_buffer, dst_channels*sizeof(int16_t));
-                dst_buffer += dst_channels;
-                src_buffer += src_channels;
-            }
-        }
-    }
-
-    return frames_wr;
+    return frames_rd;
 }
 
 static int get_next_buffer(struct resampler_buffer_provider *buffer_provider,
@@ -1221,7 +1185,6 @@ int start_input_stream(struct stream_in *in)
 
     /* force read and proc buffer reallocation in case of frame size or
      * channel count change */
-    in->proc_buf_frames = 0;
     in->proc_buf_size = 0;
     in->read_buf_size = 0;
     in->read_buf_frames = 0;
@@ -1831,10 +1794,6 @@ static ssize_t out_write(struct audio_stream_out *stream, const void *buffer,
     unsigned char *data = NULL;
     struct pcm_config config;
 
-    size_t src_channels = audio_channel_count_from_out_mask(out->channel_mask);
-    size_t dst_channels = out->config.channels;
-    bool channel_remapping_needed = (dst_channels != src_channels);
-
     lock_output_stream(out);
     if (out->standby) {
         pthread_mutex_lock(&adev->lock);
@@ -1865,13 +1824,16 @@ false_alarm:
             }
             frames_rq = bytes / frame_size;
             frames_wr = pcm_device->res_byte_count / frame_size;
-            ALOGVV("%s: resampler request frames = %d frame_size = %d",
+            ALOGVV("%s: resampler request frames = %zu frame_size = %zu",
                 __func__, frames_rq, frame_size);
             pcm_device->resampler->resample_from_input(pcm_device->resampler,
                 (int16_t *)buffer, &frames_rq, (int16_t *)pcm_device->res_buffer, &frames_wr);
-            ALOGVV("%s: resampler output frames_= %d", __func__, frames_wr);
+            ALOGVV("%s: resampler output frames_= %zu", __func__, frames_wr);
         }
         if (pcm_device->pcm) {
+            size_t src_channels = audio_channel_count_from_out_mask(out->channel_mask);
+            size_t dst_channels = pcm_device->pcm_profile->config.channels;
+            bool channel_remapping_needed = (dst_channels != src_channels);
             unsigned audio_bytes;
             const void *audio_data;
 
@@ -1891,34 +1853,23 @@ false_alarm:
             apply_dsp(pcm_device, audio_data, audio_bytes/4);
 
             if (channel_remapping_needed) {
-                unsigned remapped_audio_bytes;
                 const void *remapped_audio_data;
-                int i;
-                int frames_num = audio_bytes / frame_size;
-
-                audio_bytes = audio_bytes * dst_channels / src_channels;
+                size_t dest_buffer_size = audio_bytes * dst_channels / src_channels;
+                size_t new_size;
+                size_t bytes_per_sample = audio_bytes_per_sample(stream->common.get_format(&stream->common));
 
                 /* With additional channels, we cannot use original buffer */
-                if (out->proc_buf_size < audio_bytes) {
-                    out->proc_buf_size = audio_bytes;
-                    out->proc_buf_out = (int16_t *)realloc(out->proc_buf_out, audio_bytes);
+                if (out->proc_buf_size < dest_buffer_size) {
+                    out->proc_buf_size = dest_buffer_size;
+                    out->proc_buf_out = realloc(out->proc_buf_out, dest_buffer_size);
                     ALOG_ASSERT((out->proc_buf_out != NULL),
                                 "out_write() failed to reallocate proc_buf_out");
                 }
-                remapped_audio_data = out->proc_buf_out;
-
-                // TODO do not hardcode 16-bit encoding, use audio_stream_out_frame_size() instead
-                int16_t* src_buffer = (int16_t *)audio_data;
-                int16_t* dst_buffer = (int16_t *)remapped_audio_data;
-
-                for (i = frames_num; i > 0; i--)
-                {
-                    memcpy(dst_buffer, src_buffer, src_channels*sizeof(int16_t));
-                    dst_buffer += dst_channels;
-                    src_buffer += src_channels;
-                }
-
-                audio_data = remapped_audio_data;
+                new_size = adjust_channels(audio_data, src_channels, out->proc_buf_out, dst_channels,
+                    bytes_per_sample, audio_bytes);
+                ALOG_ASSERT(new_size == dest_buffer_size);
+                audio_data = out->proc_buf_out;
+                audio_bytes = dest_buffer_size;
             }
 
             pcm_device->status = pcm_write(pcm_device->pcm, audio_data, audio_bytes);
@@ -1927,7 +1878,7 @@ false_alarm:
         }
     }
     if (ret == 0)
-        out->written += bytes / (out->config.channels * sizeof(short));
+        out->written += bytes / frame_size;
 
 exit:
     pthread_mutex_unlock(&out->lock);
@@ -2285,7 +2236,7 @@ false_alarm:
              * - process if pre-processors are attached
              * - discard unwanted channels
              */
-            frames = read_and_process_frames(in, buffer, frames_rq);
+            frames = read_and_process_frames(stream, buffer, frames_rq);
             if (frames >= 0)
                 read_and_process_successful = true;
         }
@@ -2439,6 +2390,7 @@ static void adev_close_output_stream(struct audio_hw_device *dev,
     pthread_cond_destroy(&out->cond);
     pthread_mutex_destroy(&out->lock);
     pthread_mutex_destroy(&out->pre_lock);
+    free(out->proc_buf_out);
     free(stream);
     ALOGV("%s: exit", __func__);
 }
@@ -2739,6 +2691,7 @@ static void adev_close_input_stream(struct audio_hw_device *dev,
     in_standby_l(in);
     pthread_mutex_destroy(&in->lock);
     pthread_mutex_destroy(&in->pre_lock);
+    free(in->proc_buf_in);
     free(stream);
 
     pthread_mutex_unlock(&adev->lock_inputs);

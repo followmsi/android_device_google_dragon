@@ -121,4 +121,4 @@ ifeq ($(SECURE_OS_BUILD),tlk)
   BOARD_SUPPORT_ROLLBACK_PROTECTION := true
 endif
 
-BOARD_HAL_STATIC_LIBRARIES := libdumpstate.dragon
+BOARD_HAL_STATIC_LIBRARIES := libdumpstate.dragon libhealthd.dragon
