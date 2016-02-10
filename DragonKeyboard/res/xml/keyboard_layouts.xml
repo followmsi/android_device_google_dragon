@@ -59,6 +59,12 @@
             androidprv:vendorId="0x18d1"
             androidprv:productId="0x5018"
             androidprv:locale="nb|nn" />
+    <keyboard-layout android:name="keyboard_layout_dragon_russian"
+            android:label="@string/keyboard_layout_dragon_russian_label"
+            android:keyboardLayout="@raw/keyboard_layout_dragon_russian"
+            androidprv:vendorId="0x18d1"
+            androidprv:productId="0x5018"
+            androidprv:locale="ru" />
     <keyboard-layout android:name="keyboard_layout_dragon_spanish"
             android:label="@string/keyboard_layout_dragon_spanish_label"
             android:keyboardLayout="@raw/keyboard_layout_dragon_spanish"
