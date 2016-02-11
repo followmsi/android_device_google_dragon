@@ -1,5 +1,4 @@
-allow cameraserver device:dir r_dir_perms;
+allow cameraserver system_server:unix_stream_socket { read write };
 
 # sensor manager based camera/video stabilization
-allow cameraserver system_server:unix_stream_socket { connectto read write setopt };
 allow cameraserver sensorservice_service:service_manager find;
