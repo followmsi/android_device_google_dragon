@@ -107,8 +107,6 @@ ART_USE_HSPACE_COMPACT=true
 # let charger mode enter suspend
 BOARD_CHARGER_ENABLE_SUSPEND := true
 
-MALLOC_SVELTE := true
-
 BOARD_SEPOLICY_DIRS += \
        device/google/dragon/sepolicy
 
