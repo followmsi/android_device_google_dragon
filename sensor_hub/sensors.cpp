@@ -345,20 +345,42 @@ static int cros_ec_get_gesture_names(const char *sensor_name)
 static int cros_ec_calibrate_3d_sensor(int sensor_type, const char *device_name)
 {
     const char vpd_path[] = "/sys/firmware/vpd/ro";
+    char calib_value[MAX_AXIS][20];
+    char calib_key[MAX_AXIS][IIO_MAX_NAME_LENGTH];
+    bool calib_data_valid = true;
 
     for (int i = X ; i < MAX_AXIS; i++) {
-        char calib_key[IIO_MAX_NAME_LENGTH];
-        char calib_value[20];
-        snprintf(calib_key, sizeof(calib_key), "%s_%c_calibbias",
-                 cros_ec_iio_axis_names[sensor_type], 'x' + i);
-        if (cros_ec_sysfs_get_attr(vpd_path, calib_key, calib_value)) {
-            ALOGI("Calibration key %s missing.\n", calib_key);
-            continue;
+        snprintf(calib_key[i], sizeof(calib_key[i]), "%s_%c_calibbias",
+                cros_ec_iio_axis_names[sensor_type], 'x' + i);
+        if (cros_ec_sysfs_get_attr(vpd_path, calib_key[i], calib_value[i])) {
+            ALOGI("Calibration key %s missing.\n", calib_key[i]);
+            calib_data_valid = false;
+            break;
         }
-        if (cros_ec_sysfs_set_input_attr(device_name, calib_key,
-                                         calib_value, strlen(calib_value))) {
+    }
+    if (calib_data_valid && sensor_type == CROS_EC_ACCEL) {
+        for (int i = X ; i < MAX_AXIS; i++) {
+            /*
+             * Workaround for invalid calibration values obveserved on several
+             * devices (b/26927000). If the value seems bogus, ignore the whole
+             * calibration.
+             * If one calibration axis is greater than 2 m/s^2, ignore.
+             */
+            int value = atoi(calib_value[i]);
+            if (abs(value) > (2 * 1024 * 100 / 981)) {
+                ALOGE("Calibration data invalid on axis %d: %d\n", i, value);
+                calib_data_valid = false;
+                break;
+            }
+        }
+    }
+
+    for (int i = X ; i < MAX_AXIS; i++) {
+        const char *value = (calib_data_valid ? calib_value[i] : "0");
+        if (cros_ec_sysfs_set_input_attr(device_name, calib_key[i],
+                    value, strlen(value))) {
             ALOGE("Writing bias %s to %s for device %s failed.\n",
-                  calib_key, calib_value, device_name);
+                    calib_key[i], value, device_name);
         }
     }
     return 0;
@@ -479,13 +501,14 @@ static int cros_ec_get_sensors_names(char **ring_device_name,
                     }
 
                     if (sensor_data->type == SENSOR_TYPE_ACCELEROMETER ||
-                        sensor_data->type == SENSOR_TYPE_GYROSCOPE)
+                        sensor_data->type == SENSOR_TYPE_GYROSCOPE) {
                         /* There is an assumption by the calibration code that there is
                          * only one type of sensors per device.
                          * If it needs to change, we will add "location" sysfs key
                          * to find the proper calibration data.
                          */
                         cros_ec_calibrate_3d_sensor(i, sensor_info->device_name);
+                    }
 
                     ALOGD("new dev '%s' handle: %d\n",
                             sensor_info->device_name, sensor_id);
