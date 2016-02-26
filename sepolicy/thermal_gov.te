@@ -10,4 +10,4 @@ allow thermal_gov shell_exec:file rx_file_perms;
 allow thermal_gov sysfs:file w_file_perms;
 
 # execute toolbox/toybox
-allow locale toolbox_exec:file rx_file_perms;
+allow thermal_gov toolbox_exec:file rx_file_perms;
