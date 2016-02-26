@@ -1,0 +1,1 @@
+allow mediacodec sysfs:file r_file_perms;
