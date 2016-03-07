@@ -1450,7 +1450,7 @@ error_open:
     stop_input_stream(in);
 
 error_config:
-    ALOGD("%s: exit: status(%d)", __func__, ret);
+    ALOGV("%s: exit: status(%d)", __func__, ret);
     adev->active_input = NULL;
     return ret;
 }
@@ -1889,7 +1889,7 @@ static int out_set_parameters(struct audio_stream *stream, const char *kvpairs)
     struct stream_in *in = NULL;    /* if non-NULL, then force input to standby */
 #endif
 
-    ALOGD("%s: enter: usecase(%d: %s) kvpairs: %s out->devices(%d) adev->mode(%d)",
+    ALOGV("%s: enter: usecase(%d: %s) kvpairs: %s out->devices(%d) adev->mode(%d)",
           __func__, out->usecase, use_case_table[out->usecase], kvpairs, out->devices, adev->mode);
     parms = str_parms_create_str(kvpairs);
     ret = str_parms_get_str(parms, AUDIO_PARAMETER_STREAM_ROUTING, value, sizeof(value));
@@ -2719,7 +2719,7 @@ static int adev_open_output_stream(struct audio_hw_device *dev,
         out->usecase = USECASE_AUDIO_PLAYBACK_DEEP_BUFFER;
         out->config = pcm_config_deep_buffer;
         out->sample_rate = out->config.rate;
-        ALOGD("%s: use AUDIO_PLAYBACK_DEEP_BUFFER",__func__);
+        ALOGV("%s: use AUDIO_PLAYBACK_DEEP_BUFFER",__func__);
     } else {
         out->usecase = USECASE_AUDIO_PLAYBACK;
         out->sample_rate = out->config.rate;
@@ -2783,7 +2783,7 @@ static int adev_open_output_stream(struct audio_hw_device *dev,
 error_open:
     free(out);
     *stream_out = NULL;
-    ALOGD("%s: exit: ret %d", __func__, ret);
+    ALOGV("%s: exit: ret %d", __func__, ret);
     return ret;
 }
 
@@ -3151,7 +3151,7 @@ static int adev_open(const hw_module_t *module, const char *name,
     struct audio_device *adev;
     int i, ret, retry_count;
 
-    ALOGD("%s: enter", __func__);
+    ALOGV("%s: enter", __func__);
     if (strcmp(name, AUDIO_HARDWARE_INTERFACE) != 0) return -EINVAL;
 
     adev = calloc(1, sizeof(struct audio_device));
