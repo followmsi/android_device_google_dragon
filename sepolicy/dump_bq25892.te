@@ -9,6 +9,9 @@ init_daemon_domain(dump_bq25892)
 # Run a shell.
 allow dump_bq25892 shell_exec:file rx_file_perms;
 
+# Run toybox.
+allow dump_bq25892 toolbox_exec:file rx_file_perms;
+
 # Use fwtool to communicate with the EC through /dev/cros_ec
 allow dump_bq25892 fwtool_exec:file rx_file_perms;
 allow dump_bq25892 cros_ec_device:chr_file rw_file_perms;
