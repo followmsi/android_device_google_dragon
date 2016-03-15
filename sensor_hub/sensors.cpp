@@ -38,6 +38,12 @@
 /*****************************************************************************/
 
 #define UNSET_FIELD -1
+/*
+ * TODO(gwendal): We should guess the fifo size, but
+ * we need to issue an ioctl instead of just reading IIO sysfs.
+ * EC will trigger an interrupt at 2/3 of its FIFO.
+ */
+#define CROS_EC_FIFO_SIZE (2048 * 2 / 3)
 
 /* Name of iio devices, as reported by cros_ec_dev.c */
 const char *cros_ec_sensor_names[] = {
@@ -77,9 +83,6 @@ const int cros_ec_gesture_id[] = {
  *
  * Some parameters (handle, range, resolution) are retreived
  * from IIO.
- *
- * TODO(gwendal): We could guess the fifo size as well, but
- * we need to issue an ioctl instead of just reading IIO sysfs.
  */
 static const struct sensor_t sSensorListTemplate[] = {
     [CROS_EC_ACCEL] = {
@@ -93,7 +96,7 @@ static const struct sensor_t sSensorListTemplate[] = {
         power:              0.18f,    /* Based on BMI160 */
         minDelay:           5000,
         fifoReservedEventCount: 0,
-        fifoMaxEventCount:  2048,
+        fifoMaxEventCount:  CROS_EC_FIFO_SIZE,
         stringType:         SENSOR_STRING_TYPE_ACCELEROMETER,
         requiredPermission: 0,
         /*
@@ -115,7 +118,7 @@ static const struct sensor_t sSensorListTemplate[] = {
         power:              0.85f,
         minDelay:           5000,
         fifoReservedEventCount: 0,
-        fifoMaxEventCount:  2048,
+        fifoMaxEventCount:  CROS_EC_FIFO_SIZE,
         stringType:         SENSOR_STRING_TYPE_GYROSCOPE,
         requiredPermission: 0,
         maxDelay:           80000,
@@ -137,7 +140,7 @@ static const struct sensor_t sSensorListTemplate[] = {
          */
         minDelay:           40000,
         fifoReservedEventCount: 0,
-        fifoMaxEventCount:  2048,
+        fifoMaxEventCount:  CROS_EC_FIFO_SIZE,
         stringType:         SENSOR_STRING_TYPE_MAGNETIC_FIELD,
         requiredPermission: 0,
         maxDelay:           200000,
@@ -155,7 +158,7 @@ static const struct sensor_t sSensorListTemplate[] = {
         power:              0.12f,  /* Based on Si1141 */
         minDelay:           20000,
         fifoReservedEventCount: 0,
-        fifoMaxEventCount:  2048,
+        fifoMaxEventCount:  CROS_EC_FIFO_SIZE,
         stringType:         SENSOR_STRING_TYPE_PROXIMITY,
         requiredPermission: 0,
         /* Forced mode, can be long: 10s */
@@ -175,7 +178,7 @@ static const struct sensor_t sSensorListTemplate[] = {
         power:              0.12f,  /* Based on Si1141 */
         minDelay:           20000,
         fifoReservedEventCount: 0,
-        fifoMaxEventCount:  2048,
+        fifoMaxEventCount:  CROS_EC_FIFO_SIZE,
         stringType:         SENSOR_STRING_TYPE_LIGHT,
         requiredPermission: 0,
         /* Forced mode, can be long: 10s */
