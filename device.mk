@@ -207,6 +207,15 @@ PRODUCT_SUPPORTS_VERITY_FEC := false
 PRODUCT_SYSTEM_VERITY_PARTITION := /dev/block/platform/700b0600.sdhci/by-name/APP
 PRODUCT_VENDOR_VERITY_PARTITION := /dev/block/platform/700b0600.sdhci/by-name/VNR
 
+# The following group is necessary to support building the NVIDIA vendor
+# HALs and prebuilts.
+BOARD_SUPPORT_NVOICE := true
+BOARD_SUPPORT_NVAUDIOFX :=true
+BOARD_USES_LIBDRM := true
+NVRM_GPU_SUPPORT_NOUVEAU := 1
+NV_GPU_USE_SYNC_FD := 1
+USE_DRM_HWCOMPOSER := 1
+
 $(call inherit-product-if-exists, hardware/nvidia/tegra132/tegra132.mk)
 $(call inherit-product-if-exists, vendor/google_devices/dragon/device-vendor.mk)
 $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/config/config-bcm.mk)
