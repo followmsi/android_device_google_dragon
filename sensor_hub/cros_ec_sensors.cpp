@@ -35,6 +35,9 @@
 
 
 /*****************************************************************************/
+static int max(int a, int b) {
+    return (a > b) ? a : b;
+}
 static int min(int a, int b) {
     return (a < b) ? a : b;
 }
@@ -215,13 +218,15 @@ int CrosECSensor::batch(int handle,
          * Which is good, because HAL shold not ask for polling sensor at
          * more than the sampling period, set in sensor_t.
          */
-        if (info->max_report_latency_ns < info->sampling_period_ns) {
+        if (info->max_report_latency_ns < max(sampling_period_ns, info->sampling_period_ns)) {
             /*
              * We have to report an event as soon as available.
              * Set polling frequency as low as sampling frequency
              */
-            info->max_report_latency_ns = info->sampling_period_ns;
+            info->max_report_latency_ns = max(sampling_period_ns, info->sampling_period_ns);
         }
+
+
         /* Call activate to change the paramters if necessary */
         return activate(handle, info->enabled);
     } else {
