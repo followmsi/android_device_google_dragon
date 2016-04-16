@@ -216,6 +216,9 @@ NVRM_GPU_SUPPORT_NOUVEAU := 1
 NV_GPU_USE_SYNC_FD := 1
 USE_DRM_HWCOMPOSER := 1
 
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.hardware.vulkan=tegra
+
 $(call inherit-product-if-exists, hardware/nvidia/tegra132/tegra132.mk)
 $(call inherit-product-if-exists, vendor/google_devices/dragon/device-vendor.mk)
 $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/config/config-bcm.mk)
