@@ -183,6 +183,11 @@ on boot
     # set GPU auto suspend
     write /sys/devices/57000000.gpu/power/autosuspend_delay_ms 520
 
+    # Raise RLIMIT_NOFILE softlimit to workaround b/28277319. This is intended
+    # to go away at some point, do not copy it to new devices! This makes fd
+    # leaks much harder to notice and debug.
+    setrlimit 7 2048 4096
+
 on fs
     # Enable verity notification
     write /sys/module/dm_verity/parameters/error_behavior notify
