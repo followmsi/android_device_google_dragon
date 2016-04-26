@@ -36,8 +36,9 @@
 /dev/imx219                                     u:object_r:video_device:s0
 /dev/imx208                                     u:object_r:video_device:s0
 
-# /sys/class/rfkill/rfkill0/state
+# /sys/
 /sys/devices/bt_bcm4354(/.*)?                   u:object_r:sysfs_bluetooth:s0
+/sys/devices/soc0(/.*)?                         u:object_r:sysfs_socinfo:s0
 
 # /data
 /data/nvcam(/.*)?                               u:object_r:media_data_file:s0
