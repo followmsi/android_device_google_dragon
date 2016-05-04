@@ -355,6 +355,8 @@ static int cros_ec_calibrate_3d_sensor(int sensor_type, const char *device_name)
     for (int i = X ; i < MAX_AXIS; i++) {
         snprintf(calib_key[i], sizeof(calib_key[i]), "%s_%c_calibbias",
                 cros_ec_iio_axis_names[sensor_type], 'x' + i);
+    }
+    for (int i = X ; i < MAX_AXIS; i++) {
         if (cros_ec_sysfs_get_attr(vpd_path, calib_key[i], calib_value[i])) {
             ALOGI("Calibration key %s missing.\n", calib_key[i]);
             calib_data_valid = false;
