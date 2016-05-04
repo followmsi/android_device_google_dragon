@@ -283,7 +283,7 @@ static int cros_ec_get_sensors_list(struct sensors_module_t*,
 }
 
 /*
- * cros_ec_get_sensors_names: Build list of gestures from IIO
+ * cros_ec_get_gesture_names: Build list of gestures from IIO
  *
  * Looking into the cros_ec_activity sensors, looks for events
  * the sensorserivces are managing.
@@ -538,7 +538,7 @@ static int cros_ec_get_sensors_names(char **ring_device_name,
     if (*ring_device_name == NULL || *ring_trigger_name == NULL)
         return -ENODEV;
 
-    return Stotal_max_sensor_handle_ ? Stotal_max_sensor_handle_ : -ENODEV;
+    return Stotal_max_sensor_handle_ ? 0 : -ENODEV;
 }
 
 static struct hw_module_methods_t cros_ec_sensors_methods = {
@@ -756,17 +756,17 @@ static int cros_ec_open_sensors(
         const struct hw_module_t* module, const char*,
         struct hw_device_t** device)
 {
-    char *ring_device_name, *ring_trigger_name;
+    char *ring_device_name = NULL, *ring_trigger_name = NULL;
     int err;
     err = cros_ec_get_sensors_names(&ring_device_name, &ring_trigger_name);
-    if (err < 0)
-        return err;
+    if (err == 0) {
+        cros_ec_sensors_poll_context_t *dev = new cros_ec_sensors_poll_context_t(
+                module, ring_device_name, ring_trigger_name);
 
-    cros_ec_sensors_poll_context_t *dev = new cros_ec_sensors_poll_context_t(
-            module, ring_device_name, ring_trigger_name);
-
-    *device = &dev->device.common;
-
-    return 0;
+        *device = &dev->device.common;
+    }
+    free(ring_device_name);
+    free(ring_trigger_name);
+    return err;
 }
 
