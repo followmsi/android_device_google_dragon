@@ -86,126 +86,126 @@ const int cros_ec_gesture_id[] = {
  */
 static const struct sensor_t sSensorListTemplate[] = {
     [CROS_EC_ACCEL] = {
-        name:               "CrosEC Accelerometer",
-        vendor:             "Google",
-        version:            1,
-        handle:             UNSET_FIELD,
-        type:               SENSOR_TYPE_ACCELEROMETER,
-        maxRange:           UNSET_FIELD,
-        resolution:         UNSET_FIELD,
-        power:              0.18f,    /* Based on BMI160 */
-        minDelay:           5000,
-        fifoReservedEventCount: 0,
-        fifoMaxEventCount:  CROS_EC_FIFO_SIZE,
-        stringType:         SENSOR_STRING_TYPE_ACCELEROMETER,
-        requiredPermission: 0,
+        .name =              "CrosEC Accelerometer",
+        .vendor =            "Google",
+        .version =           1,
+        .handle =            UNSET_FIELD,
+        .type =              SENSOR_TYPE_ACCELEROMETER,
+        .maxRange =          UNSET_FIELD,
+        .resolution =        UNSET_FIELD,
+        .power =             0.18f,    /* Based on BMI160 */
+        .minDelay =          5000,
+        .fifoReservedEventCount =0,
+        .fifoMaxEventCount = CROS_EC_FIFO_SIZE,
+        .stringType =        SENSOR_STRING_TYPE_ACCELEROMETER,
+        .requiredPermission =0,
         /*
          * BMI160 has a problem at 6.25Hz or less, FIFO not readable.
          * Works at 12.5Hz, so set maxDelay at 80ms
          */
-        maxDelay:           80000,
-        flags:              SENSOR_FLAG_CONTINUOUS_MODE,
-        reserved:           { 0 }
+        .maxDelay =          80000,
+        .flags =             SENSOR_FLAG_CONTINUOUS_MODE,
+        .reserved =          { 0 }
     },
     [CROS_EC_GYRO] = {
-        name:               "CrosEC Gyroscope",
-        vendor:             "Google",
-        version:            1,
-        handle:             UNSET_FIELD,
-        type:               SENSOR_TYPE_GYROSCOPE,
-        maxRange:           UNSET_FIELD,
-        resolution:         UNSET_FIELD,
-        power:              0.85f,
-        minDelay:           5000,
-        fifoReservedEventCount: 0,
-        fifoMaxEventCount:  CROS_EC_FIFO_SIZE,
-        stringType:         SENSOR_STRING_TYPE_GYROSCOPE,
-        requiredPermission: 0,
-        maxDelay:           80000,
-        flags:              SENSOR_FLAG_CONTINUOUS_MODE,
-        reserved:           { 0 }
+        .name =              "CrosEC Gyroscope",
+        .vendor =            "Google",
+        .version =           1,
+        .handle =            UNSET_FIELD,
+        .type =              SENSOR_TYPE_GYROSCOPE,
+        .maxRange =          UNSET_FIELD,
+        .resolution =        UNSET_FIELD,
+        .power =             0.85f,
+        .minDelay =          5000,
+        .fifoReservedEventCount =0,
+        .fifoMaxEventCount = CROS_EC_FIFO_SIZE,
+        .stringType =        SENSOR_STRING_TYPE_GYROSCOPE,
+        .requiredPermission =0,
+        .maxDelay =          80000,
+        .flags =             SENSOR_FLAG_CONTINUOUS_MODE,
+        .reserved =          { 0 }
     },
     [CROS_EC_MAG] = {
-        name:               "CrosEC Compass",
-        vendor:             "Google",
-        version:            1,
-        handle:             UNSET_FIELD,
-        type:               SENSOR_TYPE_MAGNETIC_FIELD,
-        maxRange:           UNSET_FIELD,
-        resolution:         UNSET_FIELD,
-        power:              5.0f,  /* Based on BMM150 */
+        .name =              "CrosEC Compass",
+        .vendor =            "Google",
+        .version =           1,
+        .handle =            UNSET_FIELD,
+        .type =              SENSOR_TYPE_MAGNETIC_FIELD,
+        .maxRange =          UNSET_FIELD,
+        .resolution =        UNSET_FIELD,
+        .power =             5.0f,  /* Based on BMM150 */
         /*
          * BMI150 uses repetition to reduce output noise.
          * Set ODR at no more than 25Hz.
          */
-        minDelay:           40000,
-        fifoReservedEventCount: 0,
-        fifoMaxEventCount:  CROS_EC_FIFO_SIZE,
-        stringType:         SENSOR_STRING_TYPE_MAGNETIC_FIELD,
-        requiredPermission: 0,
-        maxDelay:           200000,
-        flags:              SENSOR_FLAG_CONTINUOUS_MODE,
-        reserved:           { 0 }
+        .minDelay =          40000,
+        .fifoReservedEventCount =0,
+        .fifoMaxEventCount = CROS_EC_FIFO_SIZE,
+        .stringType =        SENSOR_STRING_TYPE_MAGNETIC_FIELD,
+        .requiredPermission =0,
+        .maxDelay =          200000,
+        .flags =             SENSOR_FLAG_CONTINUOUS_MODE,
+        .reserved =          { 0 }
     },
     [CROS_EC_PROX] = {
-        name:               "CrosEC Proximity",
-        vendor:             "Google",
-        version:            1,
-        handle:             UNSET_FIELD,
-        type:               SENSOR_TYPE_PROXIMITY,
-        maxRange:           UNSET_FIELD,
-        resolution:         UNSET_FIELD,
-        power:              0.12f,  /* Based on Si1141 */
-        minDelay:           20000,
-        fifoReservedEventCount: 0,
-        fifoMaxEventCount:  CROS_EC_FIFO_SIZE,
-        stringType:         SENSOR_STRING_TYPE_PROXIMITY,
-        requiredPermission: 0,
-        /* Forced mode, can be long: 10s */
-        maxDelay:           10000000,
+        .name =              "CrosEC Proximity",
+        .vendor =            "Google",
+        .version =           1,
+        .handle =            UNSET_FIELD,
+        .type =              SENSOR_TYPE_PROXIMITY,
+        .maxRange =          UNSET_FIELD,
+        .resolution =        UNSET_FIELD,
+        .power =             0.12f,  /* Based on Si1141 */
+        .minDelay =          20000,
+        .fifoReservedEventCount =0,
+        .fifoMaxEventCount = CROS_EC_FIFO_SIZE,
+        .stringType =        SENSOR_STRING_TYPE_PROXIMITY,
+        .requiredPermission =0,
+        /* Forced mode, can be long =10s */
+        .maxDelay =          10000000,
         /* WAKE UP required by API */
-        flags:              SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
-        reserved:           { 0 }
+        .flags =             SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
+        .reserved =          { 0 }
     },
     [CROS_EC_LIGHT] = {
-        name:               "CrosEC Light",
-        vendor:             "Google",
-        version:            1,
-        handle:             UNSET_FIELD,
-        type:               SENSOR_TYPE_LIGHT,
-        maxRange:           UNSET_FIELD,
-        resolution:         UNSET_FIELD,
-        power:              0.12f,  /* Based on Si1141 */
-        minDelay:           20000,
-        fifoReservedEventCount: 0,
-        fifoMaxEventCount:  CROS_EC_FIFO_SIZE,
-        stringType:         SENSOR_STRING_TYPE_LIGHT,
-        requiredPermission: 0,
-        /* Forced mode, can be long: 10s */
-        maxDelay:           10000000,
-        flags:              SENSOR_FLAG_ON_CHANGE_MODE,
-        reserved:           { 0 }
+        .name =              "CrosEC Light",
+        .vendor =            "Google",
+        .version =           1,
+        .handle =            UNSET_FIELD,
+        .type =              SENSOR_TYPE_LIGHT,
+        .maxRange =          UNSET_FIELD,
+        .resolution =        UNSET_FIELD,
+        .power =             0.12f,  /* Based on Si1141 */
+        .minDelay =          20000,
+        .fifoReservedEventCount =0,
+        .fifoMaxEventCount = CROS_EC_FIFO_SIZE,
+        .stringType =        SENSOR_STRING_TYPE_LIGHT,
+        .requiredPermission =0,
+        /* Forced mode, can be long =9s */
+        .maxDelay =          10000000,
+        .flags =             SENSOR_FLAG_ON_CHANGE_MODE,
+        .reserved =          { 0 }
     },
 };
 
 static const struct sensor_t sGestureListTemplate[] = {
     [CROS_EC_SIGMO] = {
-        name:               "CrosEC Significant Motion",
-        vendor:             "Google",
-        version:            1,
-        handle:             UNSET_FIELD,
-        type:               SENSOR_TYPE_SIGNIFICANT_MOTION,
-        maxRange:           1.0f,
-        resolution:         1.0f,
-        power:              0.18f,    /* Based on BMI160 */
-        minDelay:           -1,
-        fifoReservedEventCount: 0,
-        fifoMaxEventCount:  0,
-        stringType:         SENSOR_STRING_TYPE_SIGNIFICANT_MOTION,
-        requiredPermission: 0,
-        maxDelay:           0,
-        flags:              SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
-        reserved:           { 0 }
+        .name =              "CrosEC Significant Motion",
+        .vendor =            "Google",
+        .version =           1,
+        .handle =            UNSET_FIELD,
+        .type =              SENSOR_TYPE_SIGNIFICANT_MOTION,
+        .maxRange =          1.0f,
+        .resolution =        1.0f,
+        .power =             0.18f,    /* Based on BMI160 */
+        .minDelay =          -1,
+        .fifoReservedEventCount =0,
+        .fifoMaxEventCount = 0,
+        .stringType =        SENSOR_STRING_TYPE_SIGNIFICANT_MOTION,
+        .requiredPermission =0,
+        .maxDelay =          0,
+        .flags =             SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
+        .reserved =          { 0 }
     },
 };
 
@@ -544,23 +544,23 @@ static int cros_ec_get_sensors_names(char **ring_device_name,
 }
 
 static struct hw_module_methods_t cros_ec_sensors_methods = {
-    open: cros_ec_open_sensors,
+    .open = cros_ec_open_sensors,
 };
 
 struct sensors_module_t HAL_MODULE_INFO_SYM = {
-    common: {
-      tag: HARDWARE_MODULE_TAG,
-      version_major: 1,
-      version_minor: 0,
-      id: SENSORS_HARDWARE_MODULE_ID,
-      name: "CrosEC sensor hub module",
-      author: "Google",
-      methods: &cros_ec_sensors_methods,
-      dso: NULL,
-      reserved: { 0 },
+    .common ={
+        .tag =HARDWARE_MODULE_TAG,
+        .version_major =1,
+        .version_minor =0,
+        .id =SENSORS_HARDWARE_MODULE_ID,
+        .name ="CrosEC sensor hub module",
+        .author ="Google",
+        .methods =&cros_ec_sensors_methods,
+        .dso =NULL,
+        .reserved ={ 0 },
     },
-    get_sensors_list: cros_ec_get_sensors_list,
-    set_operation_mode: NULL,
+    .get_sensors_list =cros_ec_get_sensors_list,
+    .set_operation_mode =NULL,
 };
 
 /*****************************************************************************/
