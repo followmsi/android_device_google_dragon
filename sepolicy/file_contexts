@@ -60,3 +60,6 @@
 
 # camera overrides ISP files
 /vendor/firmware/camera(/.*)?                   u:object_r:camera_data_file:s0
+
+#sysfs nodes for cpuinfo for CTS
+/sys/firmware/devicetree/base/cpus(/.*)?        u:object_r:sysfs_socinfo:s0
