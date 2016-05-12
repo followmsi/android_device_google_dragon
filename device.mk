@@ -167,6 +167,10 @@ PRODUCT_PROPERTY_OVERRIDES := \
 PRODUCT_SYSTEM_PROPERTY_BLACKLIST := \
     ro.product.locale
 
+# OEM Unlock reporting
+ADDITIONAL_DEFAULT_PROPERTIES += \
+    ro.oem_unlock_supported=1
+
 # setup dalvik vm configs.
 $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
 
