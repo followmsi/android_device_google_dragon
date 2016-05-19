@@ -271,6 +271,8 @@ static void *callback_thread_loop(void *context)
 
         if (fds[0].revents & POLLIN) {
             struct sound_trigger_phrase_recognition_event *event;
+            recognition_callback_t callback = stdev->recognition_callback;
+            void *cookie = stdev->recognition_cookie;
 
             event = (struct sound_trigger_phrase_recognition_event *)
                         sound_trigger_event_alloc(stdev);
@@ -279,12 +281,14 @@ static void *callback_thread_loop(void *context)
                 stdev->pcm = NULL;
                 goto exit;
             }
-
             stdev->is_streaming = 1;
             ALOGI("%s send callback model %d", __func__,
                     stdev->model_handle);
-            stdev->recognition_callback(&event->common,
-                                        stdev->recognition_cookie);
+            pthread_mutex_unlock(&stdev->lock);
+            if (callback != NULL) {
+                callback(&event->common, cookie);
+            }
+            pthread_mutex_lock(&stdev->lock);
             free(event);
             /* Leave the device open for streaming. */
             goto exit;
