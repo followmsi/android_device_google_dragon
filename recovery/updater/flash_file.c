@@ -58,7 +58,7 @@ static void *file_open(const void *params)
 		return file_blob_open(dev, value);
 
 	if (value->type != VAL_STRING)
-		return NULL;
+		goto out_free;
 
 	dev->fd = open(value->data, O_RDWR);
 	if (dev->fd == -1) {
