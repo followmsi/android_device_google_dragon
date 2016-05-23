@@ -27,6 +27,7 @@
 #include "flash_device.h"
 #include "update_log.h"
 #include "vboot_interface.h"
+#include "update_fw.h"
 
 int check_compatible_keys(struct flash_device *img, struct flash_device *spi)
 {
@@ -183,7 +184,7 @@ int update_fw(Value *fw_file, Value *ec_file, int force)
 	img = flash_open("file", fw_file);
 	if (!img)
 		goto out_free;
-	fwid = fmap_read_section(img, "RW_FWID_A", &size, NULL);
+	fwid = reinterpret_cast<char*>(fmap_read_section(img, "RW_FWID_A", &size, NULL));
 
 	if (!fwid) {
 		ALOGD("Cannot find firmware image version\n");
