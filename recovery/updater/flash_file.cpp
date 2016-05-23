@@ -40,7 +40,7 @@ struct file_data {
 static void *file_blob_open(struct file_data *dev, const Value *param)
 {
 	dev->fd = -1; /* No backing file */
-	dev->data = (void *)param->data;
+	dev->data = reinterpret_cast<uint8_t*>(param->data);
 
 	dev->info.st_size = param->size;
 
@@ -49,8 +49,8 @@ static void *file_blob_open(struct file_data *dev, const Value *param)
 
 static void *file_open(const void *params)
 {
-	const Value *value = params;
-	struct file_data *dev = calloc(1, sizeof(struct file_data));
+	const Value *value = reinterpret_cast<const Value*>(params);
+	struct file_data *dev = reinterpret_cast<struct file_data*>(calloc(1, sizeof(struct file_data)));
 	if (!dev)
 		return NULL;
 
@@ -71,8 +71,8 @@ static void *file_open(const void *params)
 		goto out_close;
 	}
 
-	dev->data = mmap(NULL, dev->info.st_size, PROT_READ | PROT_WRITE,
-			 MAP_SHARED, dev->fd, 0);
+	dev->data = reinterpret_cast<uint8_t*>(mmap(NULL, dev->info.st_size, PROT_READ | PROT_WRITE,
+			 MAP_SHARED, dev->fd, 0));
 	if (dev->data == (void *)-1) {
 		ALOGE("Cannot mmap %s : %d\n", value->data, errno);
 		goto out_close;
@@ -93,7 +93,7 @@ out_free:
 
 static void file_close(void *hnd)
 {
-	struct file_data *dev = hnd;
+	struct file_data *dev = reinterpret_cast<struct file_data*>(hnd);
 
 	if (dev->fd > 0) {
 		munmap(dev->data, dev->info.st_size);
@@ -104,7 +104,7 @@ static void file_close(void *hnd)
 
 static int file_read(void *hnd, off_t offset, void *buffer, size_t count)
 {
-	struct file_data *dev = hnd;
+	struct file_data *dev = reinterpret_cast<struct file_data*>(hnd);
 
 	if (offset + (off_t)count > dev->info.st_size) {
 		ALOGW("Invalid offset/size %ld + %zd > %lld\n",
@@ -119,7 +119,7 @@ static int file_read(void *hnd, off_t offset, void *buffer, size_t count)
 
 static int file_write(void *hnd, off_t offset, void *buffer, size_t count)
 {
-	struct file_data *dev = hnd;
+	struct file_data *dev = reinterpret_cast<struct file_data*>(hnd);
 
 	if (offset + (off_t)count > dev->info.st_size) {
 		ALOGW("Invalid offset/size %ld + %zd > %lld\n",
@@ -134,7 +134,7 @@ static int file_write(void *hnd, off_t offset, void *buffer, size_t count)
 
 static int file_erase(void *hnd, off_t offset, size_t count)
 {
-	struct file_data *dev = hnd;
+	struct file_data *dev = reinterpret_cast<struct file_data*>(hnd);
 
 	if (offset + (off_t)count > dev->info.st_size) {
 		ALOGW("Invalid offset/size %ld + %zd > %lld\n",
@@ -149,28 +149,28 @@ static int file_erase(void *hnd, off_t offset, size_t count)
 
 static size_t file_get_size(void *hnd)
 {
-	struct file_data *dev = hnd;
+	struct file_data *dev = reinterpret_cast<struct file_data*>(hnd);
 
 	return dev ? dev->info.st_size : 0;
 }
 
 static size_t file_get_write_size(void *hnd)
 {
-	struct file_data *dev = hnd;
+	struct file_data *dev = reinterpret_cast<struct file_data*>(hnd);
 
 	return dev && dev->fd > 0 ? dev->info.st_blksize : 0;
 }
 
 static size_t file_get_erase_size(void *hnd)
 {
-	struct file_data *dev = hnd;
+	struct file_data *dev = reinterpret_cast<struct file_data*>(hnd);
 
 	return dev && dev->fd > 0 ? dev->info.st_blksize : 0;
 }
 
 static off_t file_get_fmap_offset(void *hnd)
 {
-	struct file_data *dev = hnd;
+	struct file_data *dev = reinterpret_cast<struct file_data*>(hnd);
 
 	return dev->info.st_size;
 }
