@@ -24,7 +24,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "edify/expr.h"
 #include "debug_cmd.h"
 #include "flash_device.h"
 #include "fmap.h"
