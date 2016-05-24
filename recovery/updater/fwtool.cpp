@@ -77,7 +77,7 @@ static void dump_section(struct flash_device *dev, const char *name)
 	off_t offset;
 	char *content;
 
-	content = fmap_read_section(dev, name, &size, &offset);
+	content = reinterpret_cast<char*>(fmap_read_section(dev, name, &size, &offset));
 	if (content) {
 		content[size - 1] = '\0';
 		printf("[%s]@%lx={%s}\n", name, offset, content);
@@ -89,10 +89,11 @@ static int cmd_flash_fmap(int argc, const char **argv)
 	if (!get_spi())
 		return -ENODEV;
 
-	dump_fmap(spi);
-	dump_section(spi, "RO_FRID");
-	dump_section(spi, "RW_FWID_A");
-	dump_section(spi, "RW_FWID_B");
+        struct flash_device* dev = reinterpret_cast<struct flash_device*>(spi);
+	dump_fmap(dev);
+	dump_section(dev, "RO_FRID");
+	dump_section(dev, "RW_FWID_A");
+	dump_section(dev, "RW_FWID_B");
 	return 0;
 }
 
@@ -126,9 +127,9 @@ static int cmd_update(int argc, const char **argv)
 
 	printf("Updating using images main:%s and ec:%s ...\n", argv[1], argv[2]);
 	mainv.type = VAL_STRING;
-	mainv.data = (void *)argv[1];
+	mainv.data = const_cast<char*>(argv[1]);
 	ecv.type = VAL_STRING;
-	ecv.data = (void *)argv[2];
+	ecv.data = const_cast<char*>(argv[2]);
 	update_fw(&mainv, &ecv, 1);
 	printf("Done.\n");
 
@@ -149,7 +150,7 @@ static int cmd_vbnv_read(int argc, const char **argv)
 
 	uint8_t val;
 
-	if (vbnv_get_flag(spi, argv[1], &val) == 0)
+	if (vbnv_get_flag(reinterpret_cast<struct flash_device*>(spi), argv[1], &val) == 0)
 		printf("%s = %d\n", argv[1], val);
 
 	return 0;
@@ -168,7 +169,7 @@ static int cmd_vbnv_write(int argc, const char **argv)
 		return -ENODEV;
 
 	uint8_t val = atoi(argv[2]);
-	vbnv_set_flag(spi, argv[1], val);
+	vbnv_set_flag(reinterpret_cast<struct flash_device*>(spi), argv[1], val);
 	return 0;
 }
 
@@ -204,9 +205,9 @@ static void sync_slots(void)
 	}
 
 	size_t cur_id_size;
-	char *cur_fwid = fmap_read_section(spi,
-					   part_list[cur_index].id_str,
-					   &cur_id_size, NULL);
+        struct flash_device* dev = reinterpret_cast<struct flash_device*>(spi);
+	char *cur_fwid = reinterpret_cast<char*>(fmap_read_section(dev,
+		part_list[cur_index].id_str, &cur_id_size, NULL));
 
 	if ((cur_fwid == NULL) || (cur_id_size == 0)) {
 		ALOGW("ERROR: Current FWID read error.\n");
@@ -216,9 +217,8 @@ static void sync_slots(void)
 	ALOGD("Cur fwid: %s\n", cur_fwid);
 
 	size_t old_id_size;
-	char *old_fwid = fmap_read_section(spi,
-					   part_list[old_index].id_str,
-					   &old_id_size, NULL);
+	char *old_fwid = reinterpret_cast<char*>(fmap_read_section(dev,
+	        part_list[old_index].id_str, &old_id_size, NULL));
 
 	if ((old_fwid == NULL) || (old_id_size == 0))
 		ALOGD("Old FWID read error or FW slot damaged.\n");
@@ -239,9 +239,8 @@ static void sync_slots(void)
 
 	size_t sec_size;
 	ALOGD("Reading current firmware slot.\n");
-	uint8_t *cur_section = fmap_read_section(spi,
-						 part_list[cur_index].name_str,
-						 &sec_size, NULL);
+	uint8_t *cur_section = reinterpret_cast<uint8_t*>(fmap_read_section(dev,
+	        part_list[cur_index].name_str, &sec_size, NULL));
 	if (cur_section == NULL) {
 		ALOGW("Error: Could not read current firmware slot.\n");
 		return;
@@ -249,7 +248,7 @@ static void sync_slots(void)
 
 	off_t old_offset;
 	ALOGD("Reading old firmware slot offset.\n");
-	if (fmap_get_section_offset(spi,
+	if (fmap_get_section_offset(dev,
 				    part_list[old_index].name_str,
 				    &old_offset) == -1) {
 		ALOGW("Error: Could not read old firmware slot offset.\n");
@@ -258,14 +257,14 @@ static void sync_slots(void)
 	}
 
 	ALOGD("Erasing old firmware slot.\n");
-	if (flash_erase(spi, old_offset, sec_size)) {
+	if (flash_erase(dev, old_offset, sec_size)) {
 		ALOGW("Error: Could not erase old firmware slot.\n");
 		free(cur_section);
 		return;
 	}
 
 	ALOGD("Updating old firmware slot.\n");
-	if (flash_write(spi, old_offset, cur_section, sec_size))
+	if (flash_write(dev, old_offset, cur_section, sec_size))
 		ALOGW("Error: Could not update old firmware slot.\n");
 	else
 		ALOGD("Slot sync complete.\n");
@@ -286,8 +285,9 @@ static int cmd_mark_boot(int argc, const char **argv)
 		return -ENODEV;
 
 	if (strcmp(argv[1], "success") == 0) {
-		vbnv_set_flag(spi, "boot_result", VB2_FW_RESULT_SUCCESS);
-		vbnv_set_flag(spi, "try_count", 0);
+		vbnv_set_flag(reinterpret_cast<struct flash_device*>(spi), "boot_result",
+                              VB2_FW_RESULT_SUCCESS);
+		vbnv_set_flag(reinterpret_cast<struct flash_device*>(spi), "try_count", 0);
 		sync_slots();
 	} else {
 		printf("Invalid arg\n");
@@ -371,9 +371,9 @@ int main(int argc, const char **argv)
 
 	/* Clean up our flash handlers */
 	if (spi)
-		flash_close(spi);
+		flash_close(reinterpret_cast<struct flash_device*>(spi));
 	if (ec)
-		flash_close(ec);
+		flash_close(reinterpret_cast<struct flash_device*>(ec));
 
 	return res;
 }
