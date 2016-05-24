@@ -23,7 +23,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "edify/expr.h"
 #include "flash_device.h"
 #include "update_log.h"
 #include "vboot_interface.h"
