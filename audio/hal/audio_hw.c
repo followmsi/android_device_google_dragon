@@ -1542,6 +1542,10 @@ static int out_close_pcm_devices(struct stream_out *out)
             free(pcm_device->res_buffer);
             pcm_device->res_buffer = NULL;
         }
+        if (pcm_device->dsp_context) {
+            cras_dsp_context_free(pcm_device->dsp_context);
+            pcm_device->dsp_context = NULL;
+        }
     }
 
     return 0;
