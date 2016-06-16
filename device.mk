@@ -26,7 +26,7 @@
 # prebuilts.  To force using the prebuilt while having the source, set:
 # SECURE_OS_BUILD=false
 ifeq ($(wildcard vendor/nvidia/dragon-tlk/tlk),vendor/nvidia/dragon-tlk/tlk)
-    SECURE_OS_BUILD ?= tlk
+    SECURE_OS_BUILD ?= client_only
 endif
 
 ifeq ($(TARGET_PREBUILT_KERNEL),)
