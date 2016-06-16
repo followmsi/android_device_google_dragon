@@ -11,7 +11,12 @@
 /dev/block/mmcblk0rpmb                                u:object_r:rpmb_block_device:s0
 
 # /dev
-/dev/dri/(.+)                                   u:object_r:gpu_device:s0
+/dev/dri/card0                                  u:object_r:gpu_device:s0
+/dev/dri/controlD64                             u:object_r:gpu_device:s0
+/dev/dri/renderD128                             u:object_r:gpu_device:s0
+/dev/dri/card1                                  u:object_r:host1x_device:s0
+/dev/dri/controlD65                             u:object_r:host1x_device:s0
+/dev/dri/renderD129                             u:object_r:host1x_device:s0
 /dev/sw_sync                                    u:object_r:sw_sync_device:s0
 /dev/ttyTHS3                                    u:object_r:hci_attach_dev:s0
 /dev/focuser                                    u:object_r:video_device:s0
