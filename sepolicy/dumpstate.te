@@ -12,3 +12,5 @@ allow dumpstate fw_logs_data_file:dir  r_dir_perms;
 # read /data/misc/touchfwup/rmi4update.txt log file
 allow dumpstate touch_fw_update_log_file:dir r_dir_perms;
 allow dumpstate touch_fw_update_log_file:file r_file_perms;
+
+allow dumpstate host1x_device:chr_file rw_file_perms;
