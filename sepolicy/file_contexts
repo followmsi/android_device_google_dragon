@@ -7,6 +7,7 @@
 /dev/block/platform/700b0600\.sdhci/by-name/recovery  u:object_r:recovery_block_device:s0
 /dev/block/platform/700b0600\.sdhci/by-name/KERN-A    u:object_r:boot_block_device:s0
 /dev/block/platform/700b0600\.sdhci/by-name/KERN-B    u:object_r:boot_block_device:s0
+/dev/block/platform/700b0600\.sdhci/by-name/MSC       u:object_r:misc_block_device:s0
 /dev/block/zram0                                      u:object_r:swap_block_device:s0
 /dev/block/mmcblk0rpmb                                u:object_r:rpmb_block_device:s0
 
