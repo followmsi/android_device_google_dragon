@@ -120,3 +120,6 @@ ifeq ($(SECURE_OS_BUILD),tlk)
 endif
 
 BOARD_HAL_STATIC_LIBRARIES := libdumpstate.dragon libhealthd.dragon
+
+# Testing related defines
+BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh
