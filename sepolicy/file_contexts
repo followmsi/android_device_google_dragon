@@ -24,6 +24,9 @@
 /dev/cros_ec                                    u:object_r:cros_ec_device:s0
 /dev/hidraw0                                    u:object_r:hidraw_device:s0
 
+# sysfs files used by wifi
+/sys/module/bcmdhd/parameters/firmware_path     u:object_r:sysfs_wlan_fwpath:s0
+
 # system executables
 /system/bin/init_regions\.sh                    u:object_r:locale_exec:s0
 /system/bin/tune-thermal-gov\.sh                u:object_r:thermal_gov_exec:s0
