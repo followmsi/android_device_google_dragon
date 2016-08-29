@@ -1,4 +1,4 @@
-type crash_collector, domain, domain_deprecated;
+type crash_collector, domain, device_domain_deprecated;
 type crash_collector_exec, exec_type, file_type;
 type crash_reports_data_file, file_type, data_file_type;
 
