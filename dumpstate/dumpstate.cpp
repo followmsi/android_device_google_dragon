@@ -19,14 +19,16 @@
 
 void dumpstate_board()
 {
+    Dumpstate& ds = Dumpstate::GetInstance();
+
     /* ask init.dragon.rc to dump the charging state and wait */
     property_set("debug.bq25892", "dump");
     sleep(1);
 
-    dump_file("EC Version", "/sys/class/chromeos/cros_ec/version");
-    run_command("FW Version", 5, "fwtool", "vboot", NULL);
-    dump_file("Charger chip registers", "/data/misc/fw_logs/bq25892.txt");
-    dump_file("Battery gas gauge", "/sys/class/power_supply/bq27742-0/uevent");
-    dump_file("Touchscreen firmware updater", "/data/misc/touchfwup/rmi4update.txt");
-    dump_file("Ion heap", "/d/ion/heaps/system");
+    ds.DumpFile("EC Version", "/sys/class/chromeos/cros_ec/version");
+    ds.RunCommand("FW Version", {"fwtool", "vboot"}, CommandOptions::WithTimeout(5).Build());
+    ds.DumpFile("Charger chip registers", "/data/misc/fw_logs/bq25892.txt");
+    ds.DumpFile("Battery gas gauge", "/sys/class/power_supply/bq27742-0/uevent");
+    ds.DumpFile("Touchscreen firmware updater", "/data/misc/touchfwup/rmi4update.txt");
+    ds.DumpFile("Ion heap", "/d/ion/heaps/system");
 };
