@@ -49,7 +49,7 @@ Value* firmware_update(const char *name, State * state, int argc, Expr * argv[])
 	FreeValue(ec);
 
 	printf("%s: [%s] done.\n", __func__,
-		retval ? retval->data : state->errmsg);
+		retval ? retval->data : state->errmsg.c_str());
 	return retval;
 }
 
