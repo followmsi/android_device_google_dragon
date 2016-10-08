@@ -232,7 +232,32 @@ static void dragon_power_hint(struct power_module *module, power_hint_t hint,
 static int dragon_power_open(const hw_module_t *module, const char *name,
                             hw_device_t **device)
 {
-    return 0;
+    ALOGD("%s: enter; name=%s", __FUNCTION__, name);
+    int retval = 0; /* 0 is ok; -1 is error */
+
+    if (strcmp(name, POWER_HARDWARE_MODULE_ID) == 0) {
+        power_module_t *dev = (power_module_t *)calloc(1,
+                sizeof(power_module_t));
+
+        if (dev) {
+            /* Common hw_device_t fields */
+            dev->common.tag = HARDWARE_MODULE_TAG;
+            dev->common.module_api_version = POWER_MODULE_API_VERSION_0_2;
+            dev->common.module_api_version = HARDWARE_HAL_API_VERSION;
+
+            dev->init = power_init;
+            dev->powerHint = dragon_power_hint;
+            dev->setInteractive = power_set_interactive;
+
+            *device = (hw_device_t*)dev;
+        } else
+            retval = -ENOMEM;
+    } else {
+        retval = -EINVAL;
+    }
+
+    ALOGD("%s: exit %d", __FUNCTION__, retval);
+    return retval;
 }
 
 
