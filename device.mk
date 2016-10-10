@@ -145,8 +145,12 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     power.dragon \
-    lights.dragon \
     sensors.dragon
+
+# Light HAL
+PRODUCT_PACKAGES += \
+    lights.dragon \
+    android.hardware.light@2.0-impl
 
 #TODO(dgreid) is this right?
 PRODUCT_PROPERTY_OVERRIDES := \
