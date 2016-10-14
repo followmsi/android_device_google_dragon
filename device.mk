@@ -146,10 +146,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     power.dragon \
     sensors.dragon \
-    android.hardware.power@1.0-impl \
+    android.hardware.power@1.0-impl
 
 ifeq ($(ENABLE_TREBLE), true)
-PRODUCT_PACKAGES += android.hardware.power@1.0-service \
+PRODUCT_PACKAGES += android.hardware.power@1.0-service
 endif
 
 # Light HAL
