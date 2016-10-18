@@ -45,11 +45,11 @@ Value* firmware_update(const char *name, State * state, int argc, Expr * argv[])
 	else
 		retval = StringValue(strdup(res ? "UPDATED" : ""));
 
-	FreeValue(firmware);
-	FreeValue(ec);
+	free(firmware);
+	free(ec);
 
 	printf("%s: [%s] done.\n", __func__,
-		retval ? retval->data : state->errmsg.c_str());
+		retval ? retval->data.c_str() : state->errmsg.c_str());
 	return retval;
 }
 
