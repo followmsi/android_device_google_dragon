@@ -236,18 +236,23 @@ static int dragon_power_open(const hw_module_t *module, const char *name,
     int retval = 0; /* 0 is ok; -1 is error */
 
     if (strcmp(name, POWER_HARDWARE_MODULE_ID) == 0) {
-        power_module_t *dev = (power_module_t *)calloc(1,
-                sizeof(power_module_t));
+        dragon_power_module *dev = (dragon_power_module *)calloc(1,
+                sizeof(dragon_power_module));
 
         if (dev) {
             /* Common hw_device_t fields */
-            dev->common.tag = HARDWARE_MODULE_TAG;
-            dev->common.module_api_version = POWER_MODULE_API_VERSION_0_2;
-            dev->common.module_api_version = HARDWARE_HAL_API_VERSION;
+            dev->base.common.tag = HARDWARE_MODULE_TAG;
+            dev->base.common.module_api_version = POWER_MODULE_API_VERSION_0_2;
+            dev->base.common.module_api_version = HARDWARE_HAL_API_VERSION;
 
-            dev->init = power_init;
-            dev->powerHint = dragon_power_hint;
-            dev->setInteractive = power_set_interactive;
+            dev->base.init = power_init;
+            dev->base.powerHint = dragon_power_hint;
+            dev->base.setInteractive = power_set_interactive;
+            dev->boost_pulse_lock = PTHREAD_MUTEX_INITIALIZER;
+            dev->low_power_lock = PTHREAD_MUTEX_INITIALIZER;
+            dev->boostpulse_fd = -1;
+            dev->boostpulse_warned = 0;
+            dev->gpu_qos_manager = NULL;
 
             *device = (hw_device_t*)dev;
         } else
