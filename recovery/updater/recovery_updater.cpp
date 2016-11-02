@@ -20,12 +20,14 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "edify/expr.h"
 #include "update_fw.h"
 
 Value* firmware_update(const char *name, State * state, int argc, Expr * argv[]) {
-	Value *firmware;
-	Value *ec;
 	int res;
 	Value *retval = NULL;
 
@@ -34,19 +36,19 @@ Value* firmware_update(const char *name, State * state, int argc, Expr * argv[])
 		ErrorAbort(state, "syntax: %s bios.bin ec.bin", name);
 		return NULL;
 	}
-	if (ReadValueArgs(state, argv, 2, &firmware, &ec) < 0) {
+	std::vector<std::unique_ptr<Value>> args;
+	if (!ReadValueArgs(state, 2, argv, &args)) {
 		ErrorAbort(state, "%s: invalid arguments", name);
 		return NULL;
 	}
+	Value* firmware = args[0].get();
+	Value* ec = args[1].get();
 
 	res = update_fw(firmware, ec, 0);
 	if (res < 0)
 		ErrorAbort(state, "%s: firmware update error", name);
 	else
 		retval = StringValue(strdup(res ? "UPDATED" : ""));
-
-	free(firmware);
-	free(ec);
 
 	printf("%s: [%s] done.\n", __func__,
 		retval ? retval->data.c_str() : state->errmsg.c_str());
