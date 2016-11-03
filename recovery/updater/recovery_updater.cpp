@@ -28,27 +28,26 @@
 #include "update_fw.h"
 
 Value* firmware_update(const char *name, State * state, int argc, Expr * argv[]) {
-	int res;
-	Value *retval = NULL;
-
 	printf("%s: running %s.\n", __func__, name);
 	if (argc < 2) {
-		ErrorAbort(state, "syntax: %s bios.bin ec.bin", name);
-		return NULL;
+		ErrorAbort(state, kArgsParsingFailure, "syntax: %s bios.bin ec.bin", name);
+		return nullptr;
 	}
 	std::vector<std::unique_ptr<Value>> args;
 	if (!ReadValueArgs(state, 2, argv, &args)) {
-		ErrorAbort(state, "%s: invalid arguments", name);
-		return NULL;
+		ErrorAbort(state, kArgsParsingFailure, "%s: invalid arguments", name);
+		return nullptr;
 	}
-	Value* firmware = args[0].get();
-	Value* ec = args[1].get();
+	const Value *firmware = args[0].get();
+	const Value *ec = args[1].get();
 
-	res = update_fw(firmware, ec, 0);
-	if (res < 0)
-		ErrorAbort(state, "%s: firmware update error", name);
-	else
-		retval = StringValue(strdup(res ? "UPDATED" : ""));
+	Value *retval = nullptr;
+	int res = update_fw(firmware, ec, 0);
+	if (res < 0) {
+		ErrorAbort(state, kVendorFailure, "%s: firmware update error", name);
+	} else {
+		retval = StringValue(res ? "UPDATED" : "");
+	}
 
 	printf("%s: [%s] done.\n", __func__,
 		retval ? retval->data.c_str() : state->errmsg.c_str());
