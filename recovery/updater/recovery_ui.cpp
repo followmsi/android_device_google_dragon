@@ -23,8 +23,6 @@
 #include "ui.h"
 #include "vboot_interface.h"
 
-extern char *reason;
-
 class DragonDevice : public Device {
   public:
     DragonDevice(RecoveryUI* ui) : Device(ui) { }
