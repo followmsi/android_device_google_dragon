@@ -148,6 +148,10 @@ PRODUCT_PACKAGES += \
     sensors.dragon \
     android.hardware.power@1.0-impl
 
+# Health HAL
+PRODUCT_PACKAGES += \
+    android.hardware.health@1.0-impl
+
 # Light HAL
 PRODUCT_PACKAGES += \
     lights.dragon \
