@@ -200,6 +200,9 @@ PRODUCT_PACKAGES += \
     audio.usb.default \
     audio.r_submix.default
 
+PRODUCT_PACKAGES += \
+    android.hardware.audio.effect@2.0-impl
+
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.audio.monitorRotation=true \
     ro.frp.pst=/dev/block/platform/700b0600.sdhci/by-name/PST
