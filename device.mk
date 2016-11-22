@@ -161,6 +161,15 @@ PRODUCT_PACKAGES += \
     lights.dragon \
     android.hardware.light@2.0-impl
 
+# Keymaster HAL
+PRODUCT_PACKAGES += \
+    android.hardware.keymaster@3.0-impl
+
+ifeq ($(ENABLE_TREBLE), true)
+PRODUCT_PACKAGES += \
+    android.hardware.keymaster@3.0-service
+endif
+
 #TODO(dgreid) is this right?
 PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=wlan0 \
