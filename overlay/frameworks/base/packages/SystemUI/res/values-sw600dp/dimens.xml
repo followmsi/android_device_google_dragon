@@ -21,7 +21,6 @@
     <dimen name="button_size">80dp</dimen>
     <dimen name="navigation_side_padding">@dimen/button_size</dimen>
     <dimen name="navigation_key_width">@dimen/button_size</dimen>
-    <dimen name="navigation_key_width_sw600dp_land">@dimen/button_size</dimen>
     <dimen name="navigation_extra_key_width">@dimen/button_size</dimen>
 
     <!-- The maximum width of the navigation bar ripples. -->
@@ -29,6 +28,5 @@
 
     <!-- The padding around the navigation buttons -->
     <dimen name="navigation_key_padding">5dp</dimen>
-    <dimen name="navigation_key_padding_sw600dp_land">5dp</dimen>
 
 </resources>
