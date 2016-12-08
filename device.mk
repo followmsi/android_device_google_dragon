@@ -35,7 +35,11 @@ else
 LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
 endif
 
+ifeq ($(TARGET_PRODUCT), ryu_kasan)
+LOCAL_FSTAB := $(LOCAL_PATH)/fstab.dragon.nocrypt
+else
 LOCAL_FSTAB := $(LOCAL_PATH)/fstab.dragon
+endif
 
 TARGET_RECOVERY_FSTAB = $(LOCAL_FSTAB)
 
