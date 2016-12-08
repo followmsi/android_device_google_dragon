@@ -2,6 +2,12 @@ type crash_collector_app, domain, device_domain_deprecated;
 
 # com.google.android.crashuploader runs in the crash_collector_app domain
 app_domain(crash_collector_app)
+
+# app_domain fallout
+tmpfs_domain(crash_collector_app)
+# Map with PROT_EXEC.
+allow crash_collector_app crash_collector_app_tmpfs:file execute;
+
 net_domain(crash_collector_app)
 
 allow crash_collector_app crash_reports_data_file:file { read getattr };
