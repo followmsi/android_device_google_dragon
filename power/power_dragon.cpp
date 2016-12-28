@@ -243,7 +243,7 @@ static int dragon_power_open(const hw_module_t *module, const char *name,
             /* Common hw_device_t fields */
             dev->base.common.tag = HARDWARE_MODULE_TAG;
             dev->base.common.module_api_version = POWER_MODULE_API_VERSION_0_2;
-            dev->base.common.module_api_version = HARDWARE_HAL_API_VERSION;
+            dev->base.common.hal_api_version = HARDWARE_HAL_API_VERSION;
 
             dev->base.init = power_init;
             dev->base.powerHint = dragon_power_hint;
