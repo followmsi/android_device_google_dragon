@@ -114,7 +114,7 @@ ifeq ($(SECURE_OS_BUILD),tlk)
   BOARD_SUPPORT_ROLLBACK_PROTECTION := true
 endif
 
-BOARD_HAL_STATIC_LIBRARIES := libdumpstate.dragon libhealthd.dragon
+BOARD_HAL_STATIC_LIBRARIES := libhealthd.dragon
 
 # Testing related defines
 BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh

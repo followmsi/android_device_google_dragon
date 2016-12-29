@@ -84,7 +84,7 @@ on post-fs-data
     mkdir /data/misc/fw_logs 0755 root root
 
     # touch firmware updater logs
-    mkdir /data/misc/touchfwup 0750 root log
+    mkdir /data/misc/touchfwup 0755 root log
 
     # initialize region info
     exec -- /system/bin/init_regions.sh
