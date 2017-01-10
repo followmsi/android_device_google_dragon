@@ -167,6 +167,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.facelock.rec_timeout=3500 \
     ro.facelock.est_max_time=500
 
+# camera flash prop
+PRODUCT_PROPERTY_OVERRIDES += \
+    camera.flash_off=0
+
 #TODO(dgreid) is this right?
 PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=wlan0 \
