@@ -161,6 +161,10 @@ PRODUCT_PACKAGES += \
     lights.dragon \
     sensors.dragon
 
+# mobile data provision prop
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.com.android.prov_mobiledata=false
+
 #TODO(dgreid) is this right?
 PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=wlan0 \
