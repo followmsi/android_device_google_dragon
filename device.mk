@@ -191,7 +191,7 @@ PRODUCT_SYSTEM_PROPERTY_BLACKLIST := \
     ro.product.locale
 
 # OEM Unlock reporting
-ADDITIONAL_DEFAULT_PROPERTIES += \
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.oem_unlock_supported=1
 
 # setup dalvik vm configs.
