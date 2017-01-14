@@ -1,3 +1,6 @@
+# Debug files
+/sys/kernel/debug/ion/heaps/system  u:object_r:debugfs_ion:s0
+
 # block devices
 /dev/block/platform/700b0600\.sdhci/by-name/UDA       u:object_r:userdata_block_device:s0
 /dev/block/platform/700b0600\.sdhci/by-name/CAC       u:object_r:cache_block_device:s0
@@ -34,6 +37,9 @@
 /system/bin/touchfwup\.sh                       u:object_r:touch_fw_update_exec:s0
 /system/bin/rmi4update                          u:object_r:rmi4update_exec:s0
 /system/bin/fwtool                              u:object_r:fwtool_exec:s0
+
+# vendor executables
+/vendor/bin/hw/android\.hardware\.dumpstate@1\.0-service.dragon      u:object_r:hal_dumpstate_impl_exec:s0
 
 # crash_collector
 /system/bin/crash_dispatcher                    u:object_r:crash_collector_exec:s0
