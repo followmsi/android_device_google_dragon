@@ -184,6 +184,9 @@ on boot
     # leaks much harder to notice and debug.
     setrlimit 7 2048 4096
 
+    # Wifi firmware reload path
+    chown wifi wifi /sys/module/bcmdhd/parameters/firmware_path
+
 on fs
     # Enable verity notification
     write /sys/module/dm_verity/parameters/error_behavior notify
