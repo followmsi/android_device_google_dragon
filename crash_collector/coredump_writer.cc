@@ -25,7 +25,7 @@
 
 #include <android-base/file.h>
 #include <android-base/unique_fd.h>
-#include <log/logger.h>
+#include <log/log.h>
 
 // From external/google-breakpad.
 #include "common/linux/elf_core_dump.h"
