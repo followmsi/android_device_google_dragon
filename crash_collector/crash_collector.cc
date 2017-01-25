@@ -28,7 +28,7 @@
 
 #include <android-base/file.h>
 #include <cutils/properties.h>
-#include <log/logger.h>
+#include <log/log.h>
 #include <private/android_filesystem_config.h>
 #include <utils/String8.h>
 
