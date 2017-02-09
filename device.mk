@@ -155,6 +155,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     power.dragon \
     sensors.dragon \
+    android.hardware.sensors@1.0-impl \
     android.hardware.power@1.0-impl
 
 # Health HAL
