@@ -73,6 +73,8 @@ BOARD_WIDEVINE_OEMCRYPTO_LEVEL := 1
 
 #TARGET_SUPPORTS_64_BIT_APPS := true
 
+TARGET_FS_CONFIG_GEN += device/google/dragon/config.fs
+
 # Bluetooth
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/google/dragon/bluetooth
 BOARD_HAVE_BLUETOOTH_BCM := true
