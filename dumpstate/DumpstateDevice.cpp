@@ -19,6 +19,7 @@
 #include "DumpstateDevice.h"
 
 #include <log/log.h>
+#include <cutils/properties.h>
 
 #include "DumpstateUtil.h"
 
