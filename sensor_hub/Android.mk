@@ -30,6 +30,8 @@ LOCAL_MODULE_TAGS := optional
 
 LOCAL_MODULE_OWNER := google
 
+LOCAL_PROPRIETARY_MODULE := true
+
 LOCAL_SRC_FILES := \
   sensors.cpp      \
   cros_ec_sensors.cpp  \

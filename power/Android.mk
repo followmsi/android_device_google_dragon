@@ -25,4 +25,5 @@ LOCAL_SRC_FILES := power_dragon.cpp \
                    timed_qos_manager.cpp
 LOCAL_MODULE := power.dragon
 LOCAL_MODULE_TAGS := optional
+LOCAL_PROPRIETARY_MODULE := true
 include $(BUILD_SHARED_LIBRARY)

@@ -30,4 +30,6 @@ LOCAL_SHARED_LIBRARIES := liblog libcutils libtinyalsa
 LOCAL_MODULE_TAGS := optional
 # LOCAL_32_BIT_ONLY := true
 
+LOCAL_PROPRIETARY_MODULE := true
+
 include $(BUILD_SHARED_LIBRARY)
