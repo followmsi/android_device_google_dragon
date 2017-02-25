@@ -47,6 +47,8 @@ LOCAL_MODULE_RELATIVE_PATH := hw
 
 LOCAL_MODULE_TAGS := optional
 
+LOCAL_PROPRIETARY_MODULE := true
+
 # b/26236653, dsp_util.c inline assembly code does not compile with llvm yet.
 LOCAL_CLANG_CFLAGS += -no-integrated-as
 
