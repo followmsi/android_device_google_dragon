@@ -131,4 +131,5 @@ RECOVERY_SDCARD_ON_DATA := true
 TW_BRIGHTNESS_PATH := /sys/class/backlight/lpm102a188a-backlight/brightness
 TW_CUSTOM_BATTERY_PATH := /sys/class/power_supply/bq27742-0
 TW_INCLUDE_CRYPTO := true
+TW_CRYPTO_USE_SYSTEM_VOLD := true
 
