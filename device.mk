@@ -55,7 +55,8 @@ PRODUCT_COPY_FILES := \
     $(LOCAL_PATH)/com.nvidia.nvsi.xml:system/etc/permissions/com.nvidia.nvsi.xml \
     $(LOCAL_PATH)/twrp.fstab:recovery/root/etc/twrp.fstab \
     $(LOCAL_PATH)/fwtool:recovery/root/sbin/fwtool \
-    $(LOCAL_PATH)/pulldecryptfiles.sh:recovery/root/sbin/pulldecryptfiles.sh
+    $(LOCAL_PATH)/pulldecryptfiles.sh:recovery/root/sbin/pulldecryptfiles.sh \
+    $(LOCAL_PATH)/init.recovery.vold_decrypt.rc:recovery/root/init.recovery.vold_decrypt.rc
 
 PRODUCT_PACKAGES += \
     libwpa_client \
@@ -178,8 +179,8 @@ $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-he
 
 # set default USB configuration
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    persist.sys.usb.config=mtp \
-    ro.adb.secure=1 \
+    persist.sys.usb.config=mtp,adb \
+    ro.adb.secure=0 \
     ro.sf.lcd_density=320 \
     ro.opengles.version=196609
 
