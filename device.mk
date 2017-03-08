@@ -30,7 +30,7 @@ ifeq ($(wildcard vendor/nvidia/dragon-tlk/tlk),vendor/nvidia/dragon-tlk/tlk)
 endif
 
 ifeq ($(TARGET_PREBUILT_KERNEL),)
-LOCAL_KERNEL := device/google/dragon-kernel/Image.fit
+LOCAL_KERNEL := device/google/dragon/Image.fit
 else
 LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
 endif
