@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="trusted_quick_viewer_package" translatable="false">com.google.android.apps.docs</string>
-    <bool name="show_documents_root">true</bool>
-</resources>
