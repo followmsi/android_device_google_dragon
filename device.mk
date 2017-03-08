@@ -297,4 +297,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     device/google/dragon/seccomp_policy/mediacodec.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy
 
+# Run with interpreter + JIT (no AOT) for both the boot image and apps.
+PRODUCT_DEX_PREOPT_BOOT_FLAGS := --compiler-filter=interpret-only
+PRODUCT_DEX_PREOPT_DEFAULT_FLAGS := --compiler-filter=interpret-only
+
 $(call inherit-product-if-exists, vendor/nvidia/dragon/dragon-vendor.mk)
