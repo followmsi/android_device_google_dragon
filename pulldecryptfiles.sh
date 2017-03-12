@@ -11,20 +11,13 @@ mkdir -p /system
 mount -t ext4 -o ro /dev/block/platform/700b0600.sdhci/by-name/APP /system
 
 
-cp /vendor/lib/hw/keystore.dragon.so /sbin/keystore.dragon.so.32
+cp /vendor/lib64/hw/gatekeeper.dragon.so /sbin/gatekeeper.dragon.so
 cp /vendor/lib64/hw/keystore.dragon.so /sbin/keystore.dragon.so
 
-
-cp /system/lib/libkeymaster1.so /sbin/libkeymaster1.so.32
-cp /system/lib64/libkeymaster1.so /sbin/libkeymaster1.so
-
-cp /system/lib/libkeymaster_messages.so /sbin/libkeymaster_messages.so.32
-cp /system/lib64/libkeymaster_messages.so /sbin/libkeymaster_messages.so
-
-cp /system/lib/libkeystore_binder.so /sbin/libkeystore_binder.so.32
-cp /system/lib64/libkeystore_binder.so /sbin/libkeystore_binder.so
-
-cp /system/lib/libkeystore-engine.so /sbin/libkeystore-engine.so.32
+cp /system/lib64/libgatekeeper.so /tmp/libgatekeeper.so
+cp /system/lib64/libkeymaster1.so /tmp/libkeymaster1.so
+cp /system/lib64/libkeymaster_messages.so /tmp/libkeymaster_messages.so
+cp /system/lib64/libkeystore_binder.so /tmp/libkeystore_binder.so
 cp /system/lib64/libkeystore-engine.so /sbin/libkeystore-engine.so
 
 
@@ -32,27 +25,16 @@ umount /vendor
 umount /system
 
 
-mkdir -p /vendor/lib/hw
 mkdir -p /vendor/lib64/hw
-
-cp /sbin/keystore.dragon.so.32 /vendor/lib/hw/keystore.dragon.so
-cp /sbin/keystore.dragon.so /vendor/lib64/hw/keystore.dragon.so
-
-
-mkdir -p /system/lib
 mkdir -p /system/lib64
 
 
-mv /sbin/libkeymaster1.so.32 /system/lib/libkeymaster1.so
-cp /sbin/libkeymaster1.so /system/lib64/libkeymaster1.so
+cp /sbin/gatekeeper.dragon.so /vendor/lib64/hw/gatekeeper.dragon.so
+cp /sbin/keystore.dragon.so /vendor/lib64/hw/keystore.dragon.so
 
-mv /sbin/libkeymaster_messages.so.32 /system/lib/libkeymaster_messages.so
-cp /sbin/libkeymaster_messages.so /system/lib64/libkeymaster_messages.so
-
-mv /sbin/libkeystore_binder.so.32 /system/lib/libkeystore_binder.so
-cp /sbin/libkeystore_binder.so /system/lib64/libkeystore_binder.so
-
-mv /sbin/libkeystore-engine.so.32 /system/lib/libkeystore-engine.so
+mv /tmp/libgatekeeper.so /system/lib64/libgatekeeper.so
+mv /tmp/libkeymaster1.so /system/lib64/libkeymaster1.so
+mv /tmp/libkeymaster_messages.so /system/lib64/libkeymaster_messages.so
+mv /tmp/libkeystore_binder.so /system/lib64/libkeystore_binder.so
 cp /sbin/libkeystore-engine.so /system/lib64/libkeystore-engine.so
-
 

@@ -54,9 +54,7 @@ PRODUCT_COPY_FILES := \
     $(LOCAL_PATH)/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
     $(LOCAL_PATH)/com.nvidia.nvsi.xml:system/etc/permissions/com.nvidia.nvsi.xml \
     $(LOCAL_PATH)/twrp.fstab:recovery/root/etc/twrp.fstab \
-    $(LOCAL_PATH)/fwtool:recovery/root/sbin/fwtool \
-    $(LOCAL_PATH)/pulldecryptfiles.sh:recovery/root/sbin/pulldecryptfiles.sh \
-    $(LOCAL_PATH)/init.recovery.vold_decrypt.rc:recovery/root/init.recovery.vold_decrypt.rc
+    $(LOCAL_PATH)/pulldecryptfiles.sh:recovery/root/sbin/pulldecryptfiles.sh
 
 PRODUCT_PACKAGES += \
     libwpa_client \
