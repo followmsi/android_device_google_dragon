@@ -14,10 +14,10 @@ mount -t ext4 -o ro /dev/block/platform/700b0600.sdhci/by-name/APP /system
 cp /vendor/lib64/hw/gatekeeper.dragon.so /sbin/gatekeeper.dragon.so
 cp /vendor/lib64/hw/keystore.dragon.so /sbin/keystore.dragon.so
 
-cp /system/lib64/libgatekeeper.so /tmp/libgatekeeper.so
-cp /system/lib64/libkeymaster1.so /tmp/libkeymaster1.so
-cp /system/lib64/libkeymaster_messages.so /tmp/libkeymaster_messages.so
-cp /system/lib64/libkeystore_binder.so /tmp/libkeystore_binder.so
+cp /system/lib64/libgatekeeper.so /sbin/libgatekeeper.so
+cp /system/lib64/libkeymaster1.so /sbin/libkeymaster1.so
+cp /system/lib64/libkeymaster_messages.so /sbin/libkeymaster_messages.so
+cp /system/lib64/libkeystore_binder.so /sbin/libkeystore_binder.so
 cp /system/lib64/libkeystore-engine.so /sbin/libkeystore-engine.so
 
 
@@ -32,9 +32,9 @@ mkdir -p /system/lib64
 cp /sbin/gatekeeper.dragon.so /vendor/lib64/hw/gatekeeper.dragon.so
 cp /sbin/keystore.dragon.so /vendor/lib64/hw/keystore.dragon.so
 
-mv /tmp/libgatekeeper.so /system/lib64/libgatekeeper.so
-mv /tmp/libkeymaster1.so /system/lib64/libkeymaster1.so
-mv /tmp/libkeymaster_messages.so /system/lib64/libkeymaster_messages.so
-mv /tmp/libkeystore_binder.so /system/lib64/libkeystore_binder.so
+cp /sbin/libgatekeeper.so /system/lib64/libgatekeeper.so
+cp /sbin/libkeymaster1.so /system/lib64/libkeymaster1.so
+cp /sbin/libkeymaster_messages.so /system/lib64/libkeymaster_messages.so
+cp /sbin/libkeystore_binder.so /system/lib64/libkeystore_binder.so
 cp /sbin/libkeystore-engine.so /system/lib64/libkeystore-engine.so
 

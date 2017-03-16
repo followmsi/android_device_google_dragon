@@ -38,19 +38,7 @@ service pulldecryptfiles /sbin/pulldecryptfiles.sh
     group root
     seclabel u:r:recovery:s0
 
-service sys_vold /system/bin/vold \
-        --blkid_context=u:r:blkid:s0 --blkid_untrusted_context=u:r:blkid_untrusted:s0 \
-        --fsck_context=u:r:fsck:s0 --fsck_untrusted_context=u:r:fsck_untrusted:s0
-    socket vold stream 0660 root mount
-    socket cryptd stream 0660 root mount
-    setenv PATH /system/bin
-    setenv LD_LIBRARY_PATH /system/lib64:/system/lib
-    disabled
-    oneshot
-
 on fs
     # needed to make encryption work in recovery
     start pulldecryptfiles
-    install_keyring
-    start sys_vold
 
