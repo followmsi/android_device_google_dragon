@@ -231,6 +231,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.drm@1.0-impl
 
+PRODUCT_PACKAGES += \
+    android.hardware.graphics.composer@2.1-impl
+
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.audio.monitorRotation=true \
     ro.frp.pst=/dev/block/platform/700b0600.sdhci/by-name/PST
