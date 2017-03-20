@@ -270,10 +270,6 @@ USE_DRM_HWCOMPOSER := 1
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.hardware.vulkan=tegra
 
-# Use Sdcardfs
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.sys.sdcardfs=1
-
 $(call inherit-product-if-exists, hardware/nvidia/tegra132/tegra132.mk)
 $(call inherit-product-if-exists, vendor/google_devices/dragon/device-vendor.mk)
 $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/config/config-bcm.mk)
