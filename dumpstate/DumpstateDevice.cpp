@@ -53,6 +53,7 @@ Return<void> DumpstateDevice::dumpstateBoard(const hidl_handle& handle) {
     DumpFileToFd(fd, "EC Version", "/sys/class/chromeos/cros_ec/version");
     RunCommandToFd(fd, "FW Version", {"fwtool", "vboot"}, CommandOptions::WithTimeout(5).Build());
 
+    DumpFileToFd(fd, "INTERRUPTS", "/proc/interrupts");
     // This is the file created by setting debug.bq25892.
     DumpFileToFd(fd, "Charger chip registers", "/data/misc/fw_logs/bq25892.txt");
 
