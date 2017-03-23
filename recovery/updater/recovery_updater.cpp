@@ -27,14 +27,15 @@
 #include "edify/expr.h"
 #include "update_fw.h"
 
-Value* firmware_update(const char *name, State * state, int argc, Expr * argv[]) {
+Value* firmware_update(const char *name, State * state,
+                       const std::vector<std::unique_ptr<Expr>>& argv) {
 	printf("%s: running %s.\n", __func__, name);
-	if (argc < 2) {
+	if (argv.size() != 2) {
 		ErrorAbort(state, kArgsParsingFailure, "syntax: %s bios.bin ec.bin", name);
 		return nullptr;
 	}
 	std::vector<std::unique_ptr<Value>> args;
-	if (!ReadValueArgs(state, 2, argv, &args)) {
+	if (!ReadValueArgs(state, argv, &args)) {
 		ErrorAbort(state, kArgsParsingFailure, "%s: invalid arguments", name);
 		return nullptr;
 	}
