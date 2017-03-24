@@ -57,26 +57,26 @@ PRODUCT_COPY_FILES := \
     $(LOCAL_PATH)/pulldecryptfiles.sh:recovery/root/sbin/pulldecryptfiles.sh
 
 PRODUCT_COPY_FILES += \
-    vendor/nvidia/dragon/proprietary/acr_ucode.bin:recovery/root/vendor/firmware/nouveau/acr_ucode.bin:nvidia \
-    vendor/nvidia/dragon/proprietary/fecs.bin:recovery/root/vendor/firmware/nouveau/fecs.bin:nvidia \
-    vendor/nvidia/dragon/proprietary/fecs_sig.bin:recovery/root/vendor/firmware/nouveau/fecs_sig.bin:nvidia \
-    vendor/nvidia/dragon/proprietary/gpmu_ucode_desc.bin:recovery/root/vendor/firmware/nouveau/gpmu_ucode_desc.bin:nvidia \
-    vendor/nvidia/dragon/proprietary/gpmu_ucode_image.bin:recovery/root/vendor/firmware/nouveau/gpmu_ucode_image.bin:nvidia \
-    vendor/nvidia/dragon/proprietary/nv12b_bundle:recovery/root/vendor/firmware/nouveau/nv12b_bundle:nvidia \
-    vendor/nvidia/dragon/proprietary/nv12b_fuc409c:recovery/root/vendor/firmware/nouveau/nv12b_fuc409c:nvidia \
-    vendor/nvidia/dragon/proprietary/nv12b_fuc409d:recovery/root/vendor/firmware/nouveau/nv12b_fuc409d:nvidia \
-    vendor/nvidia/dragon/proprietary/nv12b_fuc41ac:recovery/root/vendor/firmware/nouveau/nv12b_fuc41ac:nvidia \
-    vendor/nvidia/dragon/proprietary/nv12b_fuc41ad:recovery/root/vendor/firmware/nouveau/nv12b_fuc41ad:nvidia \
-    vendor/nvidia/dragon/proprietary/nv12b_method:recovery/root/vendor/firmware/nouveau/nv12b_method:nvidia \
-    vendor/nvidia/dragon/proprietary/nv12b_sw_ctx:recovery/root/vendor/firmware/nouveau/nv12b_sw_ctx:nvidia \
-    vendor/nvidia/dragon/proprietary/nv12b_sw_nonctx:recovery/root/vendor/firmware/nouveau/nv12b_sw_nonctx:nvidia \
-    vendor/nvidia/dragon/proprietary/pmu_bl.bin:recovery/root/vendor/firmware/nouveau/pmu_bl.bin:nvidia \
-    vendor/nvidia/dragon/proprietary/pmu_sig.bin:recovery/root/vendor/firmware/nouveau/pmu_sig.bin:nvidia \
-    vendor/nvidia/dragon/proprietary/bpmp.bin:recovery/root/vendor/firmware/nvidia/tegra210/bpmp.bin:nvidia \
-    vendor/nvidia/dragon/proprietary/nvdec_bl_prod.bin:recovery/root/vendor/firmware/nvidia/tegra210/nvdec_bl_prod.bin:nvidia \
-    vendor/nvidia/dragon/proprietary/nvdec_ns.bin:recovery/root/vendor/firmware/nvidia/tegra210/nvdec_ns.bin:nvidia \
-    vendor/nvidia/dragon/proprietary/nvdec_prod.bin:recovery/root/vendor/firmware/nvidia/tegra210/nvdec_prod.bin:nvidia \
-    vendor/nvidia/dragon/proprietary/xusb.bin:recovery/root/vendor/firmware/nvidia/tegra210/xusb.bin:nvidia
+    device/google/dragon/vendor/nvidia/dragon/proprietary/acr_ucode.bin:recovery/root/vendor/firmware/nouveau/acr_ucode.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/fecs.bin:recovery/root/vendor/firmware/nouveau/fecs.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/fecs_sig.bin:recovery/root/vendor/firmware/nouveau/fecs_sig.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/gpmu_ucode_desc.bin:recovery/root/vendor/firmware/nouveau/gpmu_ucode_desc.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/gpmu_ucode_image.bin:recovery/root/vendor/firmware/nouveau/gpmu_ucode_image.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_bundle:recovery/root/vendor/firmware/nouveau/nv12b_bundle:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_fuc409c:recovery/root/vendor/firmware/nouveau/nv12b_fuc409c:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_fuc409d:recovery/root/vendor/firmware/nouveau/nv12b_fuc409d:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_fuc41ac:recovery/root/vendor/firmware/nouveau/nv12b_fuc41ac:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_fuc41ad:recovery/root/vendor/firmware/nouveau/nv12b_fuc41ad:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_method:recovery/root/vendor/firmware/nouveau/nv12b_method:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_sw_ctx:recovery/root/vendor/firmware/nouveau/nv12b_sw_ctx:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_sw_nonctx:recovery/root/vendor/firmware/nouveau/nv12b_sw_nonctx:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/pmu_bl.bin:recovery/root/vendor/firmware/nouveau/pmu_bl.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/pmu_sig.bin:recovery/root/vendor/firmware/nouveau/pmu_sig.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/bpmp.bin:recovery/root/vendor/firmware/nvidia/tegra210/bpmp.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nvdec_bl_prod.bin:recovery/root/vendor/firmware/nvidia/tegra210/nvdec_bl_prod.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nvdec_ns.bin:recovery/root/vendor/firmware/nvidia/tegra210/nvdec_ns.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nvdec_prod.bin:recovery/root/vendor/firmware/nvidia/tegra210/nvdec_prod.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/xusb.bin:recovery/root/vendor/firmware/nvidia/tegra210/xusb.bin:nvidia
 
 PRODUCT_PACKAGES += \
     libwpa_client \
@@ -262,4 +262,4 @@ PRODUCT_PACKAGES += \
     rmi4update \
     rmihidtool
 
-$(call inherit-product-if-exists, vendor/nvidia/dragon/dragon-vendor.mk)
+# $(call inherit-product-if-exists, vendor/nvidia/dragon/dragon-vendor.mk)
