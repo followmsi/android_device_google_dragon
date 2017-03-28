@@ -12,7 +12,6 @@
 /system		ext4	/dev/block/platform/700b0600.sdhci/by-name/APP		flags=display="System";backup=1
 /system_image	emmc	/dev/block/platform/700b0600.sdhci/by-name/APP		flags=flashimg=1
 /data		ext4	/dev/block/platform/700b0600.sdhci/by-name/UDA		flags=encryptable=/dev/block/platform/700b0600.sdhci/by-name/MD1
-/data-full	ext4	/dev/block/platform/700b0600.sdhci/by-name/UDA		flags=display="Data (incl. storage)";encryptable=/dev/block/platform/700b0600.sdhci/by-name/MD1;backup=1
 /cache		ext4	/dev/block/platform/700b0600.sdhci/by-name/CAC
 
 /usb-otg	auto	/dev/block/sda1		/dev/block/sda			flags=removable;storage;display="USB-OTG"
