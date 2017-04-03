@@ -184,7 +184,7 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     persist.sys.usb.config=mtp,adb \
     ro.adb.secure=0 \
     ro.sf.lcd_density=320 \
-    ro.opengles.version=196609
+    ro.opengles.version=196610
 
 # for audio
 #TODO(dgreid) do we need libnvvisualizer?
