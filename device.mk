@@ -166,7 +166,8 @@ PRODUCT_PROPERTY_OVERRIDES := \
     ro.hwui.text_small_cache_height=1024 \
     ro.hwui.text_large_cache_width=2048 \
     ro.hwui.text_large_cache_height=1024 \
-    ro.hwui.disable_scissor_opt=true
+    ro.hwui.disable_scissor_opt=true \
+    ro.recents.grid=true
 
 # The default locale should be determined from VPD, not from build.prop.
 PRODUCT_SYSTEM_PROPERTY_BLACKLIST := \
