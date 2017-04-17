@@ -29,9 +29,10 @@ PRODUCT_PROPERTY_OVERRIDES := \
 $(call inherit-product, device/google/dragon/product.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
 
-PRODUCT_NAME := lineage_dragon
+PRODUCT_NAME := aosp_dragon
 PRODUCT_DEVICE := dragon
-PRODUCT_BRAND := Google
-PRODUCT_MODEL := Pixel C
+PRODUCT_BRAND := Android
+PRODUCT_MODEL := AOSP on dragon
 PRODUCT_MANUFACTURER := Google
 PRODUCT_RESTRICT_VENDOR_FILES := false
+
