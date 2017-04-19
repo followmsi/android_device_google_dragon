@@ -31,6 +31,17 @@ TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a7
 
+BOARD_KERNEL_BASE := 0x10000000
+BOARD_KERNEL_PAGESIZE := 2048
+#BOARD_KERNEL_CMDLINE :=
+#BOARD_KERNEL_CMDLINE +=
+#BOARD_MKBOOTIMG_ARGS :=
+TARGET_KERNEL_SOURCE := kernel/google/tegra
+TARGET_KERNEL_CONFIG := followmsi_defconfig
+TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-android-
+TARGET_KERNEL_TOOLCHAIN_ROOT := prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
+TARGET_KERNEL_TOOLS_PREFIX := $(TARGET_KERNEL_TOOLCHAIN_ROOT)/bin/aarch64-linux-android-
+
 # Disable emulator for "make dist" until there is a 64-bit qemu kernel
 BUILD_EMULATOR := false
 
