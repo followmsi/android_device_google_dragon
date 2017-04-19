@@ -36,3 +36,8 @@ PRODUCT_MODEL := AOSP on dragon
 PRODUCT_MANUFACTURER := Google
 PRODUCT_RESTRICT_VENDOR_FILES := false
 
+PRODUCT_BUILD_PROP_OVERRIDES += \
+    PRODUCT_NAME=dragon \
+    BUILD_FINGERPRINT=google/ryu/dragon:7.1.2/N2G47D/3760269:user/release-keys \
+    PRIVATE_BUILD_DESC="ryu-user 7.1.2 N2G47D 3760269 release-keys"
+
