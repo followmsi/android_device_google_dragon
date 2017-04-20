@@ -29,8 +29,3 @@ PRODUCT_BRAND := Google
 PRODUCT_MODEL := Pixel C
 PRODUCT_MANUFACTURER := google
 
-PRODUCT_BUILD_PROP_OVERRIDES += \
-    PRODUCT_NAME=dragon \
-    BUILD_FINGERPRINT=google/ryu/dragon:7.1.2/N2G47D/3760269:user/release-keys \
-    PRIVATE_BUILD_DESC="ryu-user 7.1.2 N2G47D 3760269 release-keys"
-
