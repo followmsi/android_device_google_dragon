@@ -203,6 +203,7 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.audio.monitorRotation=true \
+    ro.sf.lcd_density=320 \
     ro.frp.pst=/dev/block/platform/700b0600.sdhci/by-name/PST
 
 # for keyboard key mappings
