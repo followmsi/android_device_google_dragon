@@ -70,6 +70,10 @@ PRODUCT_PACKAGES += \
     CrashReportProvider \
     fwtool
 
+PRODUCT_COPY_FILES += \
+    device/google/dragon/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
+    device/google/dragon/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
+
 ifeq ($(TARGET_BUILD_VARIANT),eng)
 PRODUCT_PACKAGES += \
     tinyplay \
