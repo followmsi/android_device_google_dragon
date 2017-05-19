@@ -34,3 +34,7 @@ PRODUCT_BUILD_PROP_OVERRIDES += \
     BUILD_FINGERPRINT=google/ryu/dragon:7.1.2/N2G47D/3760269:user/release-keys \
     PRIVATE_BUILD_DESC="ryu-user 7.1.2 N2G47D 3760269 release-keys"
 
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.recents.grid=true
+
+
