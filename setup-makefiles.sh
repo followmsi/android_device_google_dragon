@@ -57,3 +57,5 @@ write_makefiles "$MY_DIR"/lineage-proprietary-blobs-vendorimg.txt
 # We are done!
 write_footers
 
+cat "$MY_DIR"/proprietary-blobs-vendorimg.txt >> "$ROM_ROOT"/vendor/google/dragon/dragon-vendor.mk
+
