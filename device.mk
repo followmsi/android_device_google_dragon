@@ -213,6 +213,9 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 # TODO(dgreid) - Add back verity dependencies like flounder has.
 
 $(call inherit-product, build/target/product/vboot.mk)
+
+# only include verity on user builds for LineageOS
+ifeq ($(TARGET_BUILD_VARIANT),user)
 $(call inherit-product, build/target/product/verity.mk)
 # including verity.mk automatically enabled boot signer which conflicts with
 # vboot
@@ -220,6 +223,7 @@ PRODUCT_SUPPORTS_BOOT_SIGNER := false
 PRODUCT_SUPPORTS_VERITY_FEC := false
 PRODUCT_SYSTEM_VERITY_PARTITION := /dev/block/platform/700b0600.sdhci/by-name/APP
 PRODUCT_VENDOR_VERITY_PARTITION := /dev/block/platform/700b0600.sdhci/by-name/VNR
+endif
 
 # The following group is necessary to support building the NVIDIA vendor
 # HALs and prebuilts.
