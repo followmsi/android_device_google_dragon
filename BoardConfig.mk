@@ -121,3 +121,6 @@ ifeq ($(SECURE_OS_BUILD),tlk)
 endif
 
 BOARD_HAL_STATIC_LIBRARIES := libdumpstate.dragon libhealthd.dragon
+
+# Enable real time lockscreen charging current values
+BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
