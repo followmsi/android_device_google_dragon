@@ -17,6 +17,8 @@
  */
 -->
 <resources>
+    <bool name="def_wifi_on">true</bool>
+
     <!-- Default screen brightness, translate to 85 in kernel -->
     <integer name="def_screen_brightness">120</integer>
 </resources>
