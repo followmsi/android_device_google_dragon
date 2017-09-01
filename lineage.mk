@@ -31,8 +31,8 @@ PRODUCT_MANUFACTURER := google
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
     PRODUCT_NAME=dragon \
-    BUILD_FINGERPRINT=google/ryu/dragon:7.1.2/N2G48C/4104010:user/release-keys \
-    PRIVATE_BUILD_DESC="ryu-user 7.1.2 N2G48C 4104010 release-keys"
+    BUILD_FINGERPRINT=google/ryu/dragon:8.0.0/OPR6.170623.010/4283243:user/release-keys \
+    PRIVATE_BUILD_DESC="ryu-user 8.0.0 OPR6.170623.010 4283243 release-keys"
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.recents.grid=true
