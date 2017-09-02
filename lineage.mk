@@ -29,7 +29,3 @@ PRODUCT_BRAND := Google
 PRODUCT_MODEL := Pixel C
 PRODUCT_MANUFACTURER := google
 
-ADDITIONAL_DEFAULT_PROPERTIES += \
-    ro.secure=0 \
-    ro.adb.secure=0
-
