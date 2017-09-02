@@ -254,6 +254,12 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.sf.lcd_density=320 \
     ro.opengles.version=196610
 
+# Update the recovery image only if the option is enabled
+# under Developer options
+# by default, do not update the recovery image
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.sys.recovery_update=false
+
 # for audio
 #TODO(dgreid) do we need libnvvisualizer?
 PRODUCT_PACKAGES += \
