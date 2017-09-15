@@ -39,6 +39,13 @@ service pulldecryptfiles /sbin/pulldecryptfiles.sh
     seclabel u:r:recovery:s0
 
 on fs
-    # needed to make encryption work in recovery
+    wait /dev/block/platform/700b0600.sdhci
+    symlink /dev/block/platform/700b0600.sdhci /dev/block/bootdevice
+    chmod 0664 /dev/ion
+    chown system system /dev/ion
     start pulldecryptfiles
+    install_keyring
+
+on property:pulldecryptfiles.finished=1
+    start recovery
 

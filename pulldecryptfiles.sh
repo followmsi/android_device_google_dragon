@@ -1,40 +1,44 @@
 #!/sbin/sh
 
-# This pulls the files out of /vendor that are needed for decrypt
-# This allows us to decrypt the device in recovery and still be
-# able to unmount /vendor when we are done.
+# This pulls the files that are needed for decrypt
+# allowing us to leave /vendor and /system unmounted
 
-mkdir -p /vendor
-mount -t ext4 -o ro /dev/block/platform/700b0600.sdhci/by-name/VNR /vendor
+if [ "$(mount|grep "/dev/block/bootdevice/by-name/APP on /system ")" == "" ];then
+        mount -o rw,remount rootfs /
+	mkdir /system
+        mount -t ext4 -o ro /dev/block/bootdevice/by-name/APP /system
+	mkdir /tmp/system
+	cp -r /system/lib64 /tmp/system/
+	cp -r /system/bin /tmp/system/
+	umount /system
+	mkdir /system/lib64
+	mkdir /system/bin
+	mv /tmp/system/lib64/* /system/lib64/
+	mv /tmp/system/bin/* /system/bin/
+	rmdir /tmp/system/lib64 /tmp/system/bin /tmp/system
+fi
 
-mkdir -p /system
-mount -t ext4 -o ro /dev/block/platform/700b0600.sdhci/by-name/APP /system
+if [ "$(mount|grep "/dev/block/bootdevice/by-name/VNR on /vendor")" == "" ];then
+	mkdir -p /vendor
+	mkdir -p /tmp/vendor
+        mount -t ext4 -o ro /dev/block/bootdevice/by-name/VNR /vendor
+
+	cp -r /vendor/lib64 /tmp/vendor/
+	cp -r /vendor/bin /tmp/vendor/
+
+	umount /vendor
+
+	mv /tmp/vendor/* /vendor/
+	rmdir /tmp/vendor
+fi
+
+if [ "$(mount|grep "/dev/block/bootdevice/by-name/UDA on /data")" == "" ];then
+	LD_LIBRARY_PATH=/system/lib64 /system/bin/e2fsck  -y -E journal_only /dev/block/bootdevice/by-name/userdata
+        LD_LIBRARY_PATH=/system/lib64 /system/bin/tune2fs -Q ^usrquota,^grpquota,^prjquota /dev/block/bootdevice/by-name/userdata
+        mount /dev/block/bootdevice/by-name/UDA /data
+fi
 
 
-cp /vendor/lib64/hw/gatekeeper.dragon.so /sbin/gatekeeper.dragon.so
-cp /vendor/lib64/hw/keystore.dragon.so /sbin/keystore.dragon.so
-
-cp /system/lib64/libgatekeeper.so /sbin/libgatekeeper.so
-cp /system/lib64/libkeymaster1.so /sbin/libkeymaster1.so
-cp /system/lib64/libkeymaster_messages.so /sbin/libkeymaster_messages.so
-cp /system/lib64/libkeystore_binder.so /sbin/libkeystore_binder.so
-cp /system/lib64/libkeystore-engine.so /sbin/libkeystore-engine.so
-
-
-umount /vendor
-umount /system
-
-
-mkdir -p /vendor/lib64/hw
-mkdir -p /system/lib64
-
-
-cp /sbin/gatekeeper.dragon.so /vendor/lib64/hw/gatekeeper.dragon.so
-cp /sbin/keystore.dragon.so /vendor/lib64/hw/keystore.dragon.so
-
-cp /sbin/libgatekeeper.so /system/lib64/libgatekeeper.so
-cp /sbin/libkeymaster1.so /system/lib64/libkeymaster1.so
-cp /sbin/libkeymaster_messages.so /system/lib64/libkeymaster_messages.so
-cp /sbin/libkeystore_binder.so /system/lib64/libkeystore_binder.so
-cp /sbin/libkeystore-engine.so /system/lib64/libkeystore-engine.so
+setprop pulldecryptfiles.finished 1
+exit 0
 
