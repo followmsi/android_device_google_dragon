@@ -14,5 +14,6 @@ allow crash_collector_app {
   -incident_service
   -netd_service
   -virtual_touchpad_service
+  -vold_service
   -vr_hwc_service
 }:service_manager find;
