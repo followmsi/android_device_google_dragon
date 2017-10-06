@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "edify/expr.h"
+#include "error_code.h"
 #include "update_fw.h"
 
 Value* firmware_update(const char *name, State * state,
