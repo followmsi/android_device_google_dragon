@@ -13,10 +13,13 @@ LOCAL_SRC_FILES := \
     vboot_interface.c \
     recovery_updater.cpp \
     update_fw.cpp
+# For error_code.h (included by recovery_updater.cpp).
 LOCAL_C_INCLUDES += bootable/recovery
 # For vboot_struct.h
 LOCAL_C_INCLUDES += external/vboot_reference/firmware/include
 LOCAL_CFLAGS += -Werror
+LOCAL_STATIC_LIBRARIES := \
+    libedify
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -30,10 +33,13 @@ LOCAL_SRC_FILES := \
     flash_file.cpp \
     vboot_interface.c \
     recovery_ui.cpp
+# For ui.h, common.h (included by recovery_ui.cpp).
 LOCAL_C_INCLUDES += bootable/recovery
 # For vboot_struct.h
 LOCAL_C_INCLUDES += external/vboot_reference/firmware/include
 LOCAL_CFLAGS += -Werror
+LOCAL_STATIC_LIBRARIES := \
+    libedify
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -46,6 +52,8 @@ LOCAL_CFLAGS += -Wno-unused-parameter -DUSE_LOGCAT
 LOCAL_C_INCLUDES += bootable/recovery
 # For vboot_struct.h
 LOCAL_C_INCLUDES += external/vboot_reference/firmware/include
+LOCAL_STATIC_LIBRARIES := \
+    libedify
 
 include $(BUILD_EXECUTABLE)
 
