@@ -132,5 +132,7 @@ BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
 
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.dragon
 
+WITH_LINEAGE_CHARGER := false
+
 # Testing related defines
 BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh
