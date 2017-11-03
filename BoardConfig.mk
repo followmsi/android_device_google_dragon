@@ -41,6 +41,7 @@ TARGET_KERNEL_CONFIG := lineageos_dragon_defconfig
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-android-
 TARGET_KERNEL_TOOLCHAIN_ROOT := prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
 TARGET_KERNEL_TOOLS_PREFIX := $(TARGET_KERNEL_TOOLCHAIN_ROOT)/bin/aarch64-linux-android-
+BOARD_KERNEL_IMAGE_NAME := Image.fit
 
 # Disable emulator for "make dist" until there is a 64-bit qemu kernel
 BUILD_EMULATOR := false
