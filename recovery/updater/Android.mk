@@ -47,6 +47,10 @@ LOCAL_CFLAGS += -Wno-unused-parameter -DUSE_LOGCAT
 LOCAL_C_INCLUDES += bootable/recovery
 # For vboot_struct.h
 LOCAL_C_INCLUDES += external/vboot_reference/firmware/include
+# For TWRP
+LOCAL_LDFLAGS += -Wl,-dynamic-linker,/sbin/linker64
+LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
+LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
 
 include $(BUILD_EXECUTABLE)
 
