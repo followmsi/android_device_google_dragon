@@ -68,6 +68,7 @@ SF_VSYNC_EVENT_PHASE_OFFSET_NS := 5000000
 
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USES_MKE2FS := true
+#TARGET_USERIMAGES_USE_F2FS := true
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 3758096384
 BOARD_CACHEIMAGE_PARTITION_SIZE := 419430400
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
@@ -150,3 +151,18 @@ BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh
 # Vendor Interface Manifest
 DEVICE_MANIFEST_FILE := device/google/dragon/hidl/manifest.xml
 DEVICE_MATRIX_FILE := device/google/dragon/hidl/compatibility_matrix.xml
+
+# TWRP settings
+TW_THEME := landscape_hdpi
+TW_NO_SCREEN_TIMEOUT := true
+TW_INCLUDE_MTP := true
+BOARD_HAS_NO_REAL_SDCARD := true
+RECOVERY_SDCARD_ON_DATA := true
+TW_BRIGHTNESS_PATH := /sys/class/backlight/lpm102a188a-backlight/brightness
+TW_CUSTOM_BATTERY_PATH := /sys/class/power_supply/bq27742-0
+TW_INCLUDE_CRYPTO := true
+TARGET_RECOVERY_DEVICE_MODULES := fwtool
+TW_INCLUDE_NTFS_3G := true
+TW_INCLUDE_FBE := true
+TW_DEFAULT_BRIGHTNESS := "80"
+

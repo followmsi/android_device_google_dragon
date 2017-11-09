@@ -33,15 +33,11 @@ endif
 
 # prebuilt kernel config
 #
-#ifeq ($(TARGET_PREBUILT_KERNEL),)
-#LOCAL_KERNEL := device/google/dragon/Image.fit
-#else
-#LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
-#endif
-#
-#PRODUCT_COPY_FILES := \
-#    $(LOCAL_KERNEL):kernel \
-#
+ifeq ($(TARGET_PREBUILT_KERNEL),)
+LOCAL_KERNEL := device/google/dragon/Image.fit
+else
+LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
+endif
 
 ifeq ($(TARGET_PRODUCT), ryu_kasan)
 LOCAL_FSTAB := $(LOCAL_PATH)/fstab.dragon.nocrypt
@@ -52,6 +48,7 @@ endif
 TARGET_RECOVERY_FSTAB = $(LOCAL_FSTAB)
 
 PRODUCT_COPY_FILES := \
+    $(LOCAL_KERNEL):kernel \
     $(LOCAL_PATH)/dump_bq25892.sh:system/bin/dump_bq25892.sh \
     $(LOCAL_PATH)/touchfwup.sh:system/bin/touchfwup.sh \
     $(LOCAL_PATH)/init.dragon.rc:root/init.dragon.rc \
@@ -62,7 +59,33 @@ PRODUCT_COPY_FILES := \
     $(LOCAL_FSTAB):root/fstab.dragon \
     $(LOCAL_PATH)/ueventd.dragon.rc:root/ueventd.dragon.rc \
     $(LOCAL_PATH)/speakerdsp.ini:system/etc/cras/speakerdsp.ini \
-    $(LOCAL_PATH)/bcmdhd.cal:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/bcmdhd.cal
+    $(LOCAL_PATH)/bcmdhd.cal:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/bcmdhd.cal \
+    $(LOCAL_PATH)/bcmdhd.cal:system/etc/wifi/bcmdhd.cal \
+    $(LOCAL_PATH)/com.nvidia.nvsi.xml:system/etc/permissions/com.nvidia.nvsi.xml \
+    $(LOCAL_PATH)/twrp.fstab:recovery/root/etc/twrp.fstab \
+    $(LOCAL_PATH)/pulldecryptfiles.sh:recovery/root/sbin/pulldecryptfiles.sh
+
+PRODUCT_COPY_FILES += \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/acr_ucode.bin:recovery/root/vendor/firmware/nouveau/acr_ucode.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/fecs.bin:recovery/root/vendor/firmware/nouveau/fecs.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/fecs_sig.bin:recovery/root/vendor/firmware/nouveau/fecs_sig.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/gpmu_ucode_desc.bin:recovery/root/vendor/firmware/nouveau/gpmu_ucode_desc.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/gpmu_ucode_image.bin:recovery/root/vendor/firmware/nouveau/gpmu_ucode_image.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_bundle:recovery/root/vendor/firmware/nouveau/nv12b_bundle:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_fuc409c:recovery/root/vendor/firmware/nouveau/nv12b_fuc409c:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_fuc409d:recovery/root/vendor/firmware/nouveau/nv12b_fuc409d:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_fuc41ac:recovery/root/vendor/firmware/nouveau/nv12b_fuc41ac:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_fuc41ad:recovery/root/vendor/firmware/nouveau/nv12b_fuc41ad:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_method:recovery/root/vendor/firmware/nouveau/nv12b_method:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_sw_ctx:recovery/root/vendor/firmware/nouveau/nv12b_sw_ctx:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nv12b_sw_nonctx:recovery/root/vendor/firmware/nouveau/nv12b_sw_nonctx:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/pmu_bl.bin:recovery/root/vendor/firmware/nouveau/pmu_bl.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/pmu_sig.bin:recovery/root/vendor/firmware/nouveau/pmu_sig.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/bpmp.bin:recovery/root/vendor/firmware/nvidia/tegra210/bpmp.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nvdec_bl_prod.bin:recovery/root/vendor/firmware/nvidia/tegra210/nvdec_bl_prod.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nvdec_ns.bin:recovery/root/vendor/firmware/nvidia/tegra210/nvdec_ns.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/nvdec_prod.bin:recovery/root/vendor/firmware/nvidia/tegra210/nvdec_prod.bin:nvidia \
+    device/google/dragon/vendor/nvidia/dragon/proprietary/xusb.bin:recovery/root/vendor/firmware/nvidia/tegra210/xusb.bin:nvidia
 
 PRODUCT_PACKAGES += \
     libwpa_client \
@@ -294,4 +317,4 @@ PRODUCT_COPY_FILES += \
     device/google/dragon/seccomp_policy/mediacodec.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy \
     device/google/dragon/seccomp_policy/mediaextractor.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaextractor.policy
 
-$(call inherit-product-if-exists, vendor/nvidia/dragon/dragon-vendor.mk)
+#$(call inherit-product-if-exists, vendor/nvidia/dragon/dragon-vendor.mk)
