@@ -61,10 +61,6 @@ on post-fs-data
     mkdir /data/nvcam 0700 media camera
     mkdir /data/misc/camera 0700 media camera
 
-    # NFC: create data/nfc for nv storage
-    mkdir /data/nfc 0770 nfc nfc
-    mkdir /data/nfc/param 0770 nfc nfc
-
     # secure os storage
     mkdir /data/ss 0700 system system
     mkdir /data/ss/tlk 0700 system system
