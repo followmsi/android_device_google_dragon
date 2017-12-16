@@ -6,14 +6,10 @@ net_domain(crash_collector_app)
 
 allow crash_collector_app crash_reports_data_file:file { read getattr };
 
+# Grant access to the normal services for crash collecting. Suppress attempts
+# to find other services.
 allow crash_collector_app {
-  service_manager_type
-  -dumpstate_service
-  -gatekeeper_service
-  -installd_service
-  -incident_service
-  -netd_service
-  -virtual_touchpad_service
-  -vold_service
-  -vr_hwc_service
+  app_api_service
+  system_api_service
 }:service_manager find;
+dontaudit crash_collector_app service_manager_type:service_manager find;
