@@ -38,6 +38,6 @@ PRODUCT_RESTRICT_VENDOR_FILES := false
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
     PRODUCT_NAME=dragon \
-    BUILD_FINGERPRINT=google/ryu/dragon:8.1.0/OPM1.171019.011/4448085:user/release-keys \
-    PRIVATE_BUILD_DESC="ryu-user 8.1.0 OPM1.171019.011 4448085 release-keys"
+    BUILD_FINGERPRINT=google/ryu/dragon:8.1.0/OPM1.171019.015/4501262:user/release-keys \
+    PRIVATE_BUILD_DESC="ryu-user 8.1.0 OPM1.171019.015 4501262 release-keys"
 
