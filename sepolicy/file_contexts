@@ -62,7 +62,7 @@
 /dev/tlk_device                                 u:object_r:tee_device:s0
 
 # secure os storage
-/data/ss(/.*)?                                  u:object_r:tee_data_file:s0
+/data/ss(/.*)?                                  u:object_r:dragon_tee_data_file:s0
 
 # tlk_daemon
 /vendor/bin/tlk_daemon                          u:object_r:tee_exec:s0
