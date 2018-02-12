@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+add_lunch_combo rr_dragon-userdebug
 add_lunch_combo lineage_dragon-userdebug
 add_lunch_combo aosp_dragon-userdebug
 add_lunch_combo aosp_dragon-eng
