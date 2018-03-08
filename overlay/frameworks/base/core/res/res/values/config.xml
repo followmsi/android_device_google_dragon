@@ -188,8 +188,9 @@
          that can be set by the user. -->
     <integer name="config_screenBrightnessDoze">17</integer>
 
-    <!-- Control whether Night display is available. This should only be enabled on devices
-           with HWC 2.0 or higher. -->
-    <bool name="config_nightDisplayAvailable">true</bool>
+    <!-- Fix for Lineage LiveDisplay -->
+    <!-- Boolean indicating whether the HWC setColorTransform function can be performed efficiently
+         in hardware. -->
+    <bool name="config_setColorTransformAccelerated">true</bool>
 
 </resources>
