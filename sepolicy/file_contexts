@@ -40,6 +40,7 @@
 
 # vendor executables
 /vendor/bin/hw/android\.hardware\.dumpstate@1\.0-service.dragon      u:object_r:hal_dumpstate_impl_exec:s0
+/vendor/bin/hw/android\.hardware\.light@2\.0-service\.dragon         u:object_r:hal_light_default_exec:s0
 
 # crash_collector
 /system/bin/crash_dispatcher                    u:object_r:crash_collector_exec:s0
@@ -54,6 +55,7 @@
 # /sys/
 /sys/devices/bt_bcm4354(/.*)?                   u:object_r:sysfs_bluetooth:s0
 /sys/devices/soc0(/.*)?                         u:object_r:sysfs_socinfo:s0
+/sys/devices/50000000.host1x/544000000.dsi\.0/backlight/lpm102a188a-backlight/brightness   u:object_r:sysfs_leds:s0
 
 # /data
 /data/nvcam(/.*)?                               u:object_r:media_data_file:s0

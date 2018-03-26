@@ -1,2 +1,3 @@
 neverallow isolated_app host1x_device:chr_file { rw_file_perms execute };
-
+allow isolated_app app_data_file:dir getattr;
+allow isolated_app app_data_file:file setattr;

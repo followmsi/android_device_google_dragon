@@ -47,8 +47,7 @@ PRODUCT_PACKAGES += \
 
 # Lights
 PRODUCT_PACKAGES += \
-    android.hardware.light@2.0-impl \
-    lights.dragon
+    android.hardware.light@2.0-service.dragon
 
 # Memtrack
 PRODUCT_PACKAGES += \
