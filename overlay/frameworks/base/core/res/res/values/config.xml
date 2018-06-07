@@ -135,6 +135,10 @@
         <item>241</item>   <!-- 500 nit -->
     </integer-array>
 
+    <!-- Minimum screen brightness setting allowed by the power manager.
+          The user is forbidden from setting the brightness below this level. -->
+    <integer name="config_screenBrightnessSettingMinimum">2</integer>
+
     <string translatable="false" name="config_packagedKeyboardName">Pixel C Keyboard</string>
 
     <!-- Controls how we deal with externally connected physical keyboards.
