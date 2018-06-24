@@ -1,6 +1,6 @@
 type crash_collector, domain, device_domain_deprecated;
 type crash_collector_exec, exec_type, file_type;
-type crash_reports_data_file, file_type, data_file_type;
+type crash_reports_data_file, file_type, data_file_type, core_data_file_type;
 
 # To start crash_collector via /proc/sys/core_pattern.
 domain_auto_trans(kernel, crash_collector_exec, crash_collector)

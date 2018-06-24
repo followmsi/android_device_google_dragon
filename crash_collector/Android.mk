@@ -76,6 +76,7 @@ include $(BUILD_EXECUTABLE)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := crash-report-provider
+LOCAL_PRIVATE_PLATFORM_APIS := true
 LOCAL_SRC_FILES := $(call all-java-files-under, src)
 
 include $(BUILD_STATIC_JAVA_LIBRARY)
@@ -86,6 +87,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_TAGS := optional
 LOCAL_STATIC_JAVA_LIBRARIES := crash-report-provider
 LOCAL_PACKAGE_NAME := CrashReportProvider
+LOCAL_PRIVATE_PLATFORM_APIS := true
 LOCAL_CERTIFICATE := platform
 
 include $(BUILD_PACKAGE)
