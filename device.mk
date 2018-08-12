@@ -69,7 +69,6 @@ PRODUCT_PACKAGES += \
     fs_config_files \
     crash_dispatcher \
     crash_collector \
-    CrashReportProvider \
     fwtool
 
 PRODUCT_COPY_FILES += \
