@@ -43,6 +43,9 @@ TARGET_KERNEL_TOOLCHAIN_ROOT := prebuilts/gcc/linux-x86/aarch64/aarch64-linux-an
 TARGET_KERNEL_TOOLS_PREFIX := $(TARGET_KERNEL_TOOLCHAIN_ROOT)/bin/aarch64-linux-android-
 BOARD_KERNEL_IMAGE_NAME := Image.fit
 
+# Boot permissive temporarily
+BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive
+
 # Disable emulator for "make dist" until there is a 64-bit qemu kernel
 BUILD_EMULATOR := false
 
@@ -136,5 +139,5 @@ WITH_LINEAGE_CHARGER := false
 BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh
 
 # Vendor Interface Manifest
-DEVICE_MANIFEST_FILE := device/google/dragon/manifest.xml
-DEVICE_MATRIX_FILE := device/google/dragon/compatibility_matrix.xml
+DEVICE_MANIFEST_FILE := device/google/dragon/hidl/manifest.xml
+DEVICE_MATRIX_FILE := device/google/dragon/hidl/compatibility_matrix.xml
