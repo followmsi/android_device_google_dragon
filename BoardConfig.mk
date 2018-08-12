@@ -31,6 +31,9 @@ TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a53
 
+# Boot permissive temporarily
+#BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive
+
 # Disable emulator for "make dist" until there is a 64-bit qemu kernel
 BUILD_EMULATOR := false
 
@@ -122,5 +125,5 @@ BOARD_HAL_STATIC_LIBRARIES := libhealthd.dragon
 BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh
 
 # Vendor Interface Manifest
-DEVICE_MANIFEST_FILE := device/google/dragon/manifest.xml
-DEVICE_MATRIX_FILE := device/google/dragon/compatibility_matrix.xml
+DEVICE_MANIFEST_FILE := device/google/dragon/hidl/manifest.xml
+DEVICE_MATRIX_FILE := device/google/dragon/hidl/compatibility_matrix.xml
