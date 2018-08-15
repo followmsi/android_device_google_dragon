@@ -32,7 +32,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
 PRODUCT_NAME := aosp_dragon
 PRODUCT_DEVICE := dragon
 PRODUCT_BRAND := Android
-PRODUCT_MODEL := AOSP on dragon
+PRODUCT_MODEL := AOSP on Dragon
 PRODUCT_MANUFACTURER := Google
 PRODUCT_RESTRICT_VENDOR_FILES := false
 

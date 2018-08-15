@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-# Use the non-open-source parts, if they're present
--include vendor/google_devices/dragon/BoardConfigVendor.mk
+$(shell mkdir -p out/target/product/dragon/root/vendor/firmware)
+
 # Build a separate vendor.img
 TARGET_COPY_OUT_VENDOR := vendor
 
@@ -54,11 +54,14 @@ TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
 PRESENT_TIME_OFFSET_FROM_VSYNC_NS := 0
 VSYNC_EVENT_PHASE_OFFSET_NS := 7500000
 SF_VSYNC_EVENT_PHASE_OFFSET_NS := 5000000
+TARGET_USES_HWC2 := true
 
 TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 3758096384
 BOARD_CACHEIMAGE_PARTITION_SIZE := 419430400
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_VENDORIMAGE_PARTITION_SIZE := 268435456
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 4096
 
 BOARD_CHARGER_DISABLE_INIT_BLANK := true
@@ -95,7 +98,7 @@ WIFI_DRIVER_FW_PATH_AP      := "/vendor/firmware/fw_bcmdhd_apsta.bin"
 ifeq ($(HOST_OS),linux)
   ifeq ($(TARGET_BUILD_VARIANT),user)
     ifeq ($(WITH_DEXPREOPT),)
-      WITH_DEXPREOPT := false
+      WITH_DEXPREOPT := true
     endif
   endif
 endif
