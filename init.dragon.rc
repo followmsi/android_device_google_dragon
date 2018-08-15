@@ -186,7 +186,7 @@ on fs
     # Enable verity notification
     write /sys/module/dm_verity/parameters/error_behavior notify
 
-    mount_all /fstab.dragon
+    mount_all /fstab.dragon --early
 
 # run the touch firmware update script as soon as non-tmpfs /data is ready
 on property:vold.decrypt=trigger_restart_framework
@@ -216,7 +216,7 @@ service bugreport /system/bin/dumpstate -d -p -B -z \
 
 service wpa_supplicant /vendor/bin/hw/wpa_supplicant \
     -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
-    -I/system/etc/wifi/p2p_supplicant_overlay.conf \
+    -I/vendor/etc/wifi/p2p_supplicant_overlay.conf \
     -puse_p2p_group_interface=1p2p_device=1 \
     -m/data/misc/wifi/p2p_supplicant.conf \
     -g@android:wpa_wlan0

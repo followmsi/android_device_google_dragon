@@ -1,10 +1,10 @@
 # Audio
 PRODUCT_PACKAGES += \
-    android.hardware.audio@4.0-impl \
-    android.hardware.audio.effect@4.0-impl \
+    android.hardware.audio@2.0-impl \
+    android.hardware.audio.effect@2.0-impl \
     android.hardware.audio@2.0-service \
-    android.hardware.soundtrigger@2.1-impl \
-    android.hardware.soundtrigger@2.1-service
+    android.hardware.soundtrigger@2.0-impl \
+    android.hardware.soundtrigger@2.0-service
 
 # Bluetooth
 PRODUCT_PACKAGES += \
@@ -43,6 +43,13 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.health@1.0-impl
 
+# HIDL
+PRODUCT_PACKAGES += \
+    android.hidl.base@1.0 \
+    android.hidl.base@1.0_system \
+    android.hidl.manager@1.0 \
+    android.hidl.manager@1.0-java
+
 # Keymaster
 PRODUCT_PACKAGES += \
     android.hardware.keymaster@3.0-impl:64 \
@@ -56,7 +63,8 @@ PRODUCT_PACKAGES += \
 
 # Memtrack
 PRODUCT_PACKAGES += \
-    android.hardware.memtrack@1.0-impl
+    android.hardware.memtrack@1.0-impl \
+    android.hardware.memtrack@1.0-service
 
 # Power
 PRODUCT_PACKAGES += \
