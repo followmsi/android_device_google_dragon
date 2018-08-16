@@ -139,12 +139,6 @@ on boot
     chown system system /sys/kernel/debug/system_edp/capping/force_gpu
     chmod 0660 /sys/kernel/debug/system_edp/capping/force_gpu
 
-    # for lightbar
-    chown system system /sys/class/chromeos/cros_ec/lightbar/userspace_control
-    chmod 0660 /sys/class/chromeos/cros_ec/lightbar/userspace_control
-    chown system system /sys/class/chromeos/cros_ec/lightbar/sequence
-    chmod 0660 /sys/class/chromeos/cros_ec/lightbar/sequence
-
     # for external power limits
     chown system system /sys/class/chromeos/cros_ec/usb-pd-charger/ext_voltage_lim
     chmod 0660 /sys/class/chromeos/cros_ec/usb-pd-charger/ext_voltage_lim

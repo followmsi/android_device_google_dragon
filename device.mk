@@ -136,14 +136,6 @@ PRODUCT_PACKAGES += \
     librs_jni \
     com.android.future.usb.accessory
 
-PRODUCT_PACKAGES += \
-    power.dragon \
-    sensors.dragon
-
-# Light HAL
-PRODUCT_PACKAGES += \
-    lights.dragon
-
 #TODO(dgreid) is this right?
 PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=wlan0 \
