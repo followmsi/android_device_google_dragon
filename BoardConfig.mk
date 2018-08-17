@@ -44,7 +44,7 @@ TARGET_KERNEL_TOOLS_PREFIX := $(TARGET_KERNEL_TOOLCHAIN_ROOT)/bin/aarch64-linux-
 BOARD_KERNEL_IMAGE_NAME := Image.fit
 
 # Boot permissive temporarily
-BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 
 # Disable emulator for "make dist" until there is a 64-bit qemu kernel
 BUILD_EMULATOR := false
@@ -137,6 +137,10 @@ BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.dragon
 
 WITH_LINEAGE_CHARGER := false
+
+# Shims
+TARGET_LD_SHIM_LIBS := \
+    /vendor/lib/hw/camera.dragon.so|libshim_camera.so
 
 # Testing related defines
 BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh
