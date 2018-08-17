@@ -32,7 +32,7 @@ TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a53
 
 # Boot permissive temporarily
-#BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive
+#BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 
 # Disable emulator for "make dist" until there is a 64-bit qemu kernel
 BUILD_EMULATOR := false
@@ -96,7 +96,7 @@ WIFI_DRIVER_FW_PATH_AP      := "/vendor/firmware/fw_bcmdhd_apsta.bin"
 
 # Enable dex-preoptimization to speed up first boot sequence
 ifeq ($(HOST_OS),linux)
-  ifeq ($(TARGET_BUILD_VARIANT),user)
+  ifeq ($(TARGET_BUILD_VARIANT),userdebug)
     ifeq ($(WITH_DEXPREOPT),)
       WITH_DEXPREOPT := true
     endif
@@ -123,6 +123,10 @@ endif
 BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
 
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.dragon
+
+# Shims
+TARGET_LD_SHIM_LIBS := \
+    /vendor/lib/hw/camera.dragon.so|libshim_camera.so
 
 # Testing related defines
 BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh
