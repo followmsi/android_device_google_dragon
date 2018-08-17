@@ -27,7 +27,7 @@
 
 #define PREPROCESSING_ENABLED
 
-#define SOUND_TRIGGER_HAL_LIBRARY_PATH "/system/lib/hw/sound_trigger.primary.dragon.so"
+#define SOUND_TRIGGER_HAL_LIBRARY_PATH "/vendor/lib/hw/sound_trigger.primary.dragon.so"
 
 /* Retry for delay in FW loading*/
 #define RETRY_NUMBER 10
