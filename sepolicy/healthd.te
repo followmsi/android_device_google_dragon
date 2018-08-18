@@ -1,0 +1,1 @@
+allow healthd sysfs:file { read write open ioctl getattr };
