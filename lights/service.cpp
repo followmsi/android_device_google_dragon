@@ -34,7 +34,7 @@ using android::hardware::joinRpcThreadpool;
 using android::hardware::light::V2_0::ILight;
 using android::hardware::light::V2_0::implementation::Light;
 
-const static std::string kBacklightPath = "/sys/class/backlight/lpm102a188a-backlight";
+const static std::string kBacklightPath = "/sys/class/backlight/lpm102a188a-backlight/brightness";
 
 int main() {
     status_t status;
