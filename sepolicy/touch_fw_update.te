@@ -1,7 +1,7 @@
 # init runs /system/bin/touchfwup.sh
 type touch_fw_update, domain, device_domain_deprecated;
 type touch_fw_update_exec, exec_type, file_type;
-type touch_fw_update_log_file, file_type, data_file_type;
+type touch_fw_update_log_file, file_type, data_file_type, core_data_file_type;
 
 init_daemon_domain(touch_fw_update)
 

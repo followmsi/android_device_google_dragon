@@ -1,4 +1,7 @@
-allow tee tee_data_file:dir create_dir_perms;
+type dragon_tee_data_file, file_type, data_file_type, core_data_file_type;
+
+allow tee dragon_tee_data_file:dir create_dir_perms;
+allow tee dragon_tee_data_file:file create_file_perms;
 allow tee self:capability { setuid setgid sys_rawio };
 allow tee block_device:dir search;
 allow tee rpmb_block_device:blk_file rw_file_perms;
