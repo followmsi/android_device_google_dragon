@@ -43,6 +43,9 @@ TARGET_KERNEL_TOOLCHAIN_ROOT := prebuilts/gcc/linux-x86/aarch64/aarch64-linux-an
 TARGET_KERNEL_TOOLS_PREFIX := $(TARGET_KERNEL_TOOLCHAIN_ROOT)/bin/aarch64-linux-android-
 BOARD_KERNEL_IMAGE_NAME := Image.fit
 
+# Boot permissive temporarily
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
+
 # Disable emulator for "make dist" until there is a 64-bit qemu kernel
 BUILD_EMULATOR := false
 
