@@ -18,3 +18,4 @@ allow cameraserver vendor_file_type:dir r_dir_perms;
 allow cameraserver tmpfs:dir search;
 
 allow cameraserver hal_configstore_ISurfaceFlingerConfigs:hwservice_manager find;
+allow cameraserver hal_configstore_default:binder call;
