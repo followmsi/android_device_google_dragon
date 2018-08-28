@@ -11,7 +11,8 @@ PRODUCT_PACKAGES += \
 # Camera
 PRODUCT_PACKAGES += \
     camera.device@3.2-impl \
-    android.hardware.camera.provider@2.4-impl
+    android.hardware.camera.provider@2.4-impl \
+    libshim_camera
 
 # Display
 PRODUCT_PACKAGES += \
@@ -47,7 +48,7 @@ PRODUCT_PACKAGES += \
 # Lights
 PRODUCT_PACKAGES += \
     android.hardware.light@2.0-impl \
-    android.hardware.light@2.0-service.dragon
+    lights.dragon
 
 # Memtrack
 PRODUCT_PACKAGES += \
