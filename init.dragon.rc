@@ -30,11 +30,6 @@ on init
     start watchdogd
 
 on late-fs
-    start surfaceflinger
-    start bootanim
-    start configstore-hal-1-0
-    start gralloc-2-0
-
     # Mount RW partitions which need run fsck
     mount_all /fstab.dragon --late
 
@@ -88,7 +83,7 @@ on post-fs-data
     mkdir /data/qcks/mdm 0770 system system
 
     # wifi
-    mkdir /data/vendor/wifi 0770 wifi wifi
+    mkdir /data/vendor/wifi 0771 wifi wifi
     mkdir /data/vendor/wifi/wpa 0770 wifi wifi
     mkdir /data/vendor/wifi/wpa/sockets 0770 wifi wifi
 
@@ -237,7 +232,7 @@ service bugreport /system/bin/dumpstate -d -p -B -z \
     oneshot
 
 service wpa_supplicant /vendor/bin/hw/wpa_supplicant \
-    -puse_p2p_group_interface=1p2p_device=1 \
+    -O/data/vendor/wifi/wpa/sockets -puse_p2p_group_interface=1 \
     -g@android:wpa_wlan0
     interface android.hardware.wifi.supplicant@1.0::ISupplicant default
     interface android.hardware.wifi.supplicant@1.1::ISupplicant default
