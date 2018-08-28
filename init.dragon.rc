@@ -27,6 +27,15 @@ on init
     setprop qemu.hw.mainkeys 0
     start watchdogd
 
+on late-fs
+    start surfaceflinger
+    start bootanim
+    start configstore-hal-1-0
+    start gralloc-2-0
+
+    # Mount RW partitions which need run fsck
+    mount_all /fstab.dragon --late
+
 on late-init
     # Setting slice_idle to 0 for CFQ, so make sure the scheduler is CFQ.
     write /sys/block/mmcblk0/queue/scheduler cfq
@@ -75,6 +84,11 @@ on post-fs-data
     mkdir /data/qcks 0770 system system
     mkdir /data/efs 0771 system system
     mkdir /data/qcks/mdm 0770 system system
+
+    # wifi
+    mkdir /data/vendor/wifi 0770 wifi wifi
+    mkdir /data/vendor/wifi/wpa 0770 wifi wifi
+    mkdir /data/vendor/wifi/wpa/sockets 0770 wifi wifi
 
     # crash_collector
     mkdir /data/system/crash_reports 0700 system system
@@ -142,6 +156,12 @@ on boot
     chown system system /sys/kernel/debug/system_edp/capping/force_gpu
     chmod 0660 /sys/kernel/debug/system_edp/capping/force_gpu
 
+    # for lightbar
+    chown system system /sys/class/chromeos/cros_ec/lightbar/userspace_control
+    chmod 0660 /sys/class/chromeos/cros_ec/lightbar/userspace_control
+    chown system system /sys/class/chromeos/cros_ec/lightbar/sequence
+    chmod 0660 /sys/class/chromeos/cros_ec/lightbar/sequence
+
     # for external power limits
     chown system system /sys/class/chromeos/cros_ec/usb-pd-charger/ext_voltage_lim
     chmod 0660 /sys/class/chromeos/cros_ec/usb-pd-charger/ext_voltage_lim
@@ -184,6 +204,9 @@ on fs
     write /sys/module/dm_verity/parameters/error_behavior notify
 
     mount_all /fstab.dragon --early
+
+    # Start HW service manager early
+    start hwservicemanager
 
 # run the touch firmware update script as soon as non-tmpfs /data is ready
 on property:vold.decrypt=trigger_restart_framework
