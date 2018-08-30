@@ -57,7 +57,7 @@ PRODUCT_COPY_FILES := \
     $(LOCAL_FSTAB):root/fstab.dragon \
     $(LOCAL_PATH)/ueventd.dragon.rc:root/ueventd.dragon.rc \
     $(LOCAL_PATH)/speakerdsp.ini:system/etc/cras/speakerdsp.ini \
-    $(LOCAL_PATH)/bcmdhd.cal:system/etc/wifi/bcmdhd.cal
+    $(LOCAL_PATH)/bcmdhd.cal:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/bcmdhd.cal
 
 PRODUCT_PACKAGES += \
     libwpa_client \
@@ -206,6 +206,10 @@ PRODUCT_SYSTEM_PROPERTY_BLACKLIST := \
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.oem_unlock_supported=1
 
+# Default OMX service to non-Treble
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.media.treble_omx=false
+
 # setup dalvik vm configs.
 $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
 
@@ -229,7 +233,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.audio.monitorRotation=true \
     ro.frp.pst=/dev/block/platform/700b0600.sdhci/by-name/PST
 
-PRODUCT_SHIPPING_API_LEVEL := 23
+# ro.product.first_api_level indicates the first api level the device has commercially launched on.
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.product.first_api_level=23
 
 # for keyboard key mappings
 PRODUCT_PACKAGES += \
