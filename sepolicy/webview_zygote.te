@@ -1,0 +1,3 @@
+allow webview_zygote host1x_device:chr_file getattr;
+allow webview_zygote tombstoned_crash_socket:sock_file write;
+allow webview_zygote zygote_exec:file read;
