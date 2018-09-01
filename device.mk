@@ -76,8 +76,8 @@ PRODUCT_PACKAGES += \
     fwtool
 
 PRODUCT_COPY_FILES += \
-    device/google/dragon/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
-    device/google/dragon/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
+    device/google/dragon/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf \
+    device/google/dragon/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf
 
 PRODUCT_COPY_FILES += \
     device/google/dragon/dragon-keypad.kl:system/usr/keylayout/dragon-keypad.kl
