@@ -4,3 +4,8 @@ gettid: 1
 geteuid32: 1
 getgid32: 1
 getegid32: 1
+pselect6: 1
+eventfd2: 1
+sendto: 1
+recvfrom: 1
+_llseek: 1
