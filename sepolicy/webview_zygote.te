@@ -1,4 +1,4 @@
-allow webview_zygote host1x_device:chr_file { read write getattr };
+allow webview_zygote host1x_device:chr_file rw_file_perms;
 allow webview_zygote tombstoned_crash_socket:sock_file write;
 allow webview_zygote tombstoned:unix_stream_socket connectto;
 allow webview_zygote zygote_exec:file { open read };
