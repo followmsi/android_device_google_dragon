@@ -10,6 +10,7 @@ PRODUCT_PACKAGES += \
 
 # Camera
 PRODUCT_PACKAGES += \
+    camera.device@1.0-impl \
     camera.device@3.2-impl \
     android.hardware.camera.provider@2.4-impl \
     libshim_camera
@@ -24,7 +25,12 @@ PRODUCT_PACKAGES += \
 # DRM
 PRODUCT_PACKAGES += \
     android.hardware.drm@1.0-impl \
-    android.hardware.drm@1.0-service
+    android.hardware.drm@1.0-service \
+    android.hardware.drm@1.0-service.widevine
+
+# RenderScript HAL
+PRODUCT_PACKAGES += \
+    android.hardware.renderscript@1.0-impl
 
 # Dumpstate
 PRODUCT_PACKAGES += \
@@ -37,8 +43,9 @@ PRODUCT_PACKAGES += \
 
 # Health
 PRODUCT_PACKAGES += \
-    android.hardware.health@1.0-impl \
-    android.hardware.health@1.0-service
+    android.hardware.health@1.0-impl
+# \
+#    android.hardware.health@1.0-service
 
 # Keymaster
 PRODUCT_PACKAGES += \
@@ -70,3 +77,8 @@ PRODUCT_PACKAGES += \
 # WiFi
 PRODUCT_PACKAGES += \
     android.hardware.wifi@1.0-service
+
+# Vibrator
+PRODUCT_PACKAGES += \
+    android.hardware.vibrator@1.0-impl
+
