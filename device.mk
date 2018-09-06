@@ -191,15 +191,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.facelock.rec_timeout=3500 \
     ro.facelock.est_max_time=500
 
-# camera flash prop
-PRODUCT_PROPERTY_OVERRIDES += \
-    camera.flash_off=0
-
-# drm props
-PRODUCT_PROPERTY_OVERRIDES += \
-    drm.service.enabled=true \
-    ro.com.widevine.cachesize=16777216
-
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.media_vol_steps=25
 
