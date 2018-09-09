@@ -29,6 +29,8 @@
 
 # sysfs files used by wifi
 /sys/module/bcmdhd/parameters/firmware_path     u:object_r:sysfs_wlan_fwpath:s0
+/sys/class/drm/card0/device/pstate              u:object_r:sysfs_gpu:s0
+/sys/devices/57000000.gpu/power/autosuspend_delay_ms        u:object_r:sysfs_gpu:s0
 
 # system executables
 /system/bin/init_regions\.sh                    u:object_r:locale_exec:s0

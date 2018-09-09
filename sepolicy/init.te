@@ -16,3 +16,5 @@ allow init sysfs_bluetooth:file { read write open };
 allow init sysfs_devices_system_cpu:file { read write };
 allow init sysfs_wlan_fwpath:file setattr;
 allow init sysfs:file { setattr };
+allow init sysfs_gpu:file { read write open setattr };
+

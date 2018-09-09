@@ -1,1 +1,2 @@
-allow hal_health_default sysfs:file { read write open };
+allow hal_health_default sysfs:dir { open read };
+allow hal_health_default sysfs:file rw_file_perms;
