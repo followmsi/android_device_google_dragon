@@ -1,8 +1,9 @@
 # Audio
 PRODUCT_PACKAGES += \
-    android.hardware.audio@2.0-impl \
-    android.hardware.audio.effect@2.0-impl \
-    android.hardware.soundtrigger@2.0-impl
+    android.hardware.audio@4.0-impl \
+    android.hardware.audio.effect@4.0-impl \
+    android.hardware.soundtrigger@2.1-impl \
+    android.hardware.audio@2.0-service
 
 # Bluetooth
 PRODUCT_PACKAGES += \
@@ -26,6 +27,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.drm@1.0-impl \
     android.hardware.drm@1.0-service \
+    android.hardware.drm@1.1-service.clearkey \
     android.hardware.drm@1.0-service.widevine
 
 # RenderScript HAL
@@ -38,18 +40,17 @@ PRODUCT_PACKAGES += \
 
 # Gatekeeper
 PRODUCT_PACKAGES += \
-    android.hardware.gatekeeper@1.0-impl:64 \
+    android.hardware.gatekeeper@1.0-impl \
     android.hardware.gatekeeper@1.0-service
 
 # Health
 PRODUCT_PACKAGES += \
-    android.hardware.health@1.0-impl
-# \
-#    android.hardware.health@1.0-service
+    android.hardware.health@2.0-impl \
+    android.hardware.health@2.0-service
 
 # Keymaster
 PRODUCT_PACKAGES += \
-    android.hardware.keymaster@3.0-impl:64 \
+    android.hardware.keymaster@3.0-impl \
     android.hardware.keymaster@3.0-service
 
 # Lights
@@ -68,6 +69,7 @@ PRODUCT_PACKAGES += \
 # Sensors
 PRODUCT_PACKAGES += \
     android.hardware.sensors@1.0-impl \
+    android.hardware.sensors@1.0-service \
     sensors.dragon
 
 # USB
