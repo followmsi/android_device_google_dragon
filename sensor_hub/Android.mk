@@ -36,6 +36,7 @@ LOCAL_SRC_FILES := \
   sensors.cpp      \
   cros_ec_sensors.cpp  \
 
+LOCAL_HEADER_LIBRARIES += libhardware_headers
 LOCAL_SHARED_LIBRARIES := liblog libcutils libutils libdl
 
 include $(BUILD_SHARED_LIBRARY)
