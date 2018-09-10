@@ -21,6 +21,7 @@ $(call inherit-product, vendor/lineage/config/common_full_tablet_wifionly.mk)
 
 # Inherit from hardware-specific part of the product configuration
 $(call inherit-product, device/google/dragon/aosp_dragon.mk)
+$(call inherit-product, device/google/dragon/permissions.mk)
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := dragon
