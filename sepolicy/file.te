@@ -4,4 +4,15 @@ type sysfs_socinfo, sysfs_type, fs_type;
 type sysfs_gpu, sysfs_type, fs_type;
 
 type debugfs_ion, fs_type, debugfs_type;
+type debugfs_kgsl, debugfs_type, fs_type;
+type debugfs_clk, debugfs_type, fs_type;
+type debugfs_rpm, debugfs_type, fs_type;
+type debugfs_rmt_storage, debugfs_type, fs_type;
+type debugfs_usb, debugfs_type, fs_type;
+type debugfs_wlan, debugfs_type, fs_type;
+type debugfs_mdp, debugfs_type, fs_type;
+type debugfs_icnss, debugfs_type, fs_type;
+type debugfs_fg_sram, debugfs_type, fs_type;
+type debugfs_dma_bufinfo, debugfs_type, fs_type;
+type debugfs_tzdbg, debugfs_type, fs_type;
 

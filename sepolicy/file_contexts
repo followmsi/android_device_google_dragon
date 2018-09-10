@@ -1,5 +1,6 @@
 # Debug files
-/sys/kernel/debug/ion/heaps/system  u:object_r:debugfs_ion:s0
+#/sys/kernel/debug/ion/heaps/system  u:object_r:debugfs_ion:s0
+#/sys/kernel/debug/ion/clients/pids(/.*)?  u:object_r:debugfs_ion:s0
 
 # block devices
 /dev/block/platform/700b0600\.sdhci/by-name/UDA       u:object_r:userdata_block_device:s0
