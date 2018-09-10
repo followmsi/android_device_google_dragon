@@ -11,5 +11,4 @@
 /dev/block/platform/700b0600.sdhci/by-name/recovery	/recovery	emmc	defaults						defaults
 /dev/block/platform/700b0600.sdhci/by-name/MSC		/misc		emmc	defaults						defaults
 /dev/block/platform/700b0600.sdhci/by-name/PST		/persistent	emmc	defaults						defaults
-/dev/block/zram0					none		swap	defaults						zramsize=533413200,notrim
 /devices/70098000.usb/70090000.usb-host/usb*		auto		auto	defaults						voldmanaged=usb:auto
