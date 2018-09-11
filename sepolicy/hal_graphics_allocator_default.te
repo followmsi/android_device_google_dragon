@@ -1,1 +1,2 @@
 allow hal_graphics_allocator_default host1x_device:chr_file { read write open ioctl };
+dontaudit hal_graphics_allocator_default kernel:system module_request;
