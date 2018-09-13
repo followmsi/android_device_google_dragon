@@ -6,5 +6,7 @@ allow domain debugfs_kgsl:dir search;
 
 allow domain debugfs_ion:dir search;
 
-allow domain sysfs_socinfo:dir r_dir_perms;
-allow { domain -isolated_app } sysfs_socinfo:file r_file_perms;
+type diag_device, dev_type, mlstrustedobject;
+
+allow domain sysfs_soc:dir r_dir_perms;
+allow { domain -isolated_app } sysfs_soc:file r_file_perms;

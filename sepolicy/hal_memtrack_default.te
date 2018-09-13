@@ -1,2 +1,4 @@
 allow hal_memtrack_default debugfs_kgsl:file { open read getattr };
 allow hal_memtrack_default debugfs_ion:file { open read getattr };
+
+allow hal_memtrack_default surfaceflinger:file read;
