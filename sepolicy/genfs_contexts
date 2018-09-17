@@ -11,6 +11,8 @@ genfscon sysfs /class/backlight/lpm102a188a-backlight/brightness       u:object_
 
 genfscon sysfs /class/rfkill/rfkill0/state            u:object_r:sysfs_bluetooth:s0
 
+genfscon sysfs /devices/virtual/thermal                         u:object_r:sysfs_thermal:s0
+
 #sysfs nodes for cpuinfo for CTS
 genfscon sysfs /firmware/devicetree/base/cpus         u:object_r:sysfs_soc:s0
 

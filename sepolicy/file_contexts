@@ -27,11 +27,14 @@
 
 # system executables
 /system/bin/init_regions\.sh                    u:object_r:locale_exec:s0
-/system/bin/tune-thermal-gov\.sh                u:object_r:thermal_gov_exec:s0
+#/system/bin/tune-thermal-gov\.sh                u:object_r:thermal_gov_exec:s0
 /system/bin/dump_bq25892\.sh                    u:object_r:dump_bq25892_exec:s0
 /system/bin/touchfwup\.sh                       u:object_r:touch_fw_update_exec:s0
 /system/bin/rmi4update                          u:object_r:rmi4update_exec:s0
 /system/bin/fwtool                              u:object_r:fwtool_exec:s0
+
+# thermal sysfs files
+/sys/class/thermal(/.*)?                    u:object_r:sysfs_thermal:s0
 
 # vendor executables
 /vendor/bin/hw/android\.hardware\.dumpstate@1\.0-service.dragon      u:object_r:hal_dumpstate_impl_exec:s0

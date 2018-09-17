@@ -213,10 +213,10 @@ on property:vold.decrypt=trigger_restart_framework
     exec -- /system/bin/touchfwup.sh
 
 # tune thermal governor
-service tune_therm_gov /system/bin/tune-thermal-gov.sh skin-therm pd_thermal_gov \
-    max_err_temp 5000
-    class main
-    oneshot
+#service tune_therm_gov /system/bin/tune-thermal-gov.sh skin-therm pd_thermal_gov \
+#    max_err_temp 5000
+#    class main
+#    oneshot
 
 service battery_charger /charger
     class charger
@@ -249,19 +249,6 @@ service fwtool /system/bin/fwtool mark_boot success
     user root
     oneshot
 
-service kickstart /vendor/bin/qcks -i /vendor/firmware/mdm/image/ -r /data/qcks/mdm/
-    class late_start
-    disabled
-    user system
-    group system
-    oneshot
-
-service qmuxd /vendor/bin/qmuxd
-    class late_start
-    disabled
-    user system
-    group system radio
-
 service netmgrd /vendor/bin/netmgrd
     class late_start
     disabled
@@ -271,5 +258,5 @@ service tlk_daemon /vendor/bin/tlk_daemon --storagedir /data/ss --rpmbdev /dev/b
     class main
     group system
 
-on property:debug.bq25892=dump
-    exec - root root system -- /system/bin/dump_bq25892.sh
+#on property:debug.bq25892=dump
+#    exec - root root system -- /system/bin/dump_bq25892.sh
