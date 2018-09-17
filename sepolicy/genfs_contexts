@@ -1,5 +1,19 @@
 # TODO: genfs doesn't apply correctly to linked files (b/64270911)
 
+# sysfs files used by wifi
+genfscon sysfs /module/bcmdhd/parameters/firmware_path                 u:object_r:sysfs_wlan_fwpath:s0
+genfscon sysfs /class/drm/card0/device/pstate                          u:object_r:sysfs_gpu:s0
+genfscon sysfs /devices/57000000.gpu/power/autosuspend_delay_ms        u:object_r:sysfs_gpu:s0
+
+genfscon sysfs /devices/bt_bcm4354                    u:object_r:sysfs_bluetooth:s0
+genfscon sysfs /devices/soc0                          u:object_r:sysfs_soc:s0
+genfscon sysfs /class/backlight/lpm102a188a-backlight/brightness       u:object_r:sysfs_leds:s0
+
+genfscon sysfs /class/rfkill/rfkill0/state            u:object_r:sysfs_bluetooth:s0
+
+#sysfs nodes for cpuinfo for CTS
+genfscon sysfs /firmware/devicetree/base/cpus         u:object_r:sysfs_soc:s0
+
 genfscon debugfs /kgsl/proc                           u:object_r:debugfs_kgsl:s0
 genfscon debugfs /clk/debug_suspend                   u:object_r:debugfs_clk:s0
 genfscon debugfs /wlan0                               u:object_r:debugfs_wlan:s0
