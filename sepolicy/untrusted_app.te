@@ -1,0 +1,3 @@
+allow untrusted_app block_device:dir search;
+allow untrusted_app sysfs_leds:dir search;
+allow untrusted_app sysfs_lowmemorykiller:dir search;
