@@ -1,4 +1,4 @@
-import init.dragon.usb.rc
+import /vendor/etc/init/hw/init.dragon.usb.rc
 
 on early-init
     mount debugfs /sys/kernel/debug /sys/kernel/debug mode=755
@@ -28,8 +28,20 @@ on init
     start watchdogd
 
 on late-fs
+    # Start services for bootanim
+    start surfaceflinger
+    start bootanim
+    start vendor.hwcomposer-2-1
+    start vendor.configstore-hal
+    start vendor.gralloc-2-0
+
+    # Wait for hwservicemanager ready since fsck might be triggered in mount_all --late
+    # In such case, init won't responce the property_set from hwservicemanager and then
+    # cause services for bootanim not running.
+    wait_for_prop hwservicemanager.ready true
+
     # Mount RW partitions which need run fsck
-    mount_all /fstab.dragon --late
+    mount_all /vendor/etc/fstab.dragon --late
 
 on late-init
     # Setting slice_idle to 0 for CFQ, so make sure the scheduler is CFQ.
@@ -41,7 +53,7 @@ on late-init
 
 on early-boot
     # Update dm-verity state and set partition.*.verified properties
-    verity_update_state
+    #verity_update_state
 
 # Set watchdog timer to 30 seconds and pet it every 10 seconds to get a 20 second margin
 service watchdogd /sbin/watchdogd 10 20
@@ -49,8 +61,6 @@ service watchdogd /sbin/watchdogd 10 20
     seclabel u:r:watchdogd:s0
 
 on post-fs
-    # Turn on swap
-    swapon_all /fstab.dragon
 
     # Swap in only 1 page at a time
     write /proc/sys/vm/page-cluster 0
@@ -88,7 +98,7 @@ on post-fs-data
     mkdir /data/vendor/wifi/wpa/sockets 0770 wifi wifi
 
     # crash_collector
-    mkdir /data/system/crash_reports 0700 system system
+    mkdir /data/vendor/crash_reports 0700 system system
 
     # EC/charger logs
     mkdir /data/misc/fw_logs 0755 root root
@@ -97,7 +107,7 @@ on post-fs-data
     mkdir /data/misc/touchfwup 0755 root log
 
     # initialize region info
-    exec -- /system/bin/init_regions.sh
+    exec -- /vendor/bin/init_regions.sh
 
     setprop vold.post_fs_data_done 1
 
@@ -178,7 +188,7 @@ on boot
     write /proc/sys/net/core/wmem_max 1048576
 
     # Execute crash_collector when a process is crashing.
-    write /proc/sys/kernel/core_pattern "|/system/bin/crash_dispatcher %p %u %g %s %t %e"
+    write /proc/sys/kernel/core_pattern "|/vendor/bin/crash_dispatcher %p %u %g %s %t %e"
     write /proc/sys/kernel/core_pipe_limit 4
     write /proc/self/coredump_filter 0x1
 
@@ -201,24 +211,28 @@ on boot
 
 on fs
     # Enable verity notification
-    write /sys/module/dm_verity/parameters/error_behavior notify
-
-    mount_all /fstab.dragon --early
+    #write /sys/module/dm_verity/parameters/error_behavior notify
 
     # Start HW service manager early
     start hwservicemanager
 
+    mount_all /vendor/etc/fstab.dragon --early
+
 # run the touch firmware update script as soon as non-tmpfs /data is ready
 on property:vold.decrypt=trigger_restart_framework
-    exec -- /system/bin/touchfwup.sh
+    exec -- /vendor/bin/touchfwup.sh
+
+on property:sys.boot_completed=1
+    # Turn on swap
+    swapon_all /vendor/etc/fstab.dragon
 
 # tune thermal governor
-#service tune_therm_gov /system/bin/tune-thermal-gov.sh skin-therm pd_thermal_gov \
+#service tune_therm_gov /vendor/bin/tune-thermal-gov.sh skin-therm pd_thermal_gov \
 #    max_err_temp 5000
 #    class main
 #    oneshot
 
-service battery_charger /charger
+service vendor.battery_charger /charger
     class charger
     seclabel u:r:healthd:s0
 
@@ -228,11 +242,11 @@ on property:ro.debuggable=1
     write /sys/module/fiq_debugger/parameters/kgdb_enable 1
 
 # bugreport is triggered by holding down volume down, volume up and power
-service bugreport /system/bin/dumpstate -d -p -B -z \
-        -o /data/user_de/0/com.android.shell/files/bugreports/bugreport
-    class late_start
-    disabled
-    oneshot
+#service bugreport /vendor/bin/dumpstate -d -p -B -z \
+#        -o /data/user_de/0/com.android.shell/files/bugreports/bugreport
+#    class late_start
+#    disabled
+#    oneshot
 
 service wpa_supplicant /vendor/bin/hw/wpa_supplicant \
     -O/data/vendor/wifi/wpa/sockets -puse_p2p_group_interface=1 \
@@ -244,19 +258,19 @@ service wpa_supplicant /vendor/bin/hw/wpa_supplicant \
     disabled
     oneshot
 
-service fwtool /system/bin/fwtool mark_boot success
+service vendor.fwtool /vendor/bin/fwtool mark_boot success
     class late_start
     user root
     oneshot
 
-service netmgrd /vendor/bin/netmgrd
+service vendor.netmgrd /vendor/bin/netmgrd
     class late_start
     disabled
-    group system radio
+    group system wifi wakelock radio inet
 
-service tlk_daemon /vendor/bin/tlk_daemon --storagedir /data/ss --rpmbdev /dev/block/mmcblk0rpmb
+service vendor.tlk_daemon /vendor/bin/tlk_daemon --storagedir /data/ss --rpmbdev /dev/block/mmcblk0rpmb
     class main
     group system
 
 #on property:debug.bq25892=dump
-#    exec - root root system -- /system/bin/dump_bq25892.sh
+#    exec - root root system -- /vendor/bin/dump_bq25892.sh
