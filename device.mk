@@ -47,16 +47,16 @@ TARGET_RECOVERY_FSTAB = $(LOCAL_FSTAB)
 
 PRODUCT_COPY_FILES := \
     $(LOCAL_KERNEL):kernel \
-    $(LOCAL_PATH)/dump_bq25892.sh:system/bin/dump_bq25892.sh \
-    $(LOCAL_PATH)/touchfwup.sh:system/bin/touchfwup.sh \
-    $(LOCAL_PATH)/init.dragon.rc:root/init.dragon.rc \
-    $(LOCAL_PATH)/init.dragon.usb.rc:root/init.dragon.usb.rc \
-    $(LOCAL_PATH)/init.recovery.dragon.rc:root/init.recovery.dragon.rc \
-    $(LOCAL_PATH)/init_regions.sh:system/bin/init_regions.sh \
-    $(LOCAL_PATH)/tune-thermal-gov.sh:system/bin/tune-thermal-gov.sh \
-    $(LOCAL_FSTAB):root/fstab.dragon \
-    $(LOCAL_PATH)/ueventd.dragon.rc:root/ueventd.dragon.rc \
-    $(LOCAL_PATH)/speakerdsp.ini:system/etc/cras/speakerdsp.ini \
+    $(LOCAL_PATH)/dump_bq25892.sh:$(TARGET_COPY_OUT_VENDOR)/bin/dump_bq25892.sh \
+    $(LOCAL_PATH)/touchfwup.sh:$(TARGET_COPY_OUT_VENDOR)/bin/touchfwup.sh \
+    $(LOCAL_PATH)/init.dragon.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.dragon.rc \
+    $(LOCAL_PATH)/init.dragon.usb.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.dragon.usb.rc \
+    $(LOCAL_PATH)/init.recovery.dragon.rc:recovery/root/init.recovery.dragon.rc \
+    $(LOCAL_PATH)/init_regions.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init_regions.sh \
+    $(LOCAL_PATH)/tune-thermal-gov.sh:$(TARGET_COPY_OUT_VENDOR)/bin/tune-thermal-gov.sh \
+    $(LOCAL_FSTAB):$(TARGET_COPY_OUT_VENDOR)/etc/fstab.dragon \
+    $(LOCAL_PATH)/ueventd.dragon.rc:$(TARGET_COPY_OUT_VENDOR)/ueventd.rc \
+    $(LOCAL_PATH)/speakerdsp.ini:$(TARGET_COPY_OUT_VENDOR)/etc/cras/speakerdsp.ini \
     $(LOCAL_PATH)/bcmdhd.cal:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/bcmdhd.cal
 
 PRODUCT_PACKAGES += \
@@ -186,15 +186,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.facelock.rec_timeout=3500 \
     ro.facelock.est_max_time=500
 
-# camera flash prop
-PRODUCT_PROPERTY_OVERRIDES += \
-    camera.flash_off=0
-
-# drm props
-PRODUCT_PROPERTY_OVERRIDES += \
-    drm.service.enabled=true \
-    ro.com.widevine.cachesize=16777216
-
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.media_vol_steps=25
 
@@ -247,12 +238,15 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.frp.pst=/dev/block/platform/700b0600.sdhci/by-name/PST
 
 # ro.product.first_api_level indicates the first api level the device has commercially launched on.
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.product.first_api_level=23
+PRODUCT_SHIPPING_API_LEVEL := 23
 
 # for keyboard key mappings
 PRODUCT_PACKAGES += \
     DragonKeyboard
+
+# Camera configurations
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/camera/external_camera_config.xml:$(TARGET_COPY_OUT_VENDOR)/etc/external_camera_config.xml
 
 # DRM Mappings
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -263,6 +257,14 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Face Unlock
 PRODUCT_PACKAGES += \
     libprotobuf-cpp-full
+
+# VNDK
+#PRODUCT_PACKAGES += \
+#    vndk_package
+
+# VNDK-SP
+#PRODUCT_PACKAGES += \
+#    vndk-sp
 
 # Google Assistant
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -313,7 +315,7 @@ USE_XML_AUDIO_POLICY_CONF := 1
 PRODUCT_PACKAGES += \
     f54test \
     hwcomposer.drm \
-    libdrm \
+    libdrm.vendor \
     rmi4update \
     rmihidtool
 
