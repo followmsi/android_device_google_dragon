@@ -150,7 +150,7 @@ static void power_set_interactive(struct power_module __unused *module, int on)
     sysfs_write(CPU_MAX_FREQ_PATH,
                 (!on || low_power_mode) ? low_power_max_cpu_freq : max_cpu_freq);
     sysfs_write(IO_IS_BUSY_PATH, on ? "1" : "0");
-    sysfs_write(LIGHTBAR_SEQUENCE_PATH, on ? "s3s0" : "s0s3");
+    sysfs_write(LIGHTBAR_SEQUENCE_PATH, on ? "s0s3" : "s0s3");
     /* limit charging voltage to 5V when interactive otherwise no limit */
     sysfs_write(EXT_VOLTAGE_LIM_PATH, on ? "5000" : EC_POWER_LIMIT_NONE);
     if (iio_activity_device != NULL) {
