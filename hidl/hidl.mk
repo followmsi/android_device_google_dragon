@@ -1,3 +1,10 @@
+# HIDL
+PRODUCT_PACKAGES += \
+    android.hidl.base@1.0 \
+    android.hidl.base@1.0_system \
+    android.hidl.manager@1.0 \
+    android.hidl.manager@1.0-java
+
 # Audio
 PRODUCT_PACKAGES += \
     android.hardware.audio@4.0-impl \
@@ -14,7 +21,8 @@ PRODUCT_PACKAGES += \
     camera.device@1.0-impl \
     camera.device@3.2-impl \
     android.hardware.camera.provider@2.4-impl \
-    libshim_camera
+    libshim_camera \
+    libEGL_vndk
 
 # Display
 PRODUCT_PACKAGES += \
@@ -66,6 +74,7 @@ PRODUCT_PACKAGES += \
 # Power
 PRODUCT_PACKAGES += \
     android.hardware.power@1.0-impl \
+    android.hardware.power@1.0-service \
     power.dragon
 
 # Sensors
