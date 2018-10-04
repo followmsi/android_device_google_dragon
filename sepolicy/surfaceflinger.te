@@ -4,3 +4,5 @@ allow surfaceflinger host1x_device:chr_file rw_file_perms;
 
 allow surfaceflinger debugfs_ion:dir search;
 
+allow surfaceflinger sysfs_soc:dir search;
+allow surfaceflinger sysfs_soc:file r_file_perms;

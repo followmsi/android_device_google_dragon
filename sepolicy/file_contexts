@@ -21,17 +21,19 @@
 /dev/dri/renderD129                             u:object_r:host1x_device:s0
 /dev/sw_sync                                    u:object_r:sw_sync_device:s0
 /dev/ttyTHS3                                    u:object_r:hci_attach_dev:s0
-/dev/focuser                                    u:object_r:camera_device:s0
 /dev/cros_ec                                    u:object_r:cros_ec_device:s0
 /dev/hidraw0                                    u:object_r:hidraw_device:s0
 
-# system executables
-/system/bin/init_regions\.sh                    u:object_r:locale_exec:s0
+/data/vendor/locale(/.*)?            u:object_r:locale_data_file:s0
+/sys/firmware/vpd/ro/region(/.*)?            u:object_r:sysfs_locale:s0
+
+# vendor executables
+/vendor/bin/init_regions\.sh                    u:object_r:locale_exec:s0
 #/system/bin/tune-thermal-gov\.sh                u:object_r:thermal_gov_exec:s0
-/system/bin/dump_bq25892\.sh                    u:object_r:dump_bq25892_exec:s0
-/system/bin/touchfwup\.sh                       u:object_r:touch_fw_update_exec:s0
-/system/bin/rmi4update                          u:object_r:rmi4update_exec:s0
-/system/bin/fwtool                              u:object_r:fwtool_exec:s0
+#/vendor/bin/dump_bq25892\.sh                    u:object_r:dump_bq25892_exec:s0
+/vendor/bin/touchfwup\.sh                       u:object_r:touch_fw_update_exec:s0
+/vendor/bin/rmi4update                          u:object_r:rmi4update_exec:s0
+/vendor/bin/fwtool                              u:object_r:fwtool_exec:s0
 
 # thermal sysfs files
 /sys/class/thermal(/.*)?                    u:object_r:sysfs_thermal:s0
@@ -41,16 +43,26 @@
 /vendor/bin/hw/android\.hardware\.light@2\.0-service\.dragon         u:object_r:hal_light_default_exec:s0
 /vendor/bin/hw/android\.hardware\.drm@1\.1-service\.widevine          u:object_r:hal_drm_widevine_exec:s0
 /vendor/bin/hw/android\.hardware\.drm@1\.1-service\.clearkey          u:object_r:hal_drm_clearkey_exec:s0
+/vendor/bin/hw/android\.hardware\.power@1\.1-service          u:object_r:hal_power_default_exec:s0
+
+# file in /system
+/system/bin/move_widevine_data\.sh              u:object_r:move-widevine-data-sh_exec:s0
+
+/data/vendor/mediadrm(/.*)?            u:object_r:mediadrm_vendor_data_file:s0
 
 # crash_collector
-/system/bin/crash_dispatcher                    u:object_r:crash_collector_exec:s0
-/system/bin/crash_collector32                   u:object_r:crash_collector_exec:s0
-/system/bin/crash_collector64                   u:object_r:crash_collector_exec:s0
-/data/system/crash_reports(/.*)?                u:object_r:crash_reports_data_file:s0
+#/system/bin/crash_dispatcher                    u:object_r:crash_collector_exec:s0
+#/system/bin/crash_collector32                   u:object_r:crash_collector_exec:s0
+#/system/bin/crash_collector64                   u:object_r:crash_collector_exec:s0
+#/data/system/crash_reports(/.*)?                u:object_r:crash_reports_data_file:s0
+
+sys/class/chromeos/cros_ec/usb-pd-charger(/.*)?  u:object_r:sysfs_cros_ec:s0
+sys/class/chromeos/cros_ec/lightbar(/.*)?       u:object_r:sysfs_cros_ec:s0
 
 # camera
 /dev/imx219                                     u:object_r:camera_device:s0
 /dev/imx208                                     u:object_r:camera_device:s0
+/dev/focuser                                    u:object_r:camera_device:s0
 
 # /data
 /data/nvcam(/.*)?                               u:object_r:media_data_file:s0
@@ -69,4 +81,21 @@
 
 # logs for touch firmware update
 /data/misc/touchfwup(/.*)?                      u:object_r:touch_fw_update_log_file:s0
+
+/vendor/usr/idc(/.*)?                        u:object_r:idc_file:s0
+/vendor/usr/keylayout(/.*)?                  u:object_r:keylayout_file:s0
+
+###############################################
+# same-process HAL files and their dependencies
+#
+/vendor/lib(64)?/hw/gralloc\.tegra\.so   u:object_r:same_process_hal_file:s0
+
+/vendor/lib(64)?/hw/vulkan\.tegra\.so    u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/egl/libEGL_tegra\.so         u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/egl/libGLESv1_CM_tegra\.so   u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/egl/libGLESv2_tegra\.so      u:object_r:same_process_hal_file:s0
+
+/vendor/lib(64)?/libdrmutils\.so           u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/libdrm\.so                u:object_r:same_process_hal_file:s0
+
 

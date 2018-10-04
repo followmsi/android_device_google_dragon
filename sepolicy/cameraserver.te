@@ -19,3 +19,13 @@ allow cameraserver tmpfs:dir search;
 
 allow cameraserver hal_configstore_ISurfaceFlingerConfigs:hwservice_manager find;
 allow cameraserver hal_configstore_default:binder call;
+
+binder_call(cameraserver, mediacodec)
+
+allow cameraserver sysfs_soc:dir search;
+allow cameraserver sysfs_soc:file r_file_perms;
+
+dontaudit cameraserver kernel:system module_request;
+
+typeattribute cameraserver system_writes_vendor_properties_violators;
+

@@ -3,15 +3,27 @@
 # sysfs files used by wifi
 genfscon sysfs /module/bcmdhd/parameters/firmware_path                 u:object_r:sysfs_wlan_fwpath:s0
 genfscon sysfs /class/drm/card0/device/pstate                          u:object_r:sysfs_gpu:s0
+genfscon sysfs /devices/57000000.gpu/pstate                            u:object_r:sysfs_gpu:s0
 genfscon sysfs /devices/57000000.gpu/power/autosuspend_delay_ms        u:object_r:sysfs_gpu:s0
 
 genfscon sysfs /devices/bt_bcm4354                    u:object_r:sysfs_bluetooth:s0
 genfscon sysfs /devices/soc0                          u:object_r:sysfs_soc:s0
 genfscon sysfs /class/backlight/lpm102a188a-backlight/brightness       u:object_r:sysfs_leds:s0
 
+genfscon sysfs /class/chromeos/cros_ec/device/cros-ec-activity.0/iio:device5/events       u:object_r:sysfs_cros_ec:s0
+#genfscon sysfs /class/chromeos/cros_ec/lightbar/sequence               u:object_r:sysfs_cros_ec:s0
+genfscon sysfs /class/chromeos/cros_ec/usb-pd-charger  u:object_r:sysfs_cros_ec:s0
+genfscon sysfs /class/chromeos/cros_ec/lightbar       u:object_r:sysfs_cros_ec:s0
+
+genfscon sysfs /devices/virtual/graphics/fb0          u:object_r:sysfs_graphics:s0
+
 genfscon sysfs /class/rfkill/rfkill0/state            u:object_r:sysfs_bluetooth:s0
 
-genfscon sysfs /devices/virtual/thermal                         u:object_r:sysfs_thermal:s0
+genfscon sysfs /devices/virtual/thermal               u:object_r:sysfs_thermal:s0
+
+# We expect /sys/class/power_supply/* and everything it links to to be labeled
+# as sysfs_batteryinfo.
+genfscon sysfs /sys/class/power_supply/bq27742-0      u:object_r:sysfs_batteryinfo:s0
 
 #sysfs nodes for cpuinfo for CTS
 genfscon sysfs /firmware/devicetree/base/cpus         u:object_r:sysfs_soc:s0

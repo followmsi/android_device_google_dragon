@@ -1,4 +1,4 @@
-allow hal_sensors_default sysfs:dir { open read };
+allow hal_sensors_default sysfs:dir { open read search };
 allow hal_sensors_default sysfs:file rw_file_perms;
 
 # Allow acess to uinput for lidstate determination
@@ -9,6 +9,9 @@ allow hal_sensors_default ion_device:chr_file { open read ioctl };
 allow hal_sensors_default hal_graphics_allocator:fd use;
 
 # allow access to detect change in /dev folder
-allow hal_sensors_default device:dir { open read };
+allow hal_sensors_default device:dir { open read search };
 
-#allow hal_sensors_default iio_device:chr_file rw_file_perms;
+allow hal_sensors_default iio_device:chr_file rw_file_perms;
+
+# allow access to detect change in /dev folder
+allow hal_sensors_default device:dir { open read };

@@ -1,3 +1,6 @@
 allow priv_app sysfs:file { open read getattr };
 
+allow priv_app device:dir { open read };
+allow priv_app device:file { open read };
+
 allowxperm priv_app self:udp_socket ioctl { SIOCGIWESSID };

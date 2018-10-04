@@ -1,7 +1,18 @@
 # /sys/class/rfkill/rfkill0/state
 type sysfs_bluetooth, fs_type, sysfs_type;
-type sysfs_soc, sysfs_type, fs_type, mlstrustedobject;
+type sysfs_soc, sysfs_type, fs_type;
 type sysfs_gpu, sysfs_type, fs_type;
+type sysfs_cros_ec, sysfs_type, fs_type;
+
+type locale_data_file, file_type, data_file_type;
+type sysfs_locale, sysfs_type, fs_type;
+type sysfs_graphics, sysfs_type, fs_type;
+
+# input files
+type idc_file, file_type, vendor_file_type;
+type keylayout_file, file_type, vendor_file_type;
+
+type mediadrm_vendor_data_file, file_type, data_file_type;
 
 type debugfs_ion, fs_type, debugfs_type;
 type debugfs_kgsl, debugfs_type, fs_type;

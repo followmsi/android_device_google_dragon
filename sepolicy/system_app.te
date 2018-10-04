@@ -1,3 +1,8 @@
 allow system_app proc_pagetypeinfo:file { open read getattr };
 allow system_app sysfs_zram:dir { read search getattr };
 allow system_app sysfs_zram:file { open read getattr };
+
+# sys/devices/soc*/...
+allow system_app sysfs_soc:file r_file_perms;
+allow system_app sysfs_soc:dir r_dir_perms;
+
