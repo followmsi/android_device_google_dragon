@@ -1,4 +1,4 @@
-#!/system/bin/sh
+#!/vendor/bin/sh
 #
 # Intialize region settings. Ref: crosbug.com/p/44779
 
