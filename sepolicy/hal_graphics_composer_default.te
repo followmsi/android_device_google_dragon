@@ -11,10 +11,10 @@ allow hal_graphics_composer_default hal_configstore_ISurfaceFlingerConfigs:hwser
 allow hal_graphics_composer_default hal_graphics_allocator_hwservice:hwservice_manager find;
 allow hal_graphics_composer_default hal_graphics_mapper_hwservice:hwservice_manager find;
 
-#binder_service(hal_graphics_composer_default); trebl
+#binder_service(hal_graphics_composer_default);# treble
 vndbinder_use(hal_graphics_composer_default);
 binder_call(hal_graphics_composer_default, hal_graphics_allocator_default);
-#allow hal_graphics_composer_default surfaceflinger_service:service_manager { add find }; trebl
+#allow hal_graphics_composer_default surfaceflinger_service:service_manager { add find };# treble
 
 typeattribute hal_graphics_composer_default data_between_core_and_vendor_violators;
 

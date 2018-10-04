@@ -6,9 +6,9 @@ allow hal_drm_default host1x_device:chr_file { read write open ioctl };
 binder_call(hal_drm_default, hal_graphics_composer)
 vndbinder_use(hal_drm_default);
 
-allow hal_drm_default media_data_file:dir search;
-allow hal_drm_default media_data_file:dir create_dir_perms;
-allow hal_drm_default media_data_file:file create_file_perms;
+#allow hal_drm_default media_data_file:dir search;# treble
+#allow hal_drm_default media_data_file:dir create_dir_perms;# treble
+#allow hal_drm_default media_data_file:file create_file_perms;# treble
 
 allow hal_drm_default sysfs_soc:dir search;
 allow hal_drm_default sysfs_soc:file r_file_perms;

@@ -15,7 +15,7 @@ allow init configfs:file w_file_perms;
 
 allow init tty_device:chr_file rw_file_perms;
 
-allow init proc:file { read setattr }; # trebl
+#allow init proc:file { read setattr }; # trebl
 allow init sysfs_bluetooth:file { read write open };
 allow init sysfs_devices_system_cpu:file { read write };
 allow init sysfs_wlan_fwpath:file setattr;

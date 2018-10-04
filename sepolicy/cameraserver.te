@@ -10,11 +10,11 @@ allow cameraserver gpu_device:chr_file rw_file_perms;
 allow cameraserver host1x_device:chr_file rw_file_perms;
 
 # /sys and /proc access
-allow cameraserver { proc proc_meminfo }:{ file lnk_file } r_file_perms;
-r_dir_file(cameraserver, sysfs)
+#allow cameraserver { proc proc_meminfo }:{ file lnk_file } r_file_perms;# treble
+#r_dir_file(cameraserver, sysfs)# treble
 
 allow cameraserver system_file:dir r_dir_perms;
-allow cameraserver vendor_file_type:dir r_dir_perms;
+#allow cameraserver vendor_file_type:dir r_dir_perms;# treble
 allow cameraserver tmpfs:dir search;
 
 allow cameraserver hal_configstore_ISurfaceFlingerConfigs:hwservice_manager find;
