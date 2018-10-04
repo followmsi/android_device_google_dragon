@@ -86,9 +86,9 @@ on post-fs-data
     mkdir /data/ss 0700 system system
 
     # modem init
-    mkdir /data/qcks 0770 system system
-    mkdir /data/efs 0771 system system
-    mkdir /data/qcks/mdm 0770 system system
+    #mkdir /data/qcks 0770 system system
+    #mkdir /data/efs 0771 system system
+    #mkdir /data/qcks/mdm 0770 system system
 
     # Create the directories used by the Wireless subsystem
     mkdir /data/misc/wifi 0770 wifi wifi
@@ -98,7 +98,7 @@ on post-fs-data
     mkdir /data/vendor/wifi/wpa/sockets 0770 wifi wifi
 
     # crash_collector
-    mkdir /data/vendor/crash_reports 0700 system system
+    #mkdir /data/vendor/crash_reports 0700 system system
 
     # EC/charger logs
     mkdir /data/misc/fw_logs 0755 root root
@@ -188,9 +188,9 @@ on boot
     write /proc/sys/net/core/wmem_max 1048576
 
     # Execute crash_collector when a process is crashing.
-    write /proc/sys/kernel/core_pattern "|/vendor/bin/crash_dispatcher %p %u %g %s %t %e"
-    write /proc/sys/kernel/core_pipe_limit 4
-    write /proc/self/coredump_filter 0x1
+    #write /proc/sys/kernel/core_pattern "|/vendor/bin/crash_dispatcher %p %u %g %s %t %e"
+    #write /proc/sys/kernel/core_pipe_limit 4
+    #write /proc/self/coredump_filter 0x1
 
     # enable GPU dvfs
     write /sys/class/drm/card0/device/pstate auto
