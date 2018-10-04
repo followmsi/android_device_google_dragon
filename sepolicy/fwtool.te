@@ -1,9 +1,13 @@
 # permissions for /system/bin/fwtool
-type fwtool, domain, device_domain_deprecated;
-type fwtool_exec, exec_type, file_type;
+type fwtool, domain;
+type fwtool_exec, exec_type, file_type, vendor_file_type;
 
 init_daemon_domain(fwtool)
 
 # access /dev/mtd/*
 allow fwtool mtd_device:dir search;
 allow fwtool mtd_device:chr_file rw_file_perms;
+
+allow fwtool sysfs:dir { open read search };
+allow fwtool sysfs:file rw_file_perms;
+
