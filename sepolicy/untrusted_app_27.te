@@ -3,7 +3,4 @@ allow untrusted_app_27 sysfs_thermal:dir { read open search };
 allow untrusted_app_27 sysfs_thermal:file r_file_perms;
 allow untrusted_app_27 sysfs_thermal:lnk_file { read };
 
-allow untrusted_app sysfs_thermal:dir { read open search };
-allow untrusted_app sysfs_thermal:file r_file_perms;
-allow untrusted_app sysfs_thermal:lnk_file { read };
 
