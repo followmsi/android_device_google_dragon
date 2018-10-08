@@ -21,8 +21,7 @@ PRODUCT_PACKAGES += \
     camera.device@1.0-impl \
     camera.device@3.2-impl \
     android.hardware.camera.provider@2.4-impl \
-    libshim_camera \
-    libEGL_vndk
+    libshim_camera
 
 # Display
 PRODUCT_PACKAGES += \
@@ -37,7 +36,8 @@ PRODUCT_PACKAGES += \
     android.hardware.drm@1.0-impl \
     android.hardware.drm@1.0-service \
     android.hardware.drm@1.1-service.clearkey \
-    android.hardware.drm@1.0-service.widevine
+    android.hardware.drm@1.0-service.widevine \
+    move_widevine_data.sh
 
 # RenderScript HAL
 PRODUCT_PACKAGES += \
