@@ -1,5 +1,7 @@
 # TODO: genfs doesn't apply correctly to linked files (b/64270911)
 
+genfscon sysfs /devices/virtual/block/                                u:object_r:sysfs_devices_block:s0
+
 # sysfs files used by wifi
 genfscon sysfs /module/bcmdhd/parameters/firmware_path                 u:object_r:sysfs_wlan_fwpath:s0
 genfscon sysfs /class/drm/card0/device/pstate                          u:object_r:sysfs_gpu:s0
@@ -23,10 +25,16 @@ genfscon sysfs /devices/virtual/thermal               u:object_r:sysfs_thermal:s
 
 # We expect /sys/class/power_supply/* and everything it links to to be labeled
 # as sysfs_batteryinfo.
-genfscon sysfs /sys/class/power_supply/bq27742-0      u:object_r:sysfs_batteryinfo:s0
+#genfscon sysfs /class/power_supply/bq27742-0      u:object_r:sysfs_batteryinfo:s0
+genfscon sysfs /bus/usb                           u:object_r:sysfs_usb_device:s0
+#genfscon sysfs /bus/usb/devices/usb2                           u:object_r:sysfs_usb_device:s0
+genfscon sysfs /devices/70098000.usb/70098000.usb-host/usb1 u:object_r:sysfs_usb_device:s0
+genfscon sysfs /devices/70098000.usb/70098000.usb-host/usb2 u:object_r:sysfs_usb_device:s0
 
 #sysfs nodes for cpuinfo for CTS
 genfscon sysfs /firmware/devicetree/base/cpus         u:object_r:sysfs_soc:s0
+genfscon sysfs /firmware/devicetree/base/tegra-camera-platform/modules     u:object_r:sysfs_camera:s0
+genfscon sysfs /firmware/vpd/ro/cam_cal_data            u:object_r:sysfs_camera_data_file:s0
 
 genfscon debugfs /kgsl/proc                           u:object_r:debugfs_kgsl:s0
 genfscon debugfs /clk/debug_suspend                   u:object_r:debugfs_clk:s0

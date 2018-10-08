@@ -2,3 +2,9 @@ ro.boot.wificountrycode u:object_r:wifi_region_prop:s0
 ro.product.locale       u:object_r:product_locale_prop:s0
 debug.bq25892           u:object_r:debug_bq25892_prop:s0
 vendor.powerhal.state      u:object_r:power_prop:s0
+persist.camera.            u:object_r:camera_prop:s0
+
+# public_vendor_system_prop
+# They are public_vendor_system_props for vendor-specific extension.
+sys.all.modules.ready      u:object_r:public_vendor_system_prop:s0
+

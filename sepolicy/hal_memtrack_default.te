@@ -1,6 +1,6 @@
-allow hal_memtrack_default debugfs_kgsl:file { open read getattr };
-allow hal_memtrack_default debugfs_ion:file { open read getattr };
+allow hal_memtrack_default debugfs_kgsl:file r_file_perms;
+allow hal_memtrack_default debugfs_ion:file r_file_perms;
 
-allow hal_memtrack_default surfaceflinger:file read;
+allow hal_memtrack_default surfaceflinger:file r_file_perms;
 
 dontaudit hal_memtrack_default { domain -surfaceflinger}:file read;

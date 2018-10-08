@@ -3,15 +3,32 @@ type sysfs_bluetooth, fs_type, sysfs_type;
 type sysfs_soc, sysfs_type, fs_type;
 type sysfs_gpu, sysfs_type, fs_type;
 type sysfs_cros_ec, sysfs_type, fs_type;
+type sysfs_devices_block, sysfs_type, fs_type;
 
 type locale_data_file, file_type, data_file_type;
 type sysfs_locale, sysfs_type, fs_type;
 type sysfs_graphics, sysfs_type, fs_type;
+type sysfs_camera, sysfs_type, fs_type;
+type sysfs_camera_data_file, sysfs_type, fs_type;
+type sysfs_usb_device, sysfs_type, fs_type;
+
+# Battery Stats file
+typeattribute sysfs_batteryinfo mlstrustedobject;
 
 # input files
 type idc_file, file_type, vendor_file_type;
 type keylayout_file, file_type, vendor_file_type;
 
+#type camera_data_file, file_type, data_file_type;
+type camera_vendor_data_file, file_type, data_file_type;
+type display_vendor_data_file, file_type, data_file_type;
+type nfc_vendor_data_file, file_type, data_file_type;
+type radio_vendor_data_file, file_type, data_file_type, mlstrustedobject;
+type cnss_vendor_data_file, file_type, data_file_type, mlstrustedobject;
+type ramdump_vendor_data_file, file_type, data_file_type, mlstrustedobject;
+type modem_dump_file, file_type, data_file_type;
+type sensors_vendor_data_file, file_type, data_file_type;
+type audio_vendor_data_file, file_type, data_file_type;
 type mediadrm_vendor_data_file, file_type, data_file_type;
 
 type debugfs_ion, fs_type, debugfs_type;

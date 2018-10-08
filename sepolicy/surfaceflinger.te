@@ -6,3 +6,9 @@ allow surfaceflinger debugfs_ion:dir search;
 
 allow surfaceflinger sysfs_soc:dir search;
 allow surfaceflinger sysfs_soc:file r_file_perms;
+
+#dontaudit surfaceflinger vendor_file:file read;
+#dontaudit surfaceflinger kernel:system module_request;
+typeattribute surfaceflinger system_writes_vendor_properties_violators;
+
+#allow surfaceflinger vendor_file_type:file r_file_perms;# treble

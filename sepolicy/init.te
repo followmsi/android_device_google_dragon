@@ -1,12 +1,12 @@
 allow init tmpfs:lnk_file create;
 # set attributes on /sys/class/gpio sym link
 # chmod 0770 /sys/class/gpio/gpio66
-allow init sysfs:lnk_file setattr;
+allow init sysfs:lnk_file create_file_perms;
 allow init configfs:lnk_file create;
 allow init debugfs_clk:file w_file_perms;
 
 # userspace cannot create files in sys. ignore denial
-dontaudit init sysfs_devices_system_cpu:dir write;
+#dontaudit init sysfs_devices_system_cpu:dir write;
 
 allow init { cache_file storage_file }:dir mounton;
 
@@ -15,10 +15,12 @@ allow init configfs:file w_file_perms;
 
 allow init tty_device:chr_file rw_file_perms;
 
-#allow init proc:file { read setattr }; # trebl
-allow init sysfs_bluetooth:file { read write open };
-allow init sysfs_devices_system_cpu:file { read write };
-allow init sysfs_wlan_fwpath:file setattr;
+allow init proc:file create_file_perms; # trebl
+allow init sysfs_bluetooth:file rw_file_perms;
+allow init sysfs_devices_system_cpu:file rw_file_perms;
+allow init sysfs_wlan_fwpath:file r_file_perms;
 allow init sysfs:file { setattr };
-allow init sysfs_gpu:file { read write open setattr };
+allow init sysfs_gpu:file rw_file_perms;
+allow init sysfs_type:lnk_file read;
 
+allow init userdata_block_device:blk_file { write };

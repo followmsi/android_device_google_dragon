@@ -1,10 +1,10 @@
-allow healthd sysfs_batteryinfo:file { read write open ioctl getattr };
-allow healthd sysfs_batteryinfo:dir r_dir_perms;
+#allow healthd sysfs_batteryinfo:{ file lnk_file } r_file_perms;
+#allow healthd sysfs_batteryinfo:dir r_dir_perms;
 
-allow healthd sysfs:file { getattr };# treble
+allow healthd sysfs:file r_file_perms;# treble
 allow healthd sysfs:dir r_dir_perms;
 
-allow healthd device:dir { open read search };
+allow healthd device:dir r_dir_perms;
 
 typeattribute healthd system_writes_vendor_properties_violators;
-#set_prop(healthd, public_vendor_system_prop)
+set_prop(healthd, public_vendor_system_prop)
