@@ -207,6 +207,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
     drm.service.enabled=true \
     ro.com.widevine.cachesize=16777216
 
+# P2P0 Concurrency
+PRODUCT_PROPERTY_OVERRIDES += \
+    wifi.direct.non-concurrent=true
+
 # Face Unlock
 PRODUCT_PACKAGES += \
     libprotobuf-cpp-full
