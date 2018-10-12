@@ -1,4 +1,4 @@
-allow priv_app sysfs:file { open read };
+allow priv_app sysfs:file { r_file_perms };
 allow priv_app file_contexts_file:file getattr;
 allow priv_app hwservice_contexts_file:file getattr;
 allow priv_app nfc_data_file:dir getattr;
