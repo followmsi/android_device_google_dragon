@@ -45,7 +45,7 @@ endif
 
 TARGET_RECOVERY_FSTAB = $(LOCAL_FSTAB)
 
-PRODUCT_COPY_FILES := \
+PRODUCT_COPY_FILES += \
     $(LOCAL_KERNEL):kernel \
     $(LOCAL_PATH)/dump_bq25892.sh:$(TARGET_COPY_OUT_VENDOR)/bin/dump_bq25892.sh \
     $(LOCAL_PATH)/touchfwup.sh:$(TARGET_COPY_OUT_VENDOR)/bin/touchfwup.sh \
@@ -102,6 +102,11 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/media_profiles_V1_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles_V1_0.xml
 
 PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/media_codecs.xml:system/etc/media_codecs.xml \
+    $(LOCAL_PATH)/media_codecs_performance.xml:system/etc/media_codecs_performance.xml \
+    $(LOCAL_PATH)/media_profiles_V1_0.xml:system/etc/media_profiles_V1_0.xml
+
+PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/bluetooth/BCM4350C0_003.001.012.0433.1484_Google_A44_ORC.hcd:$(TARGET_COPY_OUT_VENDOR)/firmware/bcm4350c0.hcd \
 
 # Bluetooth HAL
@@ -141,14 +146,16 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rt5677_elf_vad:vendor/firmware/rt5677_elf_vad
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/enctune.conf:$(TARGET_COPY_OUT_VENDOR)/etc/enctune.conf
+    $(LOCAL_PATH)/enctune.conf:$(TARGET_COPY_OUT_VENDOR)/etc/enctune.conf \
+    $(LOCAL_PATH)/enctune.conf:system/etc/enctune.conf
 
-PRODUCT_AAPT_CONFIG := normal large xlarge hdpi xhdpi xxhdpi
+PRODUCT_AAPT_CONFIG := normal large xlarge
 PRODUCT_AAPT_PREF_CONFIG := xhdpi
+PRODUCT_AAPT_PREBUILT_DPI := xhdpi
 
 PRODUCT_CHARACTERISTICS := tablet,nosdcard
 
-DEVICE_PACKAGE_OVERLAYS := \
+DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay
 
 PRODUCT_TAGS += dalvik.gc.type-precise
@@ -158,21 +165,8 @@ PRODUCT_PACKAGES += \
     com.android.future.usb.accessory
 
 #TODO(dgreid) is this right?
-PRODUCT_PROPERTY_OVERRIDES := \
-    wifi.interface=wlan0 \
-    ro.hwui.texture_cache_size=86 \
-    ro.hwui.layer_cache_size=56 \
-    ro.hwui.r_buffer_cache_size=8 \
-    ro.hwui.path_cache_size=40 \
-    ro.hwui.gradient_cache_size=1 \
-    ro.hwui.drop_shadow_cache_size=6 \
-    ro.hwui.texture_cache_flushrate=0.4 \
-    ro.hwui.text_small_cache_width=1024 \
-    ro.hwui.text_small_cache_height=1024 \
-    ro.hwui.text_large_cache_width=2048 \
-    ro.hwui.text_large_cache_height=1024 \
-    ro.hwui.disable_scissor_opt=true \
-    ro.recents.grid=true
+PRODUCT_PROPERTY_OVERRIDES += \
+    wifi.interface=wlan0
 
 # mobile data provision prop
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -189,7 +183,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.media_vol_steps=25
 
 # The default locale should be determined from VPD, not from build.prop.
-PRODUCT_SYSTEM_PROPERTY_BLACKLIST := \
+PRODUCT_SYSTEM_PROPERTY_BLACKLIST = \
     ro.product.locale
 
 # OEM Unlock reporting
@@ -199,19 +193,6 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 # Default OMX service to non-Treble
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.media.treble_omx=false
-
-# OMX
-PRODUCT_PACKAGES += \
-    libc2dcolorconvert \
-    libextmedia_jni \
-    libOmxAacEnc \
-    libOmxAmrEnc \
-    libOmxCore \
-    libOmxEvrcEnc \
-    libOmxQcelp13Enc \
-    libOmxVdec \
-    libOmxVenc \
-    libstagefrighthw
 
 # setup dalvik vm configs.
 $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
@@ -237,7 +218,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.frp.pst=/dev/block/platform/700b0600.sdhci/by-name/PST
 
 # ro.product.first_api_level indicates the first api level the device has commercially launched on.
-PRODUCT_SHIPPING_API_LEVEL := 23
+PRODUCT_SHIPPING_API_LEVEL := 24
 
 # for keyboard key mappings
 PRODUCT_PACKAGES += \
@@ -304,9 +285,12 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.bionic.ld.warning=0
 
 $(call inherit-product-if-exists, hardware/nvidia/tegra132/tegra132.mk)
-$(call inherit-product-if-exists, vendor/nvidia/dragon/device-vendor.mk)
-$(call inherit-product-if-exists, vendor/nvidia/dragon-common/device-vendor.mk)
+$(call inherit-product-if-exists, vendor/google/dragon/device-vendor.mk)
+$(call inherit-product-if-exists, vendor/google/dragon-common/device-vendor.mk)
 $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/config/config-bcm.mk)
+
+PRODUCT_PACKAGES += \
+    libshim_camera
 
 ENABLE_LIBDRM := true
 BOARD_GPU_DRIVERS := tegra
