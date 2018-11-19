@@ -1,6 +1,7 @@
 # access to dev/sw_sync
 allow surfaceflinger sw_sync_device:chr_file rw_file_perms;
 allow surfaceflinger host1x_device:chr_file rw_file_perms;
+allow surfaceflinger gpu_device:chr_file rw_file_perms;
 
 allow surfaceflinger debugfs_ion:dir search;
 
@@ -12,3 +13,7 @@ allow surfaceflinger sysfs_soc:file r_file_perms;
 typeattribute surfaceflinger system_writes_vendor_properties_violators;
 
 #allow surfaceflinger vendor_file_type:file r_file_perms;# treble
+
+allow surfaceflinger sysfs:chr_file rw_file_perms;
+allow surfaceflinger sysfs:dir { search read };
+
