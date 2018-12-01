@@ -22,7 +22,9 @@
 # "SECURE_OS_BUILD = false" will will use prebuilts for TLK and client
 #                    components.
 
-$(call inherit-product, device/google/dragon/hidl/hidl.mk)
+LOCAL_PATH := device/google/dragon
+
+$(call inherit-product, $(LOCAL_PATH)/hidl/hidl.mk)
 
 # By default build TLK from source if it is available, otherwise use
 # prebuilts.  To force using the prebuilt while having the source, set:
@@ -32,7 +34,7 @@ ifeq ($(wildcard vendor/nvidia/dragon-tlk/tlk),vendor/nvidia/dragon-tlk/tlk)
 endif
 
 ifeq ($(TARGET_PREBUILT_KERNEL),)
-LOCAL_KERNEL := device/google/dragon/Image.fit
+LOCAL_KERNEL := $(LOCAL_PATH)/Image.fit
 else
 LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
 endif
@@ -71,11 +73,11 @@ PRODUCT_PACKAGES += \
     fwtool
 
 PRODUCT_COPY_FILES += \
-    device/google/dragon/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf \
-    device/google/dragon/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf
+    $(LOCAL_PATH)/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf \
+    $(LOCAL_PATH)/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf
 
 PRODUCT_COPY_FILES += \
-    device/google/dragon/dragon-keypad.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/dragon-keypad.kl
+    $(LOCAL_PATH)/dragon-keypad.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/dragon-keypad.kl
 
 ifeq ($(TARGET_BUILD_VARIANT),eng)
 PRODUCT_PACKAGES += \
@@ -166,7 +168,8 @@ PRODUCT_PACKAGES += \
 
 #TODO(dgreid) is this right?
 PRODUCT_PROPERTY_OVERRIDES += \
-    wifi.interface=wlan0
+    wifi.interface=wlan0 \
+    wifi.direct.interface=p2p-dev-wlan0
 
 # mobile data provision prop
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -287,7 +290,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 $(call inherit-product-if-exists, hardware/nvidia/tegra132/tegra132.mk)
 $(call inherit-product-if-exists, vendor/google/dragon/device-vendor.mk)
 $(call inherit-product-if-exists, vendor/google/dragon-common/device-vendor.mk)
-$(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/config/config-bcm.mk)
+#$(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/config/config-bcm.mk)
 
 PRODUCT_PACKAGES += \
     libshim_camera
@@ -304,7 +307,7 @@ PRODUCT_PACKAGES += \
 
 # Vendor seccomp policy files for media components:
 PRODUCT_COPY_FILES += \
-    device/google/dragon/seccomp_policy/mediacodec.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy \
-    device/google/dragon/seccomp_policy/mediaextractor.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaextractor.policy
+    $(LOCAL_PATH)/seccomp_policy/mediacodec.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy \
+    $(LOCAL_PATH)/seccomp_policy/mediaextractor.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaextractor.policy
 
 $(call inherit-product-if-exists, vendor/nvidia/dragon/dragon-vendor.mk)
