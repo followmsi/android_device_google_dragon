@@ -214,7 +214,8 @@ PRODUCT_PACKAGES += \
     sound_trigger.primary.dragon \
     audio.a2dp.default \
     audio.usb.default \
-    audio.r_submix.default
+    audio.r_submix.default \
+    vkinfo
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.audio.monitorRotation=true \
@@ -235,7 +236,8 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     camera.flash_off=0 \
     drm.service.enabled=true \
-    ro.com.widevine.cachesize=16777216
+    ro.com.widevine.cachesize=16777216 \
+    ro.com.google.clientidbase=android-google
 
 # Face Unlock
 PRODUCT_PACKAGES += \
