@@ -1,0 +1,26 @@
+# These are the firmwares critical for booting.
+# They will be loaded before init has a chance to execute, and
+# thus needs to be placed in ramdisk.
+#
+# NOTE: files in this list will NOT be copied. Every file that
+# needs to be copied must be present in proprietary-files.txt,
+# and files here will get an extra PRODUCT_COPY_FILES directive.
+
+# Copy to ramdisk/vendor/firmware/...
+vendor/firmware/nouveau/acr_ucode.bin
+vendor/firmware/nouveau/fecs.bin
+vendor/firmware/nouveau/fecs_sig.bin
+vendor/firmware/nouveau/gpmu_ucode_desc.bin
+vendor/firmware/nouveau/gpmu_ucode_image.bin
+vendor/firmware/nouveau/nv12b_bundle
+vendor/firmware/nouveau/nv12b_fuc409c
+vendor/firmware/nouveau/nv12b_fuc409d
+vendor/firmware/nouveau/nv12b_fuc41ac
+vendor/firmware/nouveau/nv12b_fuc41ad
+vendor/firmware/nouveau/nv12b_method
+vendor/firmware/nouveau/nv12b_sw_ctx
+vendor/firmware/nouveau/nv12b_sw_nonctx
+vendor/firmware/nouveau/pmu_bl.bin
+vendor/firmware/nouveau/pmu_sig.bin
+vendor/firmware/nvidia/tegra210/bpmp.bin
+vendor/firmware/nvidia/tegra210/xusb.bin
