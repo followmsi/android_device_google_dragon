@@ -223,6 +223,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PACKAGES += \
     DragonKeyboard
 
+# Wi-Fi country code setting
+PRODUCT_PACKAGES += \
+    DragonParts
+
 # DRM Mappings
 PRODUCT_PROPERTY_OVERRIDES += \
     camera.flash_off=0 \
