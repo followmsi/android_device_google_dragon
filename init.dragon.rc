@@ -100,6 +100,12 @@ on property:ro.persistent_properties.ready=true
     # initialize region info
     exec -- /system/bin/init_regions.sh
 
+on property:persist.sys.wifi.country_code=*
+    # If Magisk is installed, it can alternate boot process
+    # so the code here may be different from the one when
+    # ro.persistent_properties.ready=true.
+    exec -- /system/bin/init_regions.sh
+
 on boot
     # power down interface
     write /sys/class/rfkill/rfkill0/state 0
