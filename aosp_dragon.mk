@@ -25,15 +25,30 @@ PRODUCT_PROPERTY_OVERRIDES := \
         net.dns1=8.8.8.8 \
         net.dns2=8.8.4.4
 
+# Boot animation
+TARGET_SCREEN_HEIGHT := 2560
+TARGET_SCREEN_WIDTH := 1800
+
+# PixelExperience stuff.
+TARGET_BOOT_ANIMATION_RES := 1440
+TARGET_GAPPS_ARCH := arm64
+
+# Inherit some common LineageOS stuff.
+$(call inherit-product, vendor/aosp/config/common_full_tablet_wifionly.mk)
+
 # Inherit from those products. Most specific first.
 $(call inherit-product, device/google/dragon/product.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
 
-PRODUCT_NAME := aosp_dragon
+# Inherit from hardware-specific part of the product configuration
+$(call inherit-product, device/google/dragon/permissions.mk)
+
+## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := dragon
-PRODUCT_BRAND := Android
-PRODUCT_MODEL := AOSP on Dragon
-PRODUCT_MANUFACTURER := Google
+PRODUCT_NAME := aosp_dragon
+PRODUCT_BRAND := Google
+PRODUCT_MODEL := Pixel C
+PRODUCT_MANUFACTURER := google
 PRODUCT_RESTRICT_VENDOR_FILES := false
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
