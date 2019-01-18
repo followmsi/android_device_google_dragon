@@ -200,11 +200,11 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 # setup dalvik vm configs.
 $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
 
-# set default USB configuration
+# OpenGL ES
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    ro.sf.lcd_density=320 \
     ro.opengles.version=196610
 
+# set default USB and ADB configuration
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     persist.sys.usb.config=adb \
     ro.adb.secure=0 \
