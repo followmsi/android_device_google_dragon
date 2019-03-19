@@ -61,6 +61,9 @@ on post-fs-data
     # For a remount only the flags and the target mount point are relevant.
     mount dummy dummy /data remount nosuid nodev noatime rw seclabel,background_gc=on,user_xattr,acl,errors=panic
 
+    setprop persist.adb.nonblocking_ffs 0
+    setprop ro.adb.nonblocking_ffs 0
+
     mkdir /data/nvcam 0700 media camera
     mkdir /data/misc/camera 0700 media camera
 
