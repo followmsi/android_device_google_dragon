@@ -28,6 +28,8 @@ on boot
     setprop sys.usb.configfs 1
     setprop sys.usb.controller "700d0000.usb-device"
     setprop sys.usb.ffs.aio_compat 1
+    setprop persist.adb.nonblocking_ffs 0
+    setprop ro.adb.nonblocking_ffs 0
 
 on property:sys.usb.config=none && property:sys.usb.configfs=1
     write /config/usb_gadget/g1/os_desc/use 0
