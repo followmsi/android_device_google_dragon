@@ -41,6 +41,7 @@ service pulldecryptfiles /sbin/pulldecryptfiles.sh
 on fs
     wait /dev/block/platform/700b0600.sdhci
     symlink /dev/block/platform/700b0600.sdhci /dev/block/bootdevice
+    export ANDROID_ROOT /system_root
     chmod 0664 /dev/ion
     chown system system /dev/ion
     start pulldecryptfiles

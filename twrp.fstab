@@ -9,7 +9,7 @@
 /vendor_image	emmc	/dev/block/bootdevice/by-name/VNR		flags=flashimg=1
 /misc		emmc	/dev/block/bootdevice/by-name/MSC		flags=display="MISC"
 /persistent	emmc	/dev/block/bootdevice/by-name/PST		flags=display="Persistent"
-/system		ext4	/dev/block/bootdevice/by-name/APP		flags=display="System";backup=1
+/system_root	ext4	/dev/block/bootdevice/by-name/APP		flags=display="System"
 /system_image	emmc	/dev/block/bootdevice/by-name/APP		flags=flashimg=1
 /data		ext4	/dev/block/bootdevice/by-name/UDA		flags=encryptable=/dev/block/bootdevice/by-name/MD1
 /cache		ext4	/dev/block/bootdevice/by-name/CAC
