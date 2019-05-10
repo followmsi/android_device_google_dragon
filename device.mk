@@ -168,6 +168,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.media_vol_steps=25
 
+# Cast
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.debug.wfd.enable=1
+
 # The default locale should be determined from VPD, not from build.prop.
 PRODUCT_SYSTEM_PROPERTY_BLACKLIST := \
     ro.product.locale
