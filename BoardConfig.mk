@@ -120,9 +120,6 @@ endif
 
 ART_USE_HSPACE_COMPACT=true
 
-# let charger mode enter suspend
-BOARD_CHARGER_ENABLE_SUSPEND := true
-
 # Security Patch Level
 VENDOR_SECURITY_PATCH := 2019-06-05
 
