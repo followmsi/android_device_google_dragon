@@ -5,5 +5,5 @@ type fwtool_exec, exec_type, system_file_type, file_type;
 init_daemon_domain(fwtool)
 
 # access /dev/mtd/*
-allow fwtool mtd_device:dir search;
-allow fwtool mtd_device:chr_file rw_file_perms;
+#allow fwtool mtd_device:dir search;
+#allow fwtool mtd_device:chr_file rw_file_perms;
