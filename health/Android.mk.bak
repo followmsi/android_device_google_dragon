@@ -21,8 +21,11 @@ LOCAL_MODULE := libhealthd.dragon
 
 LOCAL_MODULE_TAGS := optional
 
-LOCAL_C_INCLUDES := system/core/healthd/include system/core/base/include
+LOCAL_C_INCLUDES := system/core/healthd/include system/core/base/include frameworks/native/services/batteryservice/include
 
 LOCAL_STATIC_LIBRARIES := libcutils
+
+LOCAL_CLANG_CFLAGS += -no-integrated-as -fno-addrsig -Wno-error
+LOCAL_CFLAGS += -Wno-error
 
 include $(BUILD_STATIC_LIBRARY)
