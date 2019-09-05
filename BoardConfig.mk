@@ -124,7 +124,7 @@ endif
 # Enable real time lockscreen charging current values
 BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
 
-BOARD_HAL_STATIC_LIBRARIES := libhealthd.dragon
+#BOARD_HAL_STATIC_LIBRARIES := libhealthd.dragon
 
 # Shims
 TARGET_LD_SHIM_LIBS := \
