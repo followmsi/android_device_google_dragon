@@ -54,10 +54,10 @@ static void *file_open(const void *params)
 		return NULL;
 
 	const Value *value = static_cast<const Value*>(params);
-	if (value->type == VAL_BLOB)
+	if (value->type == Value::Type::BLOB)
 		return file_blob_open(dev, value);
 
-	if (value->type != VAL_STRING)
+	if (value->type != Value::Type::STRING)
 		goto out_free;
 
 	dev->fd = open(value->data.c_str(), O_RDWR);
