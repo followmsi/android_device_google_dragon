@@ -125,8 +125,8 @@ static int cmd_update(int argc, const char **argv)
 		return -EINVAL;
 
 	printf("Updating using images main:%s and ec:%s ...\n", argv[1], argv[2]);
-	Value mainv(VAL_STRING, argv[1]);
-	Value ecv(VAL_STRING, argv[2]);
+	Value mainv(Value::Type::STRING, argv[1]);
+	Value ecv(Value::Type::STRING, argv[2]);
 	update_fw(&mainv, &ecv, 1);
 	printf("Done.\n");
 

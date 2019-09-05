@@ -17,10 +17,10 @@
 #include <string.h>
 
 #include "common.h"
-#include "device.h"
+#include "recovery_ui/device.h"
 #include "flash_device.h"
-#include "screen_ui.h"
-#include "ui.h"
+#include "recovery_ui/screen_ui.h"
+#include "recovery_ui/ui.h"
 #include "vboot_interface.h"
 
 class DragonDevice : public Device {
