@@ -152,6 +152,8 @@ BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh
 DEVICE_MANIFEST_FILE := device/google/dragon/hidl/manifest.xml
 DEVICE_MATRIX_FILE := device/google/dragon/hidl/compatibility_matrix.xml
 
+ALLOW_MISSING_DEPENDENCIES := true
+
 # TWRP settings
 TW_THEME := landscape_hdpi
 TW_NO_SCREEN_TIMEOUT := true
