@@ -113,8 +113,8 @@ BOARD_SEPOLICY_DIRS += device/google/dragon/sepolicy
 
 # system-as-root
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
-BOARD_KERNEL_CMDLINE += skip_initramfs rootwait ro init=/init root=/dev/dm-0
-BOARD_KERNEL_CMDLINE += dm=\"system none ro,0 1 android-verity /dev/mmcblk0p4\"
+#BOARD_KERNEL_CMDLINE += skip_initramfs rootwait ro init=/init root=/dev/dm-0
+#BOARD_KERNEL_CMDLINE += dm=\"system none ro,0 1 android-verity /dev/mmcblk0p4\"
 
 # add firmware update to the updater binary
 TARGET_RECOVERY_UPDATER_LIBS += librecovery_updater_dragon
