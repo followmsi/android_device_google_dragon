@@ -22,4 +22,5 @@ PRODUCT_MAKEFILES := \
 COMMON_LUNCH_CHOICES := \
 	aosp_dragon-userdebug \
 	aosp_dragon-eng \
-	omni_dragon-userdebug
+	omni_dragon-userdebug \
+	omni_dragon-eng
