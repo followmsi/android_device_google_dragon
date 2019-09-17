@@ -56,7 +56,7 @@ on early-boot
     #verity_update_state
 
 # Set watchdog timer to 30 seconds and pet it every 10 seconds to get a 20 second margin
-service watchdogd /sbin/watchdogd 10 20
+service watchdogd /sbin/watchdogd 10 110
     class core
     seclabel u:r:watchdogd:s0
 
@@ -83,7 +83,7 @@ on post-fs-data
     mkdir /data/ss/tlk 0700 system system
 
     # secure os storage
-    mkdir /data/ss 0700 system system
+    #mkdir /data/ss 0700 system system
 
     # modem init
     #mkdir /data/qcks 0770 system system
@@ -224,7 +224,7 @@ on property:vold.decrypt=trigger_restart_framework
 
 on property:sys.boot_completed=1
     # Turn on swap
-    swapon_all /vendor/etc/fstab.dragon
+    #swapon_all /vendor/etc/fstab.dragon
 
 # tune thermal governor
 #service tune_therm_gov /vendor/bin/tune-thermal-gov.sh skin-therm pd_thermal_gov \

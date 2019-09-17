@@ -104,9 +104,9 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/media_profiles_V1_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles_V1_0.xml
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/media_codecs.xml:system/etc/media_codecs.xml \
-    $(LOCAL_PATH)/media_codecs_performance.xml:system/etc/media_codecs_performance.xml \
-    $(LOCAL_PATH)/media_profiles_V1_0.xml:system/etc/media_profiles_V1_0.xml
+    $(LOCAL_PATH)/media_codecs.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/media_codecs.xml \
+    $(LOCAL_PATH)/media_codecs_performance.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/media_codecs_performance.xml \
+    $(LOCAL_PATH)/media_profiles_V1_0.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/media_profiles_V1_0.xml
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/bluetooth/BCM4350C0_003.001.012.0433.1484_Google_A44_ORC.hcd:$(TARGET_COPY_OUT_VENDOR)/firmware/bcm4350c0.hcd \
@@ -149,7 +149,7 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/enctune.conf:$(TARGET_COPY_OUT_VENDOR)/etc/enctune.conf \
-    $(LOCAL_PATH)/enctune.conf:system/etc/enctune.conf
+    $(LOCAL_PATH)/enctune.conf:$(TARGET_COPY_OUT_SYSTEM)/etc/enctune.conf
 
 PRODUCT_AAPT_CONFIG := normal large xlarge
 PRODUCT_AAPT_PREF_CONFIG := xhdpi
@@ -239,6 +239,17 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.com.widevine.cachesize=16777216 \
     ro.com.google.clientidbase=android-google
 
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.lmk.kill_timeout_ms=100 \
+    ro.lmk.use_minfree_levels=true \
+    ro.lmk.low=1001 \
+    ro.lmk.medium=800 \
+    ro.lmk.critical=0 \
+    ro.lmk.critical_upgrade=false \
+    ro.lmk.upgrade_pressure=100 \
+    ro.lmk.downgrade_pressure=100 \
+    ro.lmk.kill_heaviest_task=true
+
 # Face Unlock
 PRODUCT_PACKAGES += \
     libprotobuf-cpp-full
@@ -294,8 +305,8 @@ $(call inherit-product-if-exists, vendor/google/dragon/device-vendor.mk)
 $(call inherit-product-if-exists, vendor/google/dragon-common/device-vendor.mk)
 #$(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/config/config-bcm.mk)
 
-PRODUCT_PACKAGES += \
-    libshim_camera
+#PRODUCT_PACKAGES += \
+#    libshim_camera
 
 ENABLE_LIBDRM := true
 BOARD_GPU_DRIVERS := tegra
@@ -303,7 +314,7 @@ USE_XML_AUDIO_POLICY_CONF := 1
 PRODUCT_PACKAGES += \
     f54test \
     hwcomposer.drm \
-    libdrm.vendor \
+    libdrm \
     rmi4update \
     rmihidtool
 
