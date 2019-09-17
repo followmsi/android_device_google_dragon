@@ -1,6 +1,9 @@
 typeattribute vendor_init data_between_core_and_vendor_violators;
 
 allow vendor_init proc_uid_cpupower:file write;
+allow vendor_init proc:file write;
+allow vendor_init rootfs:dir create_dir_perms;
+allow vendor_init sysfs:file { write read };
 
 # symlink /sdcard to backing block
 
