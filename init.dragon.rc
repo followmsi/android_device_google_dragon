@@ -194,7 +194,7 @@ on boot
     chown wifi wifi /sys/module/bcmdhd/parameters/firmware_path
 
     # Initialize WiFi firmware for all Dragon variants
-    write /sys/module/bcmdhd/parameters/nvram_path \ /vendor/etc/wifi/bcmdhd.cal
+    # write /sys/module/bcmdhd/parameters/nvram_path \ /vendor/etc/wifi/bcmdhd.cal
 
 on fs
     # Enable verity notification
