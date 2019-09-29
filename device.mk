@@ -274,6 +274,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.hardware.vulkan=tegra
 
 PRODUCT_PROPERTY_OVERRIDES += \
+    debug.stagefright.ccodec=0
+
+PRODUCT_PROPERTY_OVERRIDES += \
     ro.bionic.ld.warning=0
 
 PRODUCT_PROPERTY_OVERRIDES += \
