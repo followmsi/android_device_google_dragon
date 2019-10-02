@@ -306,8 +306,8 @@ void dsp_enable_flush_denormal_to_zero()
 	__builtin_ia32_ldmxcsr(mxcsr | 0x8040);
 #elif defined(__arm__)
 	int cw;
-	__asm__ __volatile__ ("mrc p10, 7, %0, cr1, cr0, 0" : "=r" (cw));
-	__asm__ __volatile__ ("mcr p10, 7, %0, cr1, cr0, 0" : : "r" (cw | (1 << 24)));
+	__asm__ __volatile__ ("fmrx %0, FPSCR" : "=r" (cw));
+	__asm__ __volatile__ ("fmxr FPSCR, %0" : : "r" (cw | (1 << 24)));
 #else
 #warning "Don't know how to disable denorms. Performace may suffer."
 #endif
