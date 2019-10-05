@@ -94,3 +94,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.wifi@1.0-service
 
+# Cas
+PRODUCT_PACKAGES += \
+    android.hardware.cas@1.1-service
+
