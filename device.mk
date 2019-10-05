@@ -108,8 +108,8 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/media_codecs_performance.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/media_codecs_performance.xml \
     $(LOCAL_PATH)/media_profiles_V1_0.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/media_profiles_V1_0.xml
 
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/bluetooth/BCM4350C0_003.001.012.0433.1484_Google_A44_ORC.hcd:$(TARGET_COPY_OUT_VENDOR)/firmware/bcm4350c0.hcd \
+#PRODUCT_COPY_FILES += \ **move to vendor**
+#    $(LOCAL_PATH)/bluetooth/BCM4350C0_003.001.012.0433.1484_Google_A44_ORC.hcd:$(TARGET_COPY_OUT_VENDOR)/firmware/bcm4350c0.hcd \
 
 # Bluetooth HAL
 PRODUCT_PACKAGES += \
@@ -142,10 +142,10 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.vulkan.version-1_0_3.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.vulkan.version.xml \
     $(LOCAL_PATH)/com.nvidia.nvsi.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/com.nvidia.nvsi.xml
 
-# Copy dsp firmware to the vendor parition so it is available when hotwording
+# Copy dsp firmware to the vendor parition so it is available when hotwording 
 # starts
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/rt5677_elf_vad:vendor/firmware/rt5677_elf_vad
+#PRODUCT_COPY_FILES += \ **move to vendor**
+#    $(LOCAL_PATH)/rt5677_elf_vad:vendor/firmware/rt5677_elf_vad 
 
 # aptXHD
 PRODUCT_COPY_FILES += \
