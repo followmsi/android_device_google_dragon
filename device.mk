@@ -279,9 +279,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.bionic.ld.warning=0
 
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.sys.disable_rescue=true
-
 $(call inherit-product-if-exists, hardware/nvidia/tegra132/tegra132.mk)
 $(call inherit-product-if-exists, vendor/google/dragon/device-vendor.mk)
 $(call inherit-product-if-exists, vendor/google/dragon-common/device-vendor.mk)
