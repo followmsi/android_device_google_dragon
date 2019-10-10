@@ -9,3 +9,4 @@ allow priv_app sepolicy_file:file { getattr read };
 allow priv_app service_contexts_file:file getattr;
 allow priv_app system_app_data_file:dir getattr;
 allow priv_app vndservice_contexts_file:file getattr;
+allow priv_app proc_net:file read;
