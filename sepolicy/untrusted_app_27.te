@@ -1,1 +1,2 @@
 allow untrusted_app_27 proc_asound:dir search;
+allow untrusted_app_27 rootfs:dir r_dir_perms;
