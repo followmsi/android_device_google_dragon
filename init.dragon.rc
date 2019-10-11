@@ -73,7 +73,7 @@ on post-fs-data
     # This is a hack to work around the fact that we can't recover from all errors that would lead to a panic
     # during the initial mount (http://b/17382778), yet we need to panic on emmc errors (http://b/17640053)
     # For a remount only the flags and the target mount point are relevant.
-    mount dummy dummy /data remount nosuid nodev noatime rw seclabel,background_gc=on,user_xattr,acl,errors=panic
+    #mount dummy dummy /data remount nosuid nodev noatime rw seclabel,background_gc=on,user_xattr,acl,errors=panic
 
     mkdir /data/nvcam 0700 media camera
     mkdir /data/misc/camera 0700 media camera
@@ -219,8 +219,8 @@ on fs
     mount_all /vendor/etc/fstab.dragon --early
 
 # run the touch firmware update script as soon as non-tmpfs /data is ready
-on property:vold.decrypt=trigger_restart_framework
-    exec -- /vendor/bin/touchfwup.sh
+#on property:vold.decrypt=trigger_restart_framework
+#    exec -- /vendor/bin/touchfwup.sh
 
 on property:sys.boot_completed=1
     # Turn on swap
@@ -253,6 +253,7 @@ service wpa_supplicant /vendor/bin/hw/wpa_supplicant \
     -g@android:wpa_wlan0
     interface android.hardware.wifi.supplicant@1.0::ISupplicant default
     interface android.hardware.wifi.supplicant@1.1::ISupplicant default
+    interface android.hardware.wifi.supplicant@1.2::ISupplicant default
     class late_start
     socket wpa_wlan0 dgram 660 wifi wifi
     disabled
