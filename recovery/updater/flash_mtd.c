@@ -33,6 +33,7 @@
 #include "vboot_interface.h"
 
 static const char * const DEFAULT_MTD_FILE = "/dev/mtd/mtd0";
+static const char * const ALTERNATE_MTD_FILE = "/dev/mtd0";
 
 struct mtd_data {
 	int fd;
@@ -48,6 +49,11 @@ static void *mtd_open(const void *params)
 
 	dev->fd = open(path, O_RDWR);
 	if (dev->fd == -1) {
+		if (path == DEFAULT_MTD_FILE) {
+			ALOGE("No MTD device %s : %d, trying alternate path %s...", path, errno, ALTERNATE_MTD_FILE);
+			free(dev);
+			return mtd_open(ALTERNATE_MTD_FILE);
+		}
 		ALOGE("No MTD device %s : %d\n", path, errno);
 		goto out_free;
 	}
