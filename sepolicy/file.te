@@ -3,7 +3,7 @@ type sysfs_bluetooth, fs_type, sysfs_type;
 type sysfs_soc, sysfs_type, fs_type;
 type sysfs_gpu, sysfs_type, fs_type;
 type sysfs_cros_ec, sysfs_type, fs_type;
-type sysfs_devices_block, sysfs_type, fs_type;
+#type sysfs_devices_block, sysfs_type, fs_type;
 
 type locale_data_file, file_type, data_file_type;
 type sysfs_locale, sysfs_type, fs_type;

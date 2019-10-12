@@ -6,3 +6,4 @@ dontaudit hal_graphics_allocator_default kernel:system module_request;
 allow hal_graphics_allocator_default sysfs_soc:dir search;
 allow hal_graphics_allocator_default sysfs_soc:file r_file_perms;
 
+allow hal_graphics_allocator_default servicemanager:binder call;
