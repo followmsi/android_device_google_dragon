@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 The Android Open Source Project
+ * Copyright (C) 2016-2019 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "healthd-dragon"
-#include <healthd/healthd.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#define LOG_TAG "android.hardware.health@2.0-service.dragon"
+
 #include <cutils/klog.h>
+#include <fcntl.h>
+#include <healthd/BatteryMonitor.h>
+#include <healthd/healthd.h>
+#include <health2/service.h>
+#include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/uio.h>
 
 #define PSU_SYSFS_PATH "/sys/class/power_supply/bq27742-0"
 #define PSU_SYSFS_MAX_CURRENT_PATH PSU_SYSFS_PATH "/current_max"
@@ -27,9 +31,7 @@
 #define BATTERY_CRITICAL_LOW_IMAX_MA 5000
 #define BATTERY_MAX_IMAX_MA          9000
 
-using namespace android;
-
-static int read_sysfs(const char *path, char *buf, size_t size) {
+int read_sysfs(const char *path, char *buf, size_t size) {
     char *cp = NULL;
 
     int fd = open(path, O_RDONLY);
@@ -47,11 +49,11 @@ static int read_sysfs(const char *path, char *buf, size_t size) {
     else
         buf[0] = '\0';
 
-    close(fd);
+    //close(fd);
     return count;
 }
 
-static int read_current_max_ma() {
+int read_current_max_ma() {
     const int SIZE = 10;
     char buf[SIZE];
     if (read_sysfs(PSU_SYSFS_MAX_CURRENT_PATH, buf, SIZE) > 0)
@@ -60,7 +62,7 @@ static int read_current_max_ma() {
     return 0;
 }
 
-static void dragon_soc_adjust(struct BatteryProperties *props)
+void dragon_soc_adjust(struct android::BatteryProperties* props)
 {
     int soc;
     int current_max_ma;
@@ -71,9 +73,9 @@ static void dragon_soc_adjust(struct BatteryProperties *props)
      * BATTERY_CRITICAL_LOW_CAP shrink soc based on imax value
      */
     if ((soc < BATTERY_CRITICAL_LOW_CAP) &&
-        ((props->batteryStatus == BATTERY_STATUS_DISCHARGING) ||
-         (props->batteryStatus == BATTERY_STATUS_NOT_CHARGING) ||
-         (props->batteryStatus == BATTERY_STATUS_UNKNOWN))) {
+        ((props->batteryStatus == android::BATTERY_STATUS_DISCHARGING) ||
+         (props->batteryStatus == android::BATTERY_STATUS_NOT_CHARGING) ||
+         (props->batteryStatus == android::BATTERY_STATUS_UNKNOWN))) {
 
         current_max_ma = read_current_max_ma();
         if (current_max_ma == 0)
@@ -94,8 +96,7 @@ static void dragon_soc_adjust(struct BatteryProperties *props)
     props->batteryLevel = soc;
 }
 
-int healthd_board_battery_update(struct BatteryProperties *props)
-{
+int healthd_board_battery_update(struct android::BatteryProperties* props) {
 
     dragon_soc_adjust(props);
 
@@ -103,4 +104,8 @@ int healthd_board_battery_update(struct BatteryProperties *props)
     return 0;
 }
 
-void healthd_board_init(struct healthd_config *config) {}
+void healthd_board_init(struct healthd_config*) {}
+
+int main() {
+    return health_service_main();
+}

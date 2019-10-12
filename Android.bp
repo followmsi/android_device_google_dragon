@@ -15,5 +15,6 @@
 
 subdirs = [
     "bluetooth",
+    "health",
     "light",
 ]

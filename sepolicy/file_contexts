@@ -41,6 +41,7 @@
 # vendor executables
 /vendor/bin/hw/android\.hardware\.dumpstate@1\.0-service.dragon      u:object_r:hal_dumpstate_impl_exec:s0
 /vendor/bin/hw/android\.hardware\.light@2\.0-service\.dragon         u:object_r:hal_light_default_exec:s0
+/vendor/bin/hw/android\.hardware\.health@2\.0-service\.dragon        u:object_r:hal_health_default_exec:s0
 
 # crash_collector
 /system/bin/crash_dispatcher                    u:object_r:crash_collector_exec:s0
