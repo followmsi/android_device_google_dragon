@@ -8,3 +8,8 @@ persist.camera.            u:object_r:camera_prop:s0
 # They are public_vendor_system_props for vendor-specific extension.
 sys.all.modules.ready      u:object_r:public_vendor_system_prop:s0
 
+persist.vendor.service.bdroid.       u:object_r:vendor_bluetooth_prop:s0
+persist.vendor.bluetooth.            u:object_r:vendor_bluetooth_prop:s0
+ro.vendor.bluetooth.                 u:object_r:vendor_bluetooth_prop:s0
+persist.vendor.bluetooth.a2dp.       u:object_r:vendor_bluetooth_prop:s0
+

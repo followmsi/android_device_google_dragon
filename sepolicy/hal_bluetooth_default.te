@@ -1,0 +1,9 @@
+# talk to system_server to set priority
+allow hal_bluetooth fwk_scheduler_hwservice:hwservice_manager find;
+allow hal_bluetooth system_server:binder call;
+
+set_prop(hal_bluetooth_default, vendor_bluetooth_prop)
+
+allow hal_bluetooth_default sysfs_bluetooth:chr_file rw_file_perms;
+allow hal_bluetooth_default sysfs_bluetooth:file rw_file_perms;
+
