@@ -1,1 +1,5 @@
+allow healthd device:dir { open read search };
+allow healthd sysfs_batteryinfo:file { read write open ioctl getattr };
+allow healthd sysfs_batteryinfo:dir r_dir_perms;
 allow healthd sysfs:file { read write open ioctl getattr };
+allow healthd sysfs:dir r_dir_perms;
