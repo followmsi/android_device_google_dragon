@@ -1,7 +1,8 @@
 import init.dragon.usb.rc
 
 on early-init
-    mount debugfs /sys/kernel/debug /sys/kernel/debug mode=755
+    mount debugfs debugfs /sys/kernel/debug
+    chmod 0755 /sys/kernel/debug
 
 on init
     symlink /sdcard /storage/sdcard0
@@ -198,6 +199,11 @@ on boot
 
     # Initialize WiFi firmware for all Dragon variants
     # write /sys/module/bcmdhd/parameters/nvram_path \ /vendor/etc/wifi/bcmdhd.cal
+
+    # WebView
+    chmod 0755 /sys/kernel/debug/tracing
+    chmod 0644 /sys/kernel/debug/tracing/trace_marker
+    chown webview_zygote webview_zygote /sys/kernel/debug/tracing/trace_marker
 
 on fs
     # Enable verity notification
