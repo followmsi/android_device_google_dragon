@@ -157,3 +157,5 @@ BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh
 # Vendor Interface Manifest
 DEVICE_MANIFEST_FILE := device/google/dragon/hidl/manifest.xml
 DEVICE_MATRIX_FILE := device/google/dragon/hidl/compatibility_matrix.xml
+
+TARGET_FLATTEN_APEX := true
