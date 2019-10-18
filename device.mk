@@ -146,6 +146,7 @@ PRODUCT_PACKAGES += \
 #TODO(dgreid) is this right?
 PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=wlan0 \
+    wifi.direct.interface=p2p-dev-wlan0 \
     ro.hwui.texture_cache_size=86 \
     ro.hwui.layer_cache_size=56 \
     ro.hwui.r_buffer_cache_size=8 \
