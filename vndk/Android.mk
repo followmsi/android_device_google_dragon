@@ -13,9 +13,7 @@ ifndef BOARD_VNDK_VERSION
 # However, some of those libs need FWK-ONLY libs, which must be listed here
 # manually.
 VNDK_SP_LIBRARIES := \
-    libdexfile \
-    android.hardware.power@1.0.so \
-    android.hardware.camera.device@1.0.so
+    libdexfile_support \
 
 install_in_hw_dir := \
    android.hidl.memory@1.0-impl

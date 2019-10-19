@@ -280,8 +280,8 @@ PRODUCT_PACKAGES += \
 #    vndk_package
 
 # VNDK-SP
-#PRODUCT_PACKAGES += \
-#    vndk-sp
+PRODUCT_PACKAGES += \
+    vndk-sp
 
 # Google Assistant
 PRODUCT_PROPERTY_OVERRIDES += \
