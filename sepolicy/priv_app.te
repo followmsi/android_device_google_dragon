@@ -1,4 +1,4 @@
-allow priv_app sysfs:file { getattr open read };# treble
+#allow priv_app sysfs:file { getattr open read };# treble
 
 #allow priv_app device:dir { open read };# treble
 #allow priv_app device:file { open read };# treble
@@ -9,3 +9,16 @@ allowxperm priv_app self:udp_socket ioctl { SIOCGIWESSID };
 dontaudit priv_app device:dir read;
 dontaudit priv_app proc_interrupts:file read;
 dontaudit priv_app proc_modules:file read;
+
+allow priv_app sysfs:file { r_file_perms };
+allow priv_app file_contexts_file:file getattr;
+allow priv_app hwservice_contexts_file:file getattr;
+allow priv_app nfc_data_file:dir getattr;
+allow priv_app nonplat_service_contexts_file:file getattr;
+allow priv_app radio_data_file:dir getattr;
+allow priv_app seapp_contexts_file:file getattr;
+allow priv_app sepolicy_file:file { getattr read };
+allow priv_app service_contexts_file:file getattr;
+allow priv_app system_app_data_file:dir getattr;
+allow priv_app vndservice_contexts_file:file getattr;
+allow priv_app proc_net:file read;

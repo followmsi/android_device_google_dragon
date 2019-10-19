@@ -6,4 +6,4 @@ allow webview_zygote zygote_exec:file { open read };
 
 allow webview_zygote host1x_device:chr_file rw_file_perms;
 
-allow webview_zygote zygote:unix_dgram_socket write; 
+allow webview_zygote zygote:unix_dgram_socket write;
