@@ -12,4 +12,5 @@ persist.vendor.service.bdroid.       u:object_r:vendor_bluetooth_prop:s0
 persist.vendor.bluetooth.            u:object_r:vendor_bluetooth_prop:s0
 ro.vendor.bluetooth.                 u:object_r:vendor_bluetooth_prop:s0
 persist.vendor.bluetooth.a2dp.       u:object_r:vendor_bluetooth_prop:s0
+vendor.wlan.driver.version       u:object_r:vendor_wifi_version:s0
 

@@ -3,6 +3,7 @@
 #allow system_server crash_reports_data_file:file r_file_perms;
 allow system_server host1x_device:chr_file rw_file_perms;
 allow system_server sysfs_devices_system_cpu:file write;
+allow system_server wlan_device:chr_file rw_file_perms;
 
 allow system_server debugfs_kgsl:file { open read getattr };
 
