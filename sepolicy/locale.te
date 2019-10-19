@@ -22,3 +22,5 @@ allow locale locale_data_file:file { getattr open read write setattr };
 allow locale sysfs_locale:dir r_dir_perms;
 allow locale sysfs_locale:file { getattr open read write setattr };
 
+allow locale vendor_file:dir r_dir_perms;
+allow locale vendor_file:file { getattr open read };
