@@ -79,8 +79,8 @@ on post-fs-data
     mkdir /data/misc/camera 0700 media camera
 
     # secure os storage
-    mkdir /data/ss 0700 system system
-    mkdir /data/ss/tlk 0700 system system
+    mkdir /data/vendor/ss 0700 system system
+    mkdir /data/vendor/ss/tlk 0700 system system
 
     # secure os storage
     #mkdir /data/ss 0700 system system
@@ -234,7 +234,7 @@ on property:sys.boot_completed=1
 
 service vendor.battery_charger /charger
     class charger
-    seclabel u:r:healthd:s0
+    seclabel u:r:charger:s0
 
 # on userdebug and eng builds, enable kgdb on the serial console
 on property:ro.debuggable=1
@@ -269,7 +269,7 @@ service vendor.netmgrd /vendor/bin/netmgrd
     disabled
     group system wifi wakelock radio inet
 
-service vendor.tlk_daemon /vendor/bin/tlk_daemon --storagedir /data/ss --rpmbdev /dev/block/mmcblk0rpmb
+service vendor.tlk_daemon /vendor/bin/tlk_daemon --storagedir /data/vendor/ss --rpmbdev /dev/block/mmcblk0rpmb
     class main
     group system
 
