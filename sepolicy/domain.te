@@ -10,3 +10,5 @@ allow domain debugfs_ion:dir search;
 
 #allow domain sysfs_soc:dir r_dir_perms;
 #allow { domain -isolated_app } sysfs_soc:file r_file_perms;
+allow { domain -isolated_app -runas_app -untrusted_app_25 -untrusted_app_27 -ephemeral_app -mediaprovider -untrusted_app -perfprofd -vold -iorapd -installd } hwservicemanager:binder call;
+
