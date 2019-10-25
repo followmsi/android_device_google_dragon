@@ -279,6 +279,7 @@ USE_XML_AUDIO_POLICY_CONF := 1
 PRODUCT_PACKAGES += \
     f54test \
     hwcomposer.drm \
+    libvulkan \
     libdrm \
     rmi4update \
     rmihidtool
