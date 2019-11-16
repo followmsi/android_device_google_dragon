@@ -20,8 +20,8 @@ package org.mokee.device;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v14.preference.PreferenceFragment;
 import android.view.MenuItem;
+import androidx.preference.PreferenceFragment;
 
 public class DeviceSettingsActivity extends Activity {
 

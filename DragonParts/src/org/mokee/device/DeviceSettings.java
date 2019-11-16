@@ -24,10 +24,10 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemProperties;
-import android.support.v14.preference.PreferenceFragment;
-import android.support.v7.preference.ListPreference;
-import android.support.v7.preference.Preference;
 import android.util.Log;
+import androidx.preference.PreferenceFragment;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
