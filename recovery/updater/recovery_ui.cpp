@@ -28,23 +28,25 @@ class DragonDevice : public Device {
     DragonDevice(RecoveryUI* ui) : Device(ui) { }
 
     virtual bool PostWipeData() {
-        if (reason) {
-            struct flash_device *spi = flash_open("spi", NULL);
+        int fastboot_cap = -1;
+        struct flash_device *spi = flash_open("spi", NULL);
 
-            if (spi == NULL) {
-                return true;
-            }
-
-            if (!strcmp(reason, "fastboot_oem_unlock")) {
-                vbnv_set_flag(spi, "dev_boot_fastboot_full_cap", 0x1);
-                vbnv_set_flag(spi, "recovery_reason", 0xC3);
-            } else if (!strcmp(reason, "fastboot_oem_lock")) {
-                vbnv_set_flag(spi, "dev_boot_fastboot_full_cap", 0x0);
-                vbnv_set_flag(spi, "recovery_reason", 0xC3);
-            }
-
-            flash_close(spi);
+        if (spi == NULL) {
+            return true;
         }
+
+        if (vbnv_get_flag(spi, "dev_boot_fastboot_full_cap", &fastboot_cap) < 0) {
+            goto exit;
+        }
+
+        /* This is a workaround for not being able to access `reason` in Android Q:
+         * if this code is ever run, the device must have been unlocked. Just enable
+         * full cap without hesitation. */
+        if (fastboot_cap != 0x1) {
+            vbnv_set_flag(spi, "dev_boot_fastboot_full_cap", 0x1);
+        }
+exit:
+        flash_close(spi);
 
         return true;
     };
