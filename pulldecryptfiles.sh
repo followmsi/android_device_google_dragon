@@ -9,9 +9,7 @@ if [ "$(mount|grep "/dev/block/bootdevice/by-name/APP on /system ")" == "" ];the
 	mkdir -p /tmp/system
 	mount -t ext4 -o ro /dev/block/bootdevice/by-name/APP /system
 	cp -r /system/lib64 /tmp/system/
-	cp -r /system/bin /tmp/system/
 	cp -r /system/system/lib64 /tmp/system/
-	cp -r /system/system/bin /tmp/system/
 	umount /system
 	mv /tmp/system/* /system/
 	rmdir /tmp/system
@@ -25,12 +23,6 @@ if [ "$(mount|grep "/dev/block/bootdevice/by-name/VNR on /vendor")" == "" ];then
 	umount /vendor
 	mv /tmp/vendor/* /vendor/
 	rmdir /tmp/vendor
-fi
-
-if [ "$(mount|grep "/dev/block/bootdevice/by-name/UDA on /data")" == "" ];then
-	LD_LIBRARY_PATH=/system/lib64 /system/bin/e2fsck  -y -E journal_only /dev/block/bootdevice/by-name/userdata
-        LD_LIBRARY_PATH=/system/lib64 /system/bin/tune2fs -Q ^usrquota,^grpquota,^prjquota /dev/block/bootdevice/by-name/userdata
-        mount /dev/block/bootdevice/by-name/UDA /data
 fi
 
 setprop pulldecryptfiles.finished 1
