@@ -8,7 +8,6 @@ on init
     symlink /sdcard /storage/sdcard0
 
     setprop ro.hardware.gralloc tegra
-    setprop ro.hardware.hwcomposer drm
     setprop hwc.drm.device /dev/dri/card1
     setprop persist.tegra.compression off
     setprop persist.tegra.decompression disabled
