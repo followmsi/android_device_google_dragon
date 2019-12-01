@@ -289,8 +289,8 @@ BOARD_GPU_DRIVERS := tegra
 USE_XML_AUDIO_POLICY_CONF := 1
 PRODUCT_PACKAGES += \
     f54test \
-    hwcomposer.drm \
     libvulkan \
+    hwcomposer.dragon \
     libdrm \
     rmi4update \
     rmihidtool
