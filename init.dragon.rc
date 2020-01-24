@@ -54,6 +54,9 @@ on post-fs
     # Allow writing to the kernel trace log.
     chmod 0222 /sys/kernel/debug/tracing/trace_marker
 
+    # Kick start WiFi module so that it has the correct MAC address right after starting
+    write /proc/bcmdhd_kickstart 1
+
 on post-fs-data
     # Now that are booted all the way and out of mount panics, ensure that we panic on later errors.
     # This is a hack to work around the fact that we can't recover from all errors that would lead to a panic
