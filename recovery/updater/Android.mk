@@ -16,6 +16,7 @@ LOCAL_SRC_FILES := \
 # For vboot_struct.h
 LOCAL_C_INCLUDES += external/vboot_reference/firmware/include
 LOCAL_C_INCLUDES += bootable/recovery/edify/include
+LOCAL_C_INCLUDES += bootable/recovery-twrp/edify/include
 LOCAL_CFLAGS += -Werror
 LOCAL_STATIC_LIBRARIES := libotautil
 #LOCAL_STATIC_LIBRARIES := libotautil libedify
@@ -37,6 +38,7 @@ LOCAL_C_INCLUDES += bootable/recovery
 # For vboot_struct.h
 LOCAL_C_INCLUDES += external/vboot_reference/firmware/include
 LOCAL_C_INCLUDES += bootable/recovery/edify/include
+LOCAL_C_INCLUDES += bootable/recovery-twrp/edify/include
 LOCAL_CFLAGS += -Werror
 #LOCAL_STATIC_LIBRARIES := libedify
 
@@ -51,6 +53,7 @@ LOCAL_CFLAGS += -Wno-unused-parameter -DUSE_LOGCAT
 # For vboot_struct.h
 LOCAL_C_INCLUDES += external/vboot_reference/firmware/include
 LOCAL_C_INCLUDES += bootable/recovery/edify/include
+LOCAL_C_INCLUDES += bootable/recovery-twrp/edify/include
 #LOCAL_STATIC_LIBRARIES := libedify
 # For TWRP
 LOCAL_LDFLAGS += -Wl,-dynamic-linker,/sbin/linker64
