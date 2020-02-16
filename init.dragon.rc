@@ -1,4 +1,4 @@
-import init.dragon.usb.rc
+import /vendor/etc/init/hw/init.dragon.usb.rc
 
 on early-init
     mount debugfs debugfs /sys/kernel/debug
