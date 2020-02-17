@@ -23,10 +23,6 @@ on init
     setprop qemu.hw.mainkeys 0
     start watchdogd
 
-on late-fs
-    # Mount RW partitions which need run fsck
-    mount_all /fstab.dragon --late
-
 on late-init
     # Setting slice_idle to 0 for CFQ, so make sure the scheduler is CFQ.
     write /sys/block/mmcblk0/queue/scheduler cfq
@@ -210,10 +206,7 @@ on fs
     # Enable verity notification
     write /sys/module/dm_verity/parameters/error_behavior notify
 
-    mount_all /fstab.dragon --early
-
-    # Start HW service manager early
-    start hwservicemanager
+    mount_all /vendor/etc/fstab.dragon
 
 # run the touch firmware update script as soon as non-tmpfs /data is ready
 on property:vold.decrypt=trigger_restart_framework
