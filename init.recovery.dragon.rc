@@ -46,6 +46,6 @@ on fs
     start pulldecryptfiles
     install_keyring
 
-on property:pulldecryptfiles.finished=1
-    start recovery
+on early-boot
+    wait /dev/pulldecryptfiles_done
 

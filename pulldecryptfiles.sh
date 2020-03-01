@@ -25,7 +25,7 @@ if [ "$(mount|grep "/dev/block/bootdevice/by-name/VNR on /vendor")" == "" ];then
 	rmdir /tmp/vendor
 fi
 
-setprop pulldecryptfiles.finished 1
+touch /dev/pulldecryptfiles_done
 
 exit 0
 
