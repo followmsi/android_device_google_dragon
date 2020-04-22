@@ -165,7 +165,7 @@ static void power_set_interactive(struct power_module __unused *module, int on)
 static int boostpulse_open(struct dragon_power_module *dragon)
 {
     char buf[80];
-    int len;
+//    int len;
 
     pthread_mutex_lock(&dragon->boost_pulse_lock);
 

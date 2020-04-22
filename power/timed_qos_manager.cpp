@@ -54,7 +54,7 @@ bool TimedQosManager::threadLoop()
                 mQosObject->exit();
                 mTargetTime = 0;
             } else {
-                ALOGV("threadLoop [%s] timeout extended\n");
+                ALOGV("threadLoop [%s] timeout extended\n", mName);
             }
         }
     }
