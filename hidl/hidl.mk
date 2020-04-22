@@ -11,14 +11,14 @@ PRODUCT_PACKAGES += \
 
 # Audio
 PRODUCT_PACKAGES += \
-    android.hardware.audio@5.0-impl:32 \
-    android.hardware.audio.effect@5.0-impl:32 \
-    android.hardware.soundtrigger@2.2-impl:32 \
+    android.hardware.audio@5.0-impl \
+    android.hardware.audio.effect@5.0-impl \
+    android.hardware.soundtrigger@2.2-impl \
     android.hardware.audio@2.0-service
 
-# Bluetooth
+# Bluetooth -dragon
 PRODUCT_PACKAGES += \
-    android.hardware.bluetooth@1.0-impl-dragon \
+    android.hardware.bluetooth@1.0-impl \
     android.hardware.bluetooth@1.0-service \
     android.hardware.bluetooth.audio@2.0-impl
 
@@ -95,6 +95,6 @@ PRODUCT_PACKAGES += \
     android.hardware.wifi@1.0-service
 
 # Cas
-PRODUCT_PACKAGES += \
-    android.hardware.cas@1.1-service
+#PRODUCT_PACKAGES += \
+#    android.hardware.cas@1.1-service
 
