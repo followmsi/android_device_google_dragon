@@ -45,7 +45,7 @@ else
 LOCAL_FSTAB := $(LOCAL_PATH)/fstab.dragon
 endif
 
-TARGET_RECOVERY_FSTAB = $(LOCAL_FSTAB)
+TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/recovery.fstab
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_KERNEL):kernel \
@@ -53,11 +53,20 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/init.dragon.usb.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.dragon.usb.rc \
     $(LOCAL_PATH)/init.recovery.dragon.rc:recovery/root/init.recovery.dragon.rc \
     $(LOCAL_PATH)/init_regions.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init_regions.sh \
-    $(LOCAL_FSTAB):$(TARGET_COPY_OUT_VENDOR)/etc/fstab.dragon \
-    $(LOCAL_FSTAB):$(TARGET_COPY_OUT_RAMDISK)/fstab.dragon \
     $(LOCAL_PATH)/ueventd.dragon.rc:$(TARGET_COPY_OUT_VENDOR)/ueventd.rc \
     $(LOCAL_PATH)/speakerdsp.ini:$(TARGET_COPY_OUT_VENDOR)/etc/cras/speakerdsp.ini \
     $(LOCAL_PATH)/bcmdhd.cal:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/bcmdhd.cal
+
+ifeq ($(TARGET_BUILD_SYSTEM_ROOT_IMAGE),true)
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/fstab.dragon:$(TARGET_COPY_OUT_VENDOR)/etc/fstab.dragon \
+
+else
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/fstab.initdragon:$(TARGET_COPY_OUT_RAMDISK)/fstab.dragon \
+    $(LOCAL_PATH)/fstab.initdragon:$(TARGET_COPY_OUT_VENDOR)/etc/fstab.dragon \
+
+endif
 
 PRODUCT_PACKAGES += \
     libwpa_client \
@@ -167,8 +176,7 @@ PRODUCT_COPY_FILES += \
 
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/enctune.conf:$(TARGET_COPY_OUT_VENDOR)/etc/enctune.conf \
-    $(LOCAL_PATH)/enctune.conf:$(TARGET_COPY_OUT_SYSTEM)/etc/enctune.conf
+    $(LOCAL_PATH)/enctune.conf:$(TARGET_COPY_OUT_VENDOR)/etc/enctune.conf
 
 PRODUCT_AAPT_CONFIG := normal large xlarge
 PRODUCT_AAPT_PREF_CONFIG := xhdpi
@@ -216,7 +224,7 @@ PRODUCT_SYSTEM_PROPERTY_BLACKLIST = \
     ro.product.locale
 
 # OEM Unlock reporting
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+PRODUCT_PROPERTY_OVERRIDES += \
     ro.oem_unlock_supported=1
 
 # Default OMX service to non-Treble
@@ -227,9 +235,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
 
 # set default USB configuration
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    persist.sys.usb.config=mtp,adb \
+PRODUCT_PROPERTY_OVERRIDES += \
     ro.adb.secure=0 \
+
+PRODUCT_PROPERTY_OVERRIDES += \
     ro.sf.lcd_density=320 \
     ro.opengles.version=196610
 
@@ -243,6 +252,7 @@ PRODUCT_PACKAGES += \
     audio.hearing_aid.default \
     audio.usb.default \
     audio.r_submix.default \
+    libaudio-resampler \
     vkinfo
 
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -251,7 +261,15 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.frp.pst=/dev/block/platform/700b0600.sdhci/by-name/PST
 
 # ro.product.first_api_level indicates the first api level the device has commercially launched on.
-PRODUCT_SHIPPING_API_LEVEL := 24
+PRODUCT_SHIPPING_API_LEVEL := 28
+
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.vendor.vndk.version=28 \
+    ro.product.first_api_level=28
+
+# Set current VNDK version for GSI
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.gsi.vndk.version=28
 
 # for keyboard key mappings
 PRODUCT_PACKAGES += \
@@ -284,8 +302,8 @@ PRODUCT_PACKAGES += \
     libprotobuf-cpp-full
 
 # VNDK
-#PRODUCT_PACKAGES += \
-#    vndk_package
+PRODUCT_PACKAGES += \
+    vndk_package
 
 # VNDK-SP
 PRODUCT_PACKAGES += \
@@ -296,7 +314,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.opa.eligible_device=true
 
 # Allows healthd to boot directly from charger mode rather than initiating a reboot.
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+PRODUCT_PROPERTY_OVERRIDES += \
     ro.enable_boot_charger_mode=1
 
 # TODO(dgreid) - Add back verity dependencies like flounder has.
@@ -323,6 +341,17 @@ NVRM_GPU_SUPPORT_NOUVEAU := 1
 NV_GPU_USE_SYNC_FD := 1
 USE_DRM_HWCOMPOSER := 1
 
+# GSI vndk config for start legacy
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/ld.config.vndk_lite.txt:$(TARGET_COPY_OUT_VENDOR)/etc/ld.config.vndk_lite.txt \
+    $(LOCAL_PATH)/ld.config.29.txt:$(TARGET_COPY_OUT_VENDOR)/etc/ld.config.29.txt \
+    $(LOCAL_PATH)/ld.config.28.txt:$(TARGET_COPY_OUT_VENDOR)/etc/ld.config.28.txt \
+    $(LOCAL_PATH)/ld.config.27.txt:$(TARGET_COPY_OUT_VENDOR)/etc/ld.config.27.txt \
+    $(LOCAL_PATH)/ld.config.26.txt:$(TARGET_COPY_OUT_VENDOR)/etc/ld.config.26.txt
+
+#    $(LOCAL_PATH)/ld.config.vndk_lite.Legacy.txt:$(TARGET_COPY_OUT_VENDOR)/etc/ld.config.vndk_lite.txt \
+
+
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.hardware.vulkan=tegra
 
@@ -342,8 +371,8 @@ BOARD_GPU_DRIVERS := tegra
 USE_XML_AUDIO_POLICY_CONF := 1
 PRODUCT_PACKAGES += \
     f54test \
-    hwcomposer.drm \
-    libdrm \
+    hwcomposer.dragon \
+    libdrm.vendor \
     rmi4update \
     rmihidtool
 
@@ -353,3 +382,5 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/seccomp_policy/mediaextractor.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaextractor.policy
 
 $(call inherit-product-if-exists, vendor/nvidia/dragon/dragon-vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_keys.mk)
+

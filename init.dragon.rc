@@ -6,12 +6,19 @@ on early-init
 on init
     symlink /sdcard /storage/sdcard0
 
+    # bind legacy ld.config.vndk_lite.txt EGL and Camera's legacy HAL1 libraries for GSIs
+    mount none /vendor/etc/ld.config.vndk_lite.txt /system/etc/ld.config.vndk_lite.txt bind
+    mount none /vendor/etc/ld.config.29.txt /system/etc/ld.config.29.txt bind
+    mount none /vendor/etc/ld.config.28.txt /system/etc/ld.config.28.txt bind
+    mount none /vendor/etc/ld.config.27.txt /system/etc/ld.config.27.txt bind
+    mount none /vendor/etc/ld.config.26.txt /system/etc/ld.config.26.txt bind
+
     # Setup zram options
     write /sys/block/zram0/comp_algorithm lz4
     write /sys/block/zram0/max_comp_streams 4
 
     setprop ro.hardware.gralloc tegra
-    setprop ro.hardware.hwcomposer drm
+    setprop ro.hardware.hwcomposer dragon
     setprop hwc.drm.device /dev/dri/card1
     setprop persist.tegra.compression off
     setprop persist.tegra.decompression disabled

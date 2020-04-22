@@ -52,17 +52,17 @@ BOARD_USES_LIBDRM := true
 TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
 TARGET_USES_HWC2 := true
 
-#BOARD_VNDK_VERSION=current
+BOARD_VNDK_VERSION=current
 #BOARD_VNDK_RUNTIME_DISABLE := true
 #PRODUCT_USE_VNDK_OVERRIDE := false
-#PRODUCT_TREBLE_LINKER_NAMESPACES := true
+PRODUCT_TREBLE_LINKER_NAMESPACES := true
 
 # Properties
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 #TARGET_VENDOR_PROP += $(PLATFORM_PATH)/vendor.prop
 
 # Treble
-#PRODUCT_FULL_TREBLE_OVERRIDE := true
+PRODUCT_FULL_TREBLE_OVERRIDE := true
 PRODUCT_VENDOR_MOVE_ENABLED := true
 #PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE := 27
 
@@ -117,6 +117,8 @@ WIFI_DRIVER_FW_PATH_PARAM   := "/sys/module/bcmdhd/parameters/firmware_path"
 WIFI_DRIVER_FW_PATH_STA     := "/vendor/firmware/fw_bcmdhd.bin"
 WIFI_DRIVER_FW_PATH_AP      := "/vendor/firmware/fw_bcmdhd_apsta.bin"
 
+WIFI_HIDL_FEATURE_DISABLE_AP_MAC_RANDOMIZATION := true
+
 # Enable dex-preoptimization to speed up first boot sequence
 ifeq ($(HOST_OS),linux)
   ifeq ($(TARGET_BUILD_VARIANT),userdebug)
@@ -130,7 +132,7 @@ ART_USE_HSPACE_COMPACT=true
 
 # let charger mode enter suspend
 BOARD_CHARGER_ENABLE_SUSPEND := true
-
+BOARD_SEPOLICY_VERS := $(PLATFORM_SDK_VERSION).0
 BOARD_SEPOLICY_DIRS += device/google/dragon/sepolicy
 
 # add firmware update to the updater binary
