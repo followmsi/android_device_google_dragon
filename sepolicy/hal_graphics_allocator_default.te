@@ -1,9 +1,10 @@
 allow hal_graphics_allocator_default host1x_device:chr_file { read write open ioctl };
 allow hal_graphics_allocator_default gpu_device:chr_file { read write open ioctl };
 allow hal_graphics_allocator_default graphics_device:chr_file { map read write open ioctl };
+allow hal_graphics_allocator_default vndbinder_device:chr_file { read write open ioctl };
 dontaudit hal_graphics_allocator_default kernel:system module_request;
 
 allow hal_graphics_allocator_default sysfs_soc:dir search;
 allow hal_graphics_allocator_default sysfs_soc:file r_file_perms;
 
-allow hal_graphics_allocator_default servicemanager:binder call;
+#allow hal_graphics_allocator_default servicemanager:binder call; #trebl

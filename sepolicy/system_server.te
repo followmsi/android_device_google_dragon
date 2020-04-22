@@ -12,8 +12,8 @@ get_prop(system_server, wifi_region_prop)
 binder_call(system_server, hal_camera_default)
 
 # input files
-r_dir_file(system_server, idc_file)
-r_dir_file(system_server, keylayout_file)
+#r_dir_file(system_server, idc_file)#trebl
+#r_dir_file(system_server, keylayout_file)#trebl
 
 typeattribute system_server system_writes_vendor_properties_violators;
 

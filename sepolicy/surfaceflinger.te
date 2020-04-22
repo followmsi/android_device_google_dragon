@@ -17,3 +17,4 @@ typeattribute surfaceflinger system_writes_vendor_properties_violators;
 allow surfaceflinger sysfs:chr_file rw_file_perms;
 allow surfaceflinger sysfs:dir { search read };
 
+set_prop(surfaceflinger, public_vendor_system_prop)

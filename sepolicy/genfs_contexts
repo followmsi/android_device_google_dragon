@@ -11,7 +11,7 @@ genfscon sysfs /devices/57000000.gpu/power/autosuspend_delay_ms        u:object_
 genfscon sysfs /devices/bt_bcm4354                    u:object_r:sysfs_bluetooth:s0
 genfscon sysfs /devices/soc0                          u:object_r:sysfs_soc:s0
 genfscon sysfs /class/backlight/lpm102a188a-backlight/brightness       u:object_r:sysfs_leds:s0
-
+genfscon sysfs /class/chromeos/cros_ec/lightbar/userspace_control       u:object_r:sysfs_cros_ec:s0 #for powerhal
 genfscon sysfs /class/chromeos/cros_ec/device/cros-ec-activity.0/iio:device5/events       u:object_r:sysfs_cros_ec:s0
 #genfscon sysfs /class/chromeos/cros_ec/lightbar/sequence               u:object_r:sysfs_cros_ec:s0
 genfscon sysfs /class/chromeos/cros_ec/usb-pd-charger  u:object_r:sysfs_cros_ec:s0
