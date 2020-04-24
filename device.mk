@@ -74,6 +74,7 @@ PRODUCT_PACKAGES += \
     hostapd \
     wificond \
     wifilogd \
+    WifiOverlay \
     wpa_supplicant \
     wpa_supplicant.conf \
     libwifikeystorehal \
