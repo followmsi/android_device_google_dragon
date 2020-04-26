@@ -334,6 +334,7 @@ namespace.default.search.paths += /odm/${LIB}/vndk-sp
 namespace.default.search.paths += /vendor/${LIB}
 namespace.default.search.paths += /vendor/${LIB}/vndk
 namespace.default.search.paths += /vendor/${LIB}/vndk-sp
+namespace.default.search.paths += /system/${LIB}
 
 # Access to system libraries is allowed
 namespace.default.search.paths += /system/${LIB}/vndk-sp-29
@@ -363,17 +364,19 @@ namespace.default.asan.search.paths += /data/asan/product_services/${LIB}
 namespace.default.asan.search.paths += /data/asan/system/${LIB}/vndk-29
 namespace.default.asan.search.paths +=           /system/${LIB}/vndk-29
 
-namespace.default.links = runtime
-namespace.default.link.runtime.shared_libs  = libdexfile_external.so
-# libicuuc.so and libicui18n.so are kept for app compat reason. http://b/130788466
-namespace.default.link.runtime.shared_libs += libicui18n.so
-namespace.default.link.runtime.shared_libs += libicuuc.so
-namespace.default.link.runtime.shared_libs += libnativebridge.so
-namespace.default.link.runtime.shared_libs += libnativehelper.so
-namespace.default.link.runtime.shared_libs += libnativeloader.so
-# Workaround for b/124772622
-namespace.default.link.runtime.shared_libs += libandroidicu.so
+namespace.default.links = default,runtime
+namespace.default.link.default.allow_all_shared_libs = true
 
+#namespace.default.link.runtime.shared_libs  = libdexfile_external.so
+# libicuuc.so and libicui18n.so are kept for app compat reason. http://b/130788466
+#namespace.default.link.runtime.shared_libs += libicui18n.so
+#namespace.default.link.runtime.shared_libs += libicuuc.so
+#namespace.default.link.runtime.shared_libs += libnativebridge.so
+#namespace.default.link.runtime.shared_libs += libnativehelper.so
+#namespace.default.link.runtime.shared_libs += libnativeloader.so
+# Workaround for b/124772622
+#namespace.default.link.runtime.shared_libs += libandroidicu.so
+namespace.default.link.runtime.allow_all_shared_libs = true
 ###############################################################################
 # "runtime" APEX namespace
 #
