@@ -24,23 +24,22 @@ TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 :=
 TARGET_CPU_VARIANT := cortex-a53
-TARGET_CPU_VARIANT_RUNTIME := cortex-a53
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a53
-TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a53
 
 #BUILD_TOP := $(shell pwd)
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_KERNEL_PAGESIZE := 2048
 #BOARD_KERNEL_CMDLINE :=
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 #BOARD_KERNEL_CMDLINE +=
 #BOARD_MKBOOTIMG_ARGS :=
 TARGET_KERNEL_SOURCE := kernel/google/tegra
-TARGET_KERNEL_CONFIG := lineageos_dragon_defconfig
+TARGET_KERNEL_CONFIG := followmsi_defconfig
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-android-
 #TARGET_KERNEL_TOOLCHAIN_ROOT := $(BUILD_TOP)/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
 #TARGET_KERNEL_TOOLS_PREFIX := $(TARGET_KERNEL_TOOLCHAIN_ROOT)/bin/aarch64-linux-android-
@@ -62,8 +61,23 @@ BOARD_USES_DRM_HWCOMPOSER := true
 BOARD_DRM_HWCOMPOSER_BUFFER_IMPORTER := nvidia-gralloc
 BOARD_USES_LIBDRM := true
 TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
-#TARGET_USES_HWC2 := true
-TARGET_FORCES_DRM_HWC1 := true
+TARGET_USES_HWC2 := true
+
+#TARGET_NO_RECOVERY := true
+
+BOARD_VNDK_VERSION=current
+#BOARD_VNDK_RUNTIME_DISABLE := true
+#PRODUCT_USE_VNDK_OVERRIDE := false
+PRODUCT_TREBLE_LINKER_NAMESPACES := true
+
+# Properties
+BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
+#TARGET_VENDOR_PROP += $(PLATFORM_PATH)/vendor.prop
+
+# Treble
+PRODUCT_FULL_TREBLE_OVERRIDE := true
+PRODUCT_VENDOR_MOVE_ENABLED := true
+#PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE := 27
 
 PRESENT_TIME_OFFSET_FROM_VSYNC_NS := 0
 VSYNC_EVENT_PHASE_OFFSET_NS := 7500000
@@ -72,6 +86,7 @@ SF_VSYNC_EVENT_PHASE_OFFSET_NS := 5000000
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USES_MKE2FS := true
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 3758096384
+BOARD_SYSTEMIMAGE_JOURNAL_SIZE := 0
 BOARD_CACHEIMAGE_PARTITION_SIZE := 419430400
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_VENDORIMAGE_PARTITION_SIZE := 268435456
@@ -79,7 +94,9 @@ BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 4096
 
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
+TARGET_FLATTEN_APEX := true
 
+# Mark as having overridden commands
 BUILD_BROKEN_DUP_RULES := true
 
 BOARD_CHARGER_DISABLE_INIT_BLANK := true
@@ -100,6 +117,7 @@ TARGET_FS_CONFIG_GEN += device/google/dragon/config.fs
 # Bluetooth
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/google/dragon/bluetooth
 BOARD_HAVE_BLUETOOTH_BCM := true
+BOARD_CUSTOM_BT_CONFIG := device/google/dragon/bluetooth/vnd_dragon.txt
 
 # Wifi related defines
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
@@ -111,6 +129,7 @@ BOARD_WLAN_DEVICE           := bcmdhd
 WIFI_DRIVER_FW_PATH_PARAM   := "/sys/module/bcmdhd/parameters/firmware_path"
 WIFI_DRIVER_FW_PATH_STA     := "/vendor/firmware/fw_bcmdhd.bin"
 WIFI_DRIVER_FW_PATH_AP      := "/vendor/firmware/fw_bcmdhd_apsta.bin"
+
 WIFI_HIDL_FEATURE_DISABLE_AP_MAC_RANDOMIZATION := true
 
 # Enable dex-preoptimization to speed up first boot sequence
@@ -127,10 +146,10 @@ ART_USE_HSPACE_COMPACT=true
 # let charger mode enter suspend
 BOARD_CHARGER_ENABLE_SUSPEND := true
 
-# Security Patch Level
-VENDOR_SECURITY_PATCH := 2019-06-05
-
+# SeLinux
+BOARD_SEPOLICY_VERS := $(PLATFORM_SDK_VERSION).0
 BOARD_SEPOLICY_DIRS += device/google/dragon/sepolicy
+SELINUX_IGNORE_NEVERALLOWS := true
 
 # add firmware update to the updater binary
 TARGET_RECOVERY_UPDATER_LIBS += librecovery_updater_dragon
@@ -150,7 +169,7 @@ BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
 WITH_LINEAGE_CHARGER := false
 
 # Shims
-TARGET_LD_SHIM_LIBS := \
+#TARGET_LD_SHIM_LIBS := \
     /vendor/lib/hw/camera.dragon.so|libshim_camera.so
 
 # Testing related defines
@@ -159,5 +178,3 @@ BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh
 # Vendor Interface Manifest
 DEVICE_MANIFEST_FILE := device/google/dragon/hidl/manifest.xml
 DEVICE_MATRIX_FILE := device/google/dragon/hidl/compatibility_matrix.xml
-
-TARGET_FLATTEN_APEX := true

@@ -1,4 +1,4 @@
-#!/system/bin/sh
+#!/vendor/bin/sh
 #
 # Intialize region settings. Ref: crosbug.com/p/44779
 
@@ -25,20 +25,4 @@ case "${REGION}" in
 esac
 
 setprop ro.product.locale "${LANGUAGE}-${COUNTRY}"
-
-OVERRIDE_CC=$(getprop persist.sys.wifi.country_code)
-CURRENT_BOOT_CC=$(getprop ro.boot.wificountrycode)
-
-if [ -n "$OVERRIDE_CC" ]; then
-  COUNTRY=$OVERRIDE_CC
-fi
-
-if [ -z "$CURRENT_BOOT_CC" ]; then
-  setprop ro.boot.wificountrycode "${COUNTRY}"
-elif [ "$CURRENT_BOOT_CC" != "${COUNTRY}" -a -x /sbin/resetprop ]; then
-  # Preferred country code changed during boot? Likely Magisk
-  # changed the boot procedure and we have already been called once
-  # with props missing. Now use Magisk's tool to settle the problem
-  # it causes.
-  /sbin/resetprop ro.boot.wificountrycode "${COUNTRY}"
-fi
+setprop ro.boot.wificountrycode "${COUNTRY}"

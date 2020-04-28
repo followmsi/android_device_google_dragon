@@ -1,7 +1,19 @@
 # Allow system_server to open crash report files.
-allow system_server crash_reports_data_file:dir r_dir_perms;
-allow system_server crash_reports_data_file:file r_file_perms;
+#allow system_server crash_reports_data_file:dir r_dir_perms;
+#allow system_server crash_reports_data_file:file r_file_perms;
 allow system_server host1x_device:chr_file rw_file_perms;
 allow system_server sysfs_devices_system_cpu:file write;
+allow system_server wlan_device:chr_file rw_file_perms;
+
+allow system_server debugfs_kgsl:file { open read getattr };
 
 get_prop(system_server, wifi_region_prop)
+
+binder_call(system_server, hal_camera_default)
+
+# input files
+#r_dir_file(system_server, idc_file)#trebl
+#r_dir_file(system_server, keylayout_file)#trebl
+
+typeattribute system_server system_writes_vendor_properties_violators;
+

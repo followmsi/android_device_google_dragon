@@ -1,21 +1,23 @@
 # permissions for /system/bin/dump_bq25892.sh
 # which is used to debug information about the state of the charger chip
-type dump_bq25892, domain, coredomain, device_domain_deprecated;
-type dump_bq25892_exec, exec_type, system_file_type, file_type;
+type dump_bq25892, domain;
+type dump_bq25892_exec, exec_type, file_type, vendor_file_type;
 type fw_logs_data_file, file_type, data_file_type, core_data_file_type;
 
-init_daemon_domain(dump_bq25892)
+init_daemon_domain(dump_bq25892);
 
 # Run a shell.
-allow dump_bq25892 shell_exec:file rx_file_perms;
+#allow dump_bq25892 vendor_shell_exec:file rx_file_perms;
 
 # Run toybox.
-allow dump_bq25892 toolbox_exec:file rx_file_perms;
+#allow dump_bq25892 vendor_toolbox_exec:file rx_file_perms;
 
 # Use fwtool to communicate with the EC through /dev/cros_ec
 allow dump_bq25892 fwtool_exec:file rx_file_perms;
 allow dump_bq25892 cros_ec_device:chr_file rw_file_perms;
 
+typeattribute dump_bq25892 system_writes_vendor_properties_violators;
+
 # write and set world readable attribute on /data/misc/fw_logs/bq25892.txt log file
-allow dump_bq25892 fw_logs_data_file:file create_file_perms;
-allow dump_bq25892 fw_logs_data_file:dir  w_dir_perms;
+#allow dump_bq25892 fw_logs_data_file:file create_file_perms;
+#allow dump_bq25892 fw_logs_data_file:dir w_dir_perms;

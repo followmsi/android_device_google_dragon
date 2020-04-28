@@ -1,4 +1,8 @@
+# Allow apps to read /dev/dri. Needed to pass CTS
 allow app_zygote device:dir r_dir_perms;
 allow { app_zygote -isolated_app } host1x_device:chr_file rw_file_perms;
+
+#allow { app_zygote -isolated_app } sysfs_soc:dir search;
 allow app_zygote app_data_file:dir r_dir_perms;
 allow app_zygote zygote_exec:file r_file_perms;
+

@@ -1,3 +1,9 @@
 # Allow apps to read /dev/dri. Needed to pass CTS
 allow appdomain device:dir r_dir_perms;
 allow { appdomain -isolated_app } host1x_device:chr_file rw_file_perms;
+
+allow { appdomain -isolated_app } sysfs_soc:dir search;
+allow { appdomain -isolated_app } sysfs_soc:file r_file_perms;
+
+# For the camera app
+get_prop(appdomain, camera_prop)

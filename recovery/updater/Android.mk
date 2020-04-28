@@ -33,26 +33,31 @@ LOCAL_SRC_FILES := \
     vboot_interface.c \
     recovery_ui.cpp
 # For ui.h, common.h (included by recovery_ui.cpp).
-LOCAL_C_INCLUDES += bootable/recovery
+LOCAL_C_INCLUDES := \
+    bootable/recovery \
+    bootable/recovery/edify/include \
+    bootable/recovery/otautil/include
 # For vboot_struct.h
 LOCAL_C_INCLUDES += external/vboot_reference/firmware/include
 LOCAL_CFLAGS += -Werror
-LOCAL_SHARED_LIBRARIES := librecovery_ui
-LOCAL_STATIC_LIBRARIES := \
-    libedify
 
 include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := fwtool
 LOCAL_MODULE_TAGS := optional
+LOCAL_PROPRIETARY_MODULE := true
 LOCAL_SRC_FILES := flash_ec.c flash_mtd.c flash_device.c vboot_interface.c debug_ec.c flash_file.cpp fwtool.cpp update_fw.cpp
 LOCAL_SHARED_LIBRARIES := liblog
 LOCAL_CFLAGS += -Wno-unused-parameter -DUSE_LOGCAT
 # For vboot_struct.h
+LOCAL_C_INCLUDES := \
+    bootable/recovery \
+    bootable/recovery/edify/include \
+    bootable/recovery/otautil/include
 LOCAL_C_INCLUDES += external/vboot_reference/firmware/include
-LOCAL_STATIC_LIBRARIES := \
-    libedify
+
+LOCAL_HEADER_LIBRARIES :=  libhardware_headers
 
 include $(BUILD_EXECUTABLE)
 

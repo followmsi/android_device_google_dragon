@@ -17,10 +17,10 @@
 #include <string.h>
 
 #include "common.h"
-#include "recovery_ui/device.h"
+#include "device.h"
 #include "flash_device.h"
-#include "recovery_ui/screen_ui.h"
-#include "recovery_ui/ui.h"
+#include "screen_ui.h"
+#include "ui.h"
 #include "vboot_interface.h"
 
 class DragonDevice : public Device {
@@ -28,25 +28,23 @@ class DragonDevice : public Device {
     DragonDevice(RecoveryUI* ui) : Device(ui) { }
 
     virtual bool PostWipeData() {
-        int fastboot_cap = -1;
-        struct flash_device *spi = flash_open("spi", NULL);
+        if (reason) {
+            struct flash_device *spi = flash_open("spi", NULL);
 
-        if (spi == NULL) {
-            return true;
-        }
+            if (spi == NULL) {
+                return true;
+            }
 
-        if (vbnv_get_flag(spi, "dev_boot_fastboot_full_cap", &fastboot_cap) < 0) {
-            goto exit;
-        }
+            if (!strcmp(reason, "fastboot_oem_unlock")) {
+                vbnv_set_flag(spi, "dev_boot_fastboot_full_cap", 0x1);
+                vbnv_set_flag(spi, "recovery_reason", 0xC3);
+            } else if (!strcmp(reason, "fastboot_oem_lock")) {
+                vbnv_set_flag(spi, "dev_boot_fastboot_full_cap", 0x0);
+                vbnv_set_flag(spi, "recovery_reason", 0xC3);
+            }
 
-        /* This is a workaround for not being able to access `reason` in Android Q:
-         * if this code is ever run, the device must have been unlocked. Just enable
-         * full cap without hesitation. */
-        if (fastboot_cap != 0x1) {
-            vbnv_set_flag(spi, "dev_boot_fastboot_full_cap", 0x1);
+            flash_close(spi);
         }
-exit:
-        flash_close(spi);
 
         return true;
     };

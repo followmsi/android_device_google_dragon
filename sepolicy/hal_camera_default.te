@@ -1,10 +1,32 @@
-allow hal_camera_default gpu_device:chr_file { read write open ioctl getattr };
-allow hal_camera_default host1x_device:chr_file { read write open ioctl };
-allow hal_camera_default vndbinder_device:chr_file { read write open ioctl };
-allow hal_camera_default sysfs:dir { open read } ;
+allow hal_camera_default gpu_device:chr_file rw_file_perms;
+allow hal_camera_default host1x_device:chr_file rw_file_perms;
+allow hal_camera_default vndbinder_device:chr_file rw_file_perms;
+allow hal_camera_default sysfs:dir r_dir_perms;
 allow hal_camera_default sysfs:file r_file_perms;
 
 allow hal_camera_default hal_configstore_default:binder call;
-#allow hal_camera_default hal_configstore_ISurfaceFlingerConfigs:hwservice_manager find;
+allow hal_camera_default hal_configstore_ISurfaceFlingerConfigs:hwservice_manager find;
+
+allow hal_camera_default hal_graphics_mapper_hwservice:hwservice_manager find;
+#allow hal_camera_default hal_graphics_allocator_hwservice:hwservice_manager find;
+
+hal_client_domain(hal_camera_default, hal_configstore)
+binder_call(hal_camera_default, hal_graphics_composer)
+binder_call(hal_camera_default, system_server)
+binder_call(hal_camera_default, hal_graphics_allocator)
 
 vndbinder_use(hal_camera_default)
+
+#allow hal_camera_default surfaceflinger_service:service_manager find;
+
+# access to /dev/input/event{5,10}
+allow hal_camera_default input_device:dir r_dir_perms;
+allow hal_camera_default input_device:chr_file r_file_perms;
+
+allow hal_camera_default sysfs_soc:dir r_dir_perms;
+allow hal_camera_default sysfs_soc:file r_file_perms;
+
+#allow hal_camera_default proc_meminfo:file r_file_perms;
+allow hal_camera_default { proc proc_meminfo }:{ file lnk_file } r_file_perms;
+
+

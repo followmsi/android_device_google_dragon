@@ -1,6 +1,6 @@
 # init runs /system/bin/touchfwup.sh which runs rmi4update
-type rmi4update, domain, coredomain, device_domain_deprecated;
-type rmi4update_exec, exec_type, system_file_type, file_type;
+type rmi4update, domain;
+type rmi4update_exec, exec_type, file_type, vendor_file_type;
 
 init_daemon_domain(rmi4update)
 
@@ -15,4 +15,4 @@ allow rmi4update sysfs:file rw_file_perms;
 allow rmi4update touch_fw_update:fd use;
 
 # Allow rmi4update to getattr and append to log file.
-allow rmi4update touch_fw_update_log_file:file { getattr append };
+#allow rmi4update touch_fw_update_log_file:file rw_file_perms;

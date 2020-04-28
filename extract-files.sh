@@ -1,0 +1,98 @@
+#!/bin/bash
+#
+# Copyright (C) 2016 The CyanogenMod Project
+# Copyright (C) 2017 The LineageOS Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+set -e
+
+DEVICE=dragon
+VENDOR=google
+
+# Load extract_utils and do some sanity checks
+MY_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$MY_DIR" ]]; then MY_DIR="$PWD"; fi
+
+LINEAGE_ROOT="$MY_DIR"/../../..
+
+HELPER="$LINEAGE_ROOT"/vendor/lineage/build/tools/extract_utils.sh
+if [ ! -f "$HELPER" ]; then
+    echo "Unable to find helper script at $HELPER"
+    exit 1
+fi
+. "$HELPER"
+
+# Default to sanitizing the vendor folder before extraction
+CLEAN_VENDOR=true
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -n | --no-cleanup )     CLEAN_VENDOR=false
+                                ;;
+        -s | --section )        shift
+                                SECTION=$1
+                                CLEAN_VENDOR=false
+                                ;;
+        * )                     SRC=$1
+                                ;;
+    esac
+    shift
+done
+
+if [ -z "$SRC" ]; then
+    SRC=adb
+fi
+
+# Initialize the helper
+setup_vendor "$DEVICE" "$VENDOR" "$LINEAGE_ROOT" false "$CLEAN_VENDOR"
+
+extract "$MY_DIR"/proprietary-files.txt "$SRC" "$SECTION"
+
+"$MY_DIR"/setup-makefiles.sh
+
+DEVICE_BLOB_ROOT="$LINEAGE_ROOT"/vendor/"$VENDOR"/"$DEVICE"/proprietary
+
+#
+# Correct android.hidl.manager@1.0-java jar name
+#
+#sed -i "s|name=\"android.hidl.manager-V1.0-java|name=\"android.hidl.manager@1.0-java|g" \
+#    "$DEVICE_BLOB_ROOT"/etc/permissions/qti_libpermissions.xml
+
+#patchelf --set-soname "vulkan.tegra.so" "$DEVICE_BLOB_ROOT"/vendor/lib/hw/vulkan.tegra.so
+#patchelf --set-soname "vulkan.tegra.so" "$DEVICE_BLOB_ROOT"/vendor/lib64/hw/vulkan.tegra.so
+
+# Using prebuilt patchelf 0.9 for hex edit from https://review.lineageos.org/c/LineageOS/android_vendor_lineage/+/218832
+# libcameraservice.so is currently only necessary shared library and requires lots of other libraries under system/lib.
+# However it is not possible to make vendor libs loading system libs due to ld config limitation.
+# Maybe we need ld config patches for R+ GSIs by hand.
+patchelf --add-needed libcamera_shim.so "$DEVICE_BLOB_ROOT"/vendor/lib/hw/camera.dragon.so
+patchelf --remove-needed libgui.so "$DEVICE_BLOB_ROOT"/vendor/lib/hw/camera.dragon.so
+patchelf --replace-needed libutils.so libutilscallback.so "$DEVICE_BLOB_ROOT"/vendor/lib/libglcore.so
+patchelf --replace-needed libutils.so libutilscallback.so "$DEVICE_BLOB_ROOT"/vendor/lib64/libglcore.so
+
+#patchelf --replace-needed libcamera_client.so android.hardware.camera.common@1.0-helper.so "$DEVICE_BLOB_ROOT"/vendor/lib/hw/camera.dragon.so
+
+#patchelf --remove-needed libgui.so "$DEVICE_BLOB_ROOT"/vendor/lib/libmmcamera2_stats_modules.so
+#patchelf --remove-needed libandroid.so "$DEVICE_BLOB_ROOT"/vendor/lib/libmmcamera2_stats_modules.so
+#patchelf --remove-needed libandroid.so "$DEVICE_BLOB_ROOT"/vendor/lib/libFNVfbEngineHAL.so
+
+function fix_vendor () {
+    sed -i \
+        "s/\/system\/$1\//\/vendor\/$1\//g" \
+        "$LINEAGE_ROOT"/vendor/"$VENDOR"/"$DEVICE"/proprietary/"$2"
+}
+
+fix_vendor etc vendor/lib/libnvomx.so 
+fix_vendor etc vendor/lib64/libnvomx.so 

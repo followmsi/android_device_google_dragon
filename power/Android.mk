@@ -26,4 +26,5 @@ LOCAL_SRC_FILES := power_dragon.cpp \
 LOCAL_MODULE := power.dragon
 LOCAL_MODULE_TAGS := optional
 LOCAL_PROPRIETARY_MODULE := true
+LOCAL_HEADER_LIBRARIES :=  libhardware_headers
 include $(BUILD_SHARED_LIBRARY)

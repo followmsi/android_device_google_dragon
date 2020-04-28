@@ -29,4 +29,3 @@ PRODUCT_NAME := lineage_dragon
 PRODUCT_BRAND := Google
 PRODUCT_MODEL := Pixel C
 PRODUCT_MANUFACTURER := google
-

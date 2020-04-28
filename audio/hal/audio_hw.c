@@ -3250,7 +3250,7 @@ static int adev_open(const hw_module_t *module, const char *name,
 
     *device = &adev->device.common;
 
-    cras_dsp_init("/system/etc/cras/speakerdsp.ini");
+    cras_dsp_init("/vendor/etc/cras/speakerdsp.ini");
 
     ALOGV("%s: exit", __func__);
     return 0;

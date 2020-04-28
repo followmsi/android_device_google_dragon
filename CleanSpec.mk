@@ -51,5 +51,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/android.hard
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/android.hardware.camera.manual_sensor.xml)
 $(call add-clean-step, rm -f $(PRODUCT_OUT)/system/lib/hw/android.hardware.broadcastradio@1.0-impl.so)
 $(call add-clean-step, rm -f $(PRODUCT_OUT)/system/lib64/hw/android.hardware.broadcastradio@1.0-impl.so)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/bin/hw/android.hardware.health@2.0-service)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/etc/init/android.hardware.health@2.0-service.rc)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/wifi/wpa_supplicant_overlay.conf)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/wifi/p2p_supplicant_overlay.conf)
+
+# Remove /system/lib[64]/vndk-sp/android.hardware.graphics.allocator@2.0.so
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib/vndk-sp/android.hardware.graphics.allocator@2.0.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib64/vndk-sp/android.hardware.graphics.allocator@2.0.so)

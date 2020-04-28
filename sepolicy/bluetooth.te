@@ -1,3 +1,6 @@
 # access /sys/devices/bt_bcm4354
 allow bluetooth sysfs_bluetooth:dir search;
 allow bluetooth sysfs_bluetooth:file rw_file_perms;
+
+allow bluetooth bluetooth_data_file:dir { read write open getattr };
+

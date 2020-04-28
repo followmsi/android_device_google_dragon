@@ -21,26 +21,23 @@
 # lines, aosp and dragon, hence its name.
 #
 
-PRODUCT_PROPERTY_OVERRIDES := \
-        net.dns1=8.8.8.8 \
-        net.dns2=8.8.4.4
+#PRODUCT_PROPERTY_OVERRIDES := \
+#        net.dns1=8.8.8.8 \
+#        net.dns2=8.8.4.4
 
 # Inherit from those products. Most specific first.
 $(call inherit-product, device/google/dragon/product.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
 
 PRODUCT_NAME := aosp_dragon
 PRODUCT_DEVICE := dragon
-PRODUCT_BRAND := Android
-PRODUCT_MODEL := AOSP on Dragon
+PRODUCT_BRAND := google
+PRODUCT_MODEL := Pixel C
 PRODUCT_MANUFACTURER := Google
 PRODUCT_RESTRICT_VENDOR_FILES := false
 
-PRODUCT_BUILD_PROP_OVERRIDES += \
-    PRODUCT_NAME=dragon \
-    PRIVATE_BUILD_DESC="ryu-user 8.1.0 OPM1.171019.016 4503492 release-keys"
+PRODUCT_PACKAGES += \
+    Launcher3QuickStep \
+    WallpaperPicker
 
-BUILD_FINGERPRINT := google/ryu/dragon:8.1.0/OPM1.171019.016/4503492:user/release-keys
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.build.fingerprint=google/ryu/dragon:8.1.0/OPM1.171019.016/4503492:user/release-keys

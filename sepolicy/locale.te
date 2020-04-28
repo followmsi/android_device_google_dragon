@@ -1,7 +1,7 @@
 # init_regions.sh reads region from vpd and sets
 # ro.product.locale property
-type locale, domain, coredomain, device_domain_deprecated;
-type locale_exec, exec_type, system_file_type, file_type;
+type locale, domain;
+type locale_exec, exec_type, file_type, vendor_file_type;
 
 init_daemon_domain(locale)
 
@@ -9,7 +9,18 @@ set_prop(locale, product_locale_prop)
 set_prop(locale, wifi_region_prop)
 
 # use cat to read /sys/firmware/vpd/ro/region
-allow locale shell_exec:file rx_file_perms;
+allow locale vendor_shell_exec:file rx_file_perms;
 
 # execute toolbox/toybox
-allow locale toolbox_exec:file rx_file_perms;
+allow locale vendor_toolbox_exec:file rx_file_perms;
+
+# /data/vendor/location
+allow locale locale_data_file:dir create_dir_perms;
+allow locale locale_data_file:{ file sock_file } create_file_perms;
+allow locale locale_data_file:file { getattr open read write setattr };
+
+allow locale sysfs_locale:dir r_dir_perms;
+allow locale sysfs_locale:file { getattr open read write setattr };
+
+allow locale vendor_file:dir r_dir_perms;
+allow locale vendor_file:file { getattr open read };

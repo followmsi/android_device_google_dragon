@@ -1,3 +1,10 @@
 type product_locale_prop, property_type;
 type debug_bq25892_prop, property_type;
 type wifi_region_prop, property_type;
+type power_prop, property_type;
+type public_vendor_system_prop, property_type;
+type camera_prop, property_type;
+type vendor_bluetooth_prop, property_type;
+
+# Wifi version recorder
+type vendor_wifi_version, property_type;

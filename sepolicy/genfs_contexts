@@ -1,0 +1,53 @@
+# TODO: genfs doesn't apply correctly to linked files (b/64270911)
+
+#genfscon sysfs /devices/virtual/block/                                u:object_r:sysfs_devices_block:s0
+
+# sysfs files used by wifi
+genfscon sysfs /module/bcmdhd/parameters/firmware_path                 u:object_r:sysfs_wlan_fwpath:s0
+genfscon sysfs /class/drm/card0/device/pstate                          u:object_r:sysfs_gpu:s0
+genfscon sysfs /devices/57000000.gpu/pstate                            u:object_r:sysfs_gpu:s0
+genfscon sysfs /devices/57000000.gpu/power/autosuspend_delay_ms        u:object_r:sysfs_gpu:s0
+
+genfscon sysfs /devices/bt_bcm4354                    u:object_r:sysfs_bluetooth:s0
+genfscon sysfs /devices/soc0                          u:object_r:sysfs_soc:s0
+genfscon sysfs /class/backlight/lpm102a188a-backlight/brightness       u:object_r:sysfs_leds:s0
+genfscon sysfs /class/chromeos/cros_ec/lightbar/userspace_control       u:object_r:sysfs_cros_ec:s0 #for powerhal
+genfscon sysfs /class/chromeos/cros_ec/device/cros-ec-activity.0/iio:device5/events       u:object_r:sysfs_cros_ec:s0
+#genfscon sysfs /class/chromeos/cros_ec/lightbar/sequence               u:object_r:sysfs_cros_ec:s0
+genfscon sysfs /class/chromeos/cros_ec/usb-pd-charger  u:object_r:sysfs_cros_ec:s0
+genfscon sysfs /class/chromeos/cros_ec/lightbar       u:object_r:sysfs_cros_ec:s0
+
+genfscon sysfs /devices/virtual/graphics/fb0          u:object_r:sysfs_graphics:s0
+
+#genfscon sysfs /class/rfkill/rfkill0/state            u:object_r:sysfs_bluetooth:s0
+
+genfscon sysfs /devices/virtual/thermal               u:object_r:sysfs_thermal:s0
+
+# We expect /sys/class/power_supply/* and everything it links to to be labeled
+# as sysfs_batteryinfo.
+#genfscon sysfs /class/power_supply/bq27742-0      u:object_r:sysfs_batteryinfo:s0
+genfscon sysfs /bus/usb                           u:object_r:sysfs_usb_device:s0
+#genfscon sysfs /bus/usb/devices/usb2                           u:object_r:sysfs_usb_device:s0
+genfscon sysfs /devices/70098000.usb/70098000.usb-host/usb1 u:object_r:sysfs_usb_device:s0
+genfscon sysfs /devices/70098000.usb/70098000.usb-host/usb2 u:object_r:sysfs_usb_device:s0
+
+#sysfs nodes for cpuinfo for CTS
+genfscon sysfs /firmware/devicetree/base/cpus         u:object_r:sysfs_soc:s0
+genfscon sysfs /firmware/devicetree/base/tegra-camera-platform/modules     u:object_r:sysfs_camera:s0
+genfscon sysfs /firmware/vpd/ro/cam_cal_data            u:object_r:sysfs_camera_data_file:s0
+
+genfscon debugfs /kgsl/proc                           u:object_r:debugfs_kgsl:s0
+genfscon debugfs /clk/debug_suspend                   u:object_r:debugfs_clk:s0
+genfscon debugfs /wlan0                               u:object_r:debugfs_wlan:s0
+
+genfscon debugfs /rpm_stats                           u:object_r:debugfs_rpm:s0
+genfscon debugfs /rpm_master_stats                    u:object_r:debugfs_rpm:s0
+genfscon debugfs /ion                                 u:object_r:debugfs_ion:s0
+genfscon debugfs /system_stats                        u:object_r:debugfs_rpm:s0
+genfscon debugfs /tcpm/usbpd0                         u:object_r:debugfs_usb:s0
+genfscon debugfs /pd_engine/usbpd0                    u:object_r:debugfs_usb:s0
+genfscon debugfs /rmt_storage                         u:object_r:debugfs_rmt_storage:s0
+genfscon debugfs /icnss                               u:object_r:debugfs_icnss:s0
+genfscon debugfs /fg/sram                             u:object_r:debugfs_fg_sram:s0
+genfscon debugfs /dma_buf/bufinfo                     u:object_r:debugfs_dma_bufinfo:s0
+genfscon debugfs /tzdbg	                              u:object_r:debugfs_tzdbg:s0
