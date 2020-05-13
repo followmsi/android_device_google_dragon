@@ -182,8 +182,8 @@
     <!-- Doze: should the TYPE_PICK_UP_GESTURE sensor be used as a pulse signal. -->
     <bool name="config_dozePulsePickup">false</bool>
 
-    <!-- Type of the double tap sensor. Empty if double tap is not supported.
-    <string name="config_dozeDoubleTapSensorType" translatable="false">com.google.sensor.double_touch</string -->
+    <!-- Type of the double tap sensor. Empty if double tap is not supported. -->
+    <string name="config_dozeDoubleTapSensorType" translatable="false">com.google.sensor.double_touch</string>
 
     <!-- If true, the doze component is not started until after the screen has been turned off
          and the screen off animation has been performed. -->
@@ -195,7 +195,23 @@
     <!-- Screen brightness used to dim the screen while dozing in a very low power state.
          May be less than the minimum allowed brightness setting
          that can be set by the user. -->
-    <integer name="config_screenBrightnessDoze">17</integer>
+    <integer name="config_screenBrightnessDoze">3</integer>
+
+    <!-- Control whether the always on display mode is available. This should only be enabled on
+     devices where the display has been tuned to be power efficient in DOZE and/or DOZE_SUSPEND
+     states. -->
+    <bool name="config_dozeAlwaysOnDisplayAvailable">true</bool>
+
+    <!-- Control whether the always on display mode is enabled by default. This value will be used
+     during initialization when the setting is still null. -->
+    <bool name="config_dozeAlwaysOnEnabled">false</bool>
+
+    <!-- Whether the display blanks itself when transitioning from a doze to a non-doze state -->
+    <bool name="config_displayBlanksAfterDoze">true</bool>
+
+    <!-- True if the display hardware only has brightness buckets rather than a full range of
+     backlight values -->
+    <bool name="config_displayBrightnessBucketsInDoze">true</bool>
 
     <!-- Fix for Lineage LiveDisplay -->
     <!-- Boolean indicating whether the HWC setColorTransform function can be performed efficiently
