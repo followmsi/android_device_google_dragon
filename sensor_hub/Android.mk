@@ -30,13 +30,15 @@ LOCAL_MODULE_TAGS := optional
 
 LOCAL_MODULE_OWNER := google
 
-LOCAL_PROPRIETARY_MODULE := true
-
 LOCAL_SRC_FILES := \
   sensors.cpp      \
   cros_ec_sensors.cpp  \
 
 LOCAL_SHARED_LIBRARIES := liblog libcutils libutils libdl
+
+LOCAL_VENDOR_MODULE := true
+
+LOCAL_HEADER_LIBRARIES :=  libhardware_headers
 
 include $(BUILD_SHARED_LIBRARY)
 endif  #($(BOARD_VENDOR_USE_SENSOR_HAL), sensor_hub)
