@@ -24,6 +24,7 @@
 #include <poll.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <utils/Atomic.h>
 #include <utils/Log.h>
