@@ -53,6 +53,8 @@ TARGET_RECOVERY_FSTAB = $(LOCAL_FSTAB)
 
 PRODUCT_BUILD_RECOVERY_IMAGE := true
 
+PRODUCT_BUILD_BOOT_IMAGE := true
+
 PRODUCT_COPY_FILES := \
     $(LOCAL_PATH)/dump_bq25892.sh:system/bin/dump_bq25892.sh \
     $(LOCAL_PATH)/touchfwup.sh:system/bin/touchfwup.sh \
