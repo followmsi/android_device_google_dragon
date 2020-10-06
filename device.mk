@@ -219,6 +219,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.audio.monitorRotation=true \
     ro.frp.pst=/dev/block/platform/700b0600.sdhci/by-name/PST
 
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.bt.bdaddr_path=/sys/devices/700b0200.sdhci/mmc_host/mmc0/mmc0:0001/mmc0:0001:2/net/wlan0/address
+
 # ro.product.first_api_level indicates the first api level the device has commercially launched on.
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.product.first_api_level=23
