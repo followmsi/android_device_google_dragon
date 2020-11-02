@@ -225,8 +225,9 @@ service tune_therm_gov /system/bin/tune-thermal-gov.sh skin-therm pd_thermal_gov
     class main
     oneshot
 
-service battery_charger /charger
+service battery_charger /system/bin/charger
     class charger
+    capabilities SYS_BOOT
     seclabel u:r:healthd:s0
 
 # on userdebug and eng builds, enable kgdb on the serial console
