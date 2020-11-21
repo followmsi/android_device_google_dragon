@@ -320,6 +320,12 @@ PRODUCT_PACKAGES += \
     rmi4update \
     rmihidtool
 
+PRODUCT_COPY_FILES += \
+    device/google/dragon/public.libraries.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt
+
+PRODUCT_COPY_FILES += \
+    prebuilts/vndk/v29/arm64/arch-arm-armv8-a/shared/vndk-core/libprotobuf-cpp-lite.so:$(TARGET_COPY_OUT_VENDOR)/lib/libprotobuf-cpp-lite-v29.so
+
 # Vendor seccomp policy files for media components:
 PRODUCT_COPY_FILES += \
     device/google/dragon/seccomp_policy/mediacodec.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy \
