@@ -146,10 +146,6 @@ WITH_LINEAGE_CHARGER := false
 TARGET_LD_SHIM_LIBS += \
     /vendor/lib/hw/camera.dragon.so|libshim_camera.so
 
-# DRM
-TARGET_LD_SHIM_LIBS += \
-    /vendor/lib/mediadrm/libwvdrmengine.so|/vendor/lib/libprotobuf-cpp-lite-v29.so
-
 # Testing related defines
 BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh
 
