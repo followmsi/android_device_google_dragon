@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.lineageos.device"
+    package="org.pixelexperience.device"
     android:sharedUserId="android.uid.system" >
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme"
         android:supportsRtl="true" >
         <activity
-            android:name="org.lineageos.device.DeviceSettingsActivity"
+            android:name="org.pixelexperience.device.DeviceSettingsActivity"
             android:label="@string/advanced_settings" >
             <intent-filter>
 		<action android:name="com.android.settings.action.IA_SETTINGS" />
@@ -30,7 +30,7 @@
                 android:resource="@string/advanced_settings_summary" />
         </activity>
         <activity-alias
-            android:name="org.lineageos.device.DeviceSettings"
+            android:name="org.pixelexperience.device.DeviceSettings"
             android:label="@string/advanced_settings"
             android:targetActivity="DeviceSettingsActivity" >
             <intent-filter>
