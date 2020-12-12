@@ -198,7 +198,7 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 # under Developer options
 # by default, do not update the recovery image
 PRODUCT_PROPERTY_OVERRIDES += \
-    persist.sys.recovery_update=false
+    persist.vendor.recovery_update=false
 
 # for audio
 #TODO(dgreid) do we need libnvvisualizer?
