@@ -22,6 +22,9 @@
 # "SECURE_OS_BUILD = false" will will use prebuilts for TLK and client
 #                    components.
 
+# Device was launched with M
+$(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_m.mk)
+
 $(call inherit-product, device/google/dragon/hidl/hidl.mk)
 
 # By default build TLK from source if it is available, otherwise use
