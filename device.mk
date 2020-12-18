@@ -27,6 +27,8 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_m.mk)
 
 $(call inherit-product, device/google/dragon/hidl/hidl.mk)
 
+$(call inherit-product, device/google/dragon/permissions.mk)
+
 # By default build TLK from source if it is available, otherwise use
 # prebuilts.  To force using the prebuilt while having the source, set:
 # SECURE_OS_BUILD=false
@@ -58,7 +60,7 @@ PRODUCT_BUILD_RECOVERY_IMAGE := true
 
 PRODUCT_BUILD_BOOT_IMAGE := true
 
-PRODUCT_COPY_FILES := \
+PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/dump_bq25892.sh:system/bin/dump_bq25892.sh \
     $(LOCAL_PATH)/touchfwup.sh:system/bin/touchfwup.sh \
     $(LOCAL_PATH)/init.dragon.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.dragon.rc \
