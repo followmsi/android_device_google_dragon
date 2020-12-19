@@ -264,7 +264,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # UI
 PRODUCT_PROPERTY_OVERRIDES += \
-    sys.use_fifo_ui=1
+    sys.use_fifo_ui=1 \
+    debug.sf.enable_gl_backpressure=1
 
 # HIDL
 PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := true
