@@ -67,9 +67,19 @@ void DrmConnector::set_display(int display) {
   display_ = display;
 }
 
-bool DrmConnector::built_in() const {
+bool DrmConnector::internal() const {
   return type_ == DRM_MODE_CONNECTOR_LVDS || type_ == DRM_MODE_CONNECTOR_eDP ||
          type_ == DRM_MODE_CONNECTOR_DSI || type_ == DRM_MODE_CONNECTOR_VIRTUAL;
+}
+
+bool DrmConnector::external() const {
+  return type_ == DRM_MODE_CONNECTOR_HDMIA || type_ == DRM_MODE_CONNECTOR_DisplayPort ||
+         type_ == DRM_MODE_CONNECTOR_DVID || type_ == DRM_MODE_CONNECTOR_DVII ||
+         type_ == DRM_MODE_CONNECTOR_VGA;
+}
+
+bool DrmConnector::valid_type() const {
+  return internal() || external();
 }
 
 int DrmConnector::UpdateModes() {

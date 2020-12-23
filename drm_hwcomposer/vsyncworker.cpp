@@ -35,6 +35,7 @@ VSyncWorker::VSyncWorker()
     : Worker("vsync", HAL_PRIORITY_URGENT_DISPLAY),
       drm_(NULL),
       display_(-1),
+      enabled_(false),
       last_timestamp_(-1) {
 }
 
@@ -119,6 +120,7 @@ void VSyncWorker::Routine() {
   if (!enabled_) {
     ret = WaitForSignalOrExitLocked();
     if (ret == -EINTR) {
+      Unlock();
       return;
     }
   }
@@ -126,7 +128,6 @@ void VSyncWorker::Routine() {
   bool enabled = enabled_;
   int display = display_;
   std::shared_ptr<VsyncCallback> callback(callback_);
-
   Unlock();
 
   if (!enabled)
