@@ -17,13 +17,13 @@
 #ifndef ANDROID_DRM_DISPLAY_COMPOSITOR_H_
 #define ANDROID_DRM_DISPLAY_COMPOSITOR_H_
 
-#include "drmcomposition.h"
-#include "drmframebuffer.h"
 #include "drmhwcomposer.h"
-#include "queue_worker.h"
+#include "drmcomposition.h"
+#include "drmcompositorworker.h"
+#include "drmframebuffer.h"
 #include "separate_rects.h"
 
-#include <chrono>
+#include <pthread.h>
 #include <memory>
 #include <queue>
 #include <sstream>
@@ -81,7 +81,7 @@ class SquashState {
   std::vector<Region> regions_;
 };
 
-class DrmDisplayCompositor : public QueueWorker<DrmDisplayComposition> {
+class DrmDisplayCompositor {
  public:
   DrmDisplayCompositor();
   ~DrmDisplayCompositor();
@@ -90,12 +90,13 @@ class DrmDisplayCompositor : public QueueWorker<DrmDisplayComposition> {
 
   std::unique_ptr<DrmDisplayComposition> CreateComposition() const;
   int QueueComposition(std::unique_ptr<DrmDisplayComposition> composition);
-  void ProcessWork(std::unique_ptr<DrmDisplayComposition> composition);
-  void ProcessIdle();
+  int Composite();
   int SquashAll();
   void Dump(std::ostringstream *out) const;
 
   std::tuple<uint32_t, uint32_t, int> GetActiveModeResolution();
+
+  bool HaveQueuedComposites() const;
 
   SquashState *squash_state() {
     return &squash_state_;
@@ -103,29 +104,25 @@ class DrmDisplayCompositor : public QueueWorker<DrmDisplayComposition> {
 
  private:
   struct FrameState {
-    FrameState(std::unique_ptr<DrmDisplayComposition> composition, int status)
-        : composition(std::move(composition)), status(status) {
-    }
-
     std::unique_ptr<DrmDisplayComposition> composition;
     int status = 0;
   };
 
-  class FrameWorker : public QueueWorker<FrameState> {
+  class FrameWorker : public Worker {
    public:
     FrameWorker(DrmDisplayCompositor *compositor);
+    ~FrameWorker() override;
 
     int Init();
     void QueueFrame(std::unique_ptr<DrmDisplayComposition> composition,
                     int status);
 
-    mutable uint64_t max_duration_us;
-
    protected:
-    void ProcessWork(std::unique_ptr<FrameState> frame);
+    void Routine() override;
 
    private:
     DrmDisplayCompositor *compositor_;
+    std::queue<FrameState> frame_queue_;
   };
 
   struct ModeState {
@@ -161,10 +158,13 @@ class DrmDisplayCompositor : public QueueWorker<DrmDisplayComposition> {
   DrmResources *drm_;
   int display_;
 
+  DrmCompositorWorker worker_;
   FrameWorker frame_worker_;
 
+  std::queue<std::unique_ptr<DrmDisplayComposition>> composite_queue_;
   std::unique_ptr<DrmDisplayComposition> active_composition_;
 
+  bool initialized_;
   bool active_;
   bool use_hw_overlays_;
 
@@ -179,13 +179,12 @@ class DrmDisplayCompositor : public QueueWorker<DrmDisplayComposition> {
   DrmFramebuffer squash_framebuffers_[2];
 
   // mutable since we need to acquire in HaveQueuedComposites
-  mutable std::mutex mutex_;
+  mutable pthread_mutex_t lock_;
 
   // State tracking progress since our last Dump(). These are mutable since
   // we need to reset them on every Dump() call.
   mutable uint64_t dump_frames_composited_;
   mutable uint64_t dump_last_timestamp_ns_;
-  mutable uint64_t max_duration_us;
 };
 }
 

@@ -14,31 +14,29 @@
  * limitations under the License.
  */
 
-#include "drmcrtc.h"
-#include "drmencoder.h"
-#include "drmresources.h"
-
-#include <stdint.h>
-#include <xf86drmMode.h>
+#include <pthread.h>
 
 namespace android {
 
-DrmEncoder::DrmEncoder(drmModeEncoderPtr e, DrmCrtc *current_crtc,
-                       const std::vector<DrmCrtc *> &possible_crtcs)
-    : id_(e->encoder_id),
-      crtc_(current_crtc),
-      possible_crtcs_(possible_crtcs) {
-}
+class AutoLock {
+ public:
+  AutoLock(pthread_mutex_t *mutex, const char *const name)
+      : mutex_(mutex), name_(name) {
+  }
+  ~AutoLock() {
+    if (locked_)
+      Unlock();
+  }
 
-uint32_t DrmEncoder::id() const {
-  return id_;
-}
+  AutoLock(const AutoLock &rhs) = delete;
+  AutoLock &operator=(const AutoLock &rhs) = delete;
 
-DrmCrtc *DrmEncoder::crtc() const {
-  return crtc_;
-}
+  int Lock();
+  int Unlock();
 
-void DrmEncoder::set_crtc(DrmCrtc *crtc) {
-  crtc_ = crtc;
-}
+ private:
+  pthread_mutex_t *const mutex_;
+  bool locked_ = false;
+  const char *const name_;
+};
 }
