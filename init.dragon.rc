@@ -270,9 +270,16 @@ service netmgrd /vendor/bin/netmgrd
     disabled
     group system radio
 
+service init_renderer /system/bin/init_renderer.sh
+    user root
+    oneshot
+
 service tlk_daemon /vendor/bin/tlk_daemon --storagedir /data/ss --rpmbdev /dev/block/mmcblk0rpmb
     class main
     group system
 
 on property:debug.bq25892=dump
     exec - root root system -- /system/bin/dump_bq25892.sh
+
+on property:dev.bootcomplete=1
+    start init_renderer
