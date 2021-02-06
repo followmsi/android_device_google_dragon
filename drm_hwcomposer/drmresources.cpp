@@ -154,28 +154,16 @@ int DrmResources::Init() {
       break;
     }
 
-    connectors_.emplace_back(std::move(conn));
-  }
-
-  // First look for primary amongst internal connectors
-  for (auto &conn : connectors_) {
-    if (conn->internal() && !found_primary) {
+    if (conn->built_in() && !found_primary) {
       conn->set_display(0);
       found_primary = true;
     } else {
       conn->set_display(display_num);
       ++display_num;
     }
-  }
 
-  // Then look for primary amongst external connectors
-  for (auto &conn : connectors_) {
-    if (conn->external() && !found_primary) {
-      conn->set_display(0);
-      found_primary = true;
-    }
+    connectors_.emplace_back(std::move(conn));
   }
-
   if (res)
     drmModeFreeResources(res);
 
