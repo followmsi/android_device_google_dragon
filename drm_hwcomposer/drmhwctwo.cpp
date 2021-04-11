@@ -698,11 +698,9 @@ HWC2::Error DrmHwcTwo::HwcDisplay::ValidateDisplay(uint32_t *num_types,
       case HWC2::Composition::SolidColor:
       case HWC2::Composition::Cursor:
       case HWC2::Composition::Sideband:
+      default:
         layer.set_validated_type(HWC2::Composition::Client);
         ++*num_types;
-        break;
-      default:
-        layer.set_validated_type(layer.sf_type());
         break;
     }
   }

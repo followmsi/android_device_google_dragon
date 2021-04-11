@@ -279,9 +279,6 @@ static int hwc_prepare(hwc_composer_device_1_t *dev, size_t num_displays,
             frame->left >= (int)mode.h_display() ||
             frame->top >= (int)mode.v_display())
             continue;
-
-        if (layer->compositionType == HWC_FRAMEBUFFER)
-          layer->compositionType = HWC_OVERLAY;
       } else {
         switch (layer->compositionType) {
           case HWC_OVERLAY:
