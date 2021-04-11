@@ -333,6 +333,13 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.bionic.ld.warning=0
 
+# ConfigStore HAL has been deprecated in presence of these props
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    ro.surface_flinger.max_frame_buffer_acquired_buffers=3 \
+    ro.surface_flinger.present_time_offset_from_vsync_ns=0 \
+    ro.surface_flinger.vsync_event_phase_offset_ns=7500000 \
+    ro.surface_flinger.vsync_sf_event_phase_offset_ns=5000000
+
 $(call inherit-product-if-exists, hardware/nvidia/tegra132/tegra132.mk)
 $(call inherit-product-if-exists, vendor/google/dragon/device-vendor.mk)
 $(call inherit-product-if-exists, vendor/google/dragon-common/device-vendor.mk)
