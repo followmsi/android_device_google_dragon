@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemProperties;
 import android.util.Log;
 import androidx.preference.PreferenceFragment;
@@ -62,38 +61,7 @@ public class DeviceSettings extends PreferenceFragment implements Preference.OnP
 
     private void setWifiCountryCode(String ccode) {
         SystemProperties.set(WIFI_CCODE_SYSTEM_PROPERTY, ccode);
-
-        try {
-            mWifiManager.setCountryCode(ccode);
-
-            if (mWifiManager.isWifiEnabled()) {
-                /* Country code takes effect after WiFi restart */
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mWifiManager.setWifiEnabled(false);
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            /* noop */
-                        } finally {
-                            mWifiManager.setWifiEnabled(true);
-                        }
-                    }
-                });
-            }
-
-            refreshCurrentCcode();
-
-            Context context = getActivity();
-            mWifiCCodePref.setSummary(context.getString(R.string.wifi_country_summary, mCurrentCcodeDesc));
-        } catch (NullPointerException | IllegalArgumentException e) {
-            Log.e(LOG_TAG, "Could not set WiFi country code to " + ccode + ". " + e.getLocalizedMessage());
-            e.printStackTrace();
-            return;
-        }
-
-        Log.i(LOG_TAG, "WiFi country code changed to " + ccode);
+        Log.i(LOG_TAG, "WiFi country code changed to " + ccode + ", will take effect on next reboot");
     }
 
     private String ccodeToDescription(String ccode) {
