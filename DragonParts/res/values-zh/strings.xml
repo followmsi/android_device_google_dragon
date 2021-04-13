@@ -18,5 +18,5 @@
     <string name="advanced_settings_summary">附加设置</string>
     <string name="wifi_title">Wi-Fi</string>
     <string name="wifi_countrycode_title">Wi-Fi 国家码</string>
-    <string name="wifi_country_summary">如果设备无法搜索到您的 Wi-Fi 网络，请尝试修改国家码。修改后 Wi-Fi 将重启。\n当前国家码：<xliff:g id="current_ccode">%1$s</xliff:g></string>
+    <string name="wifi_country_summary">如果设备无法搜索到您的 Wi-Fi 网络，请尝试修改国家码。设备重启后生效。\n当前国家码：<xliff:g id="current_ccode">%1$s</xliff:g></string>
 </resources>
