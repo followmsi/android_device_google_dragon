@@ -31,7 +31,7 @@ BOARD_SEPOLICY_DIRS += packages/services/Car/car_product/sepolicy
 
 PRODUCT_NAME := aosp_dragon_car
 PRODUCT_DEVICE := dragon
-PRODUCT_BRAND := Android
-PRODUCT_MODEL := Android Auto Embedded on Dragon
+PRODUCT_BRAND := Google
+PRODUCT_MODEL := Android Auto Embedded on Pixel-C (Dragon)
 PRODUCT_MANUFACTURER := Google
 PRODUCT_RESTRICT_VENDOR_FILES := true
