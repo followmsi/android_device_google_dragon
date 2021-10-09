@@ -69,7 +69,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/init_regions.sh:system/bin/init_regions.sh \
     $(LOCAL_PATH)/init_renderer.sh:system/bin/init_renderer.sh \
     $(LOCAL_PATH)/tune-thermal-gov.sh:system/bin/tune-thermal-gov.sh \
-    $(LOCAL_PATH)/ueventd.dragon.rc:$(TARGET_COPY_OUT_VENDOR)/ueventd.rc \
+    $(LOCAL_PATH)/ueventd.dragon.rc:$(TARGET_COPY_OUT_VENDOR)/etc/ueventd.rc \
     $(LOCAL_PATH)/speakerdsp.ini:system/etc/cras/speakerdsp.ini \
     $(LOCAL_PATH)/bcmdhd.cal:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/bcmdhd.cal \
     $(LOCAL_FSTAB):$(TARGET_COPY_OUT_RAMDISK)/fstab.dragon \
