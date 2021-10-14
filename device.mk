@@ -280,7 +280,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.demo.hdmirotationlock=false \
     debug.sf.recomputecrop=0 \
     sys.use_fifo_ui=1 \
-    debug.sf.enable_gl_backpressure=1
+    debug.sf.enable_gl_backpressure=1 \
+    debug.renderengine.backend=threaded
 
 # HIDL
 PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := true
