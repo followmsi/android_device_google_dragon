@@ -29,6 +29,8 @@ on init
     setprop qemu.hw.mainkeys 0
     start watchdogd
 
+    setprop ro.kernel.ebpf.supported false
+
 on late-init
     # Setting slice_idle to 0 for CFQ, so make sure the scheduler is CFQ.
     write /sys/block/mmcblk0/queue/scheduler cfq
