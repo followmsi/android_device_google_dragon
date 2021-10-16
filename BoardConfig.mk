@@ -143,7 +143,8 @@ WITH_LINEAGE_CHARGER := false
 
 # Shims
 TARGET_LD_SHIM_LIBS += \
-    /vendor/lib/hw/camera.dragon.so|libshim_camera.so
+    /vendor/lib/hw/camera.dragon.so|libshim_camera.so \
+    /vendor/lib/libnvmm_camera_v3.so|libshim_sensor.so
 
 # Testing related defines
 BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh
