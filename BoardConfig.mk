@@ -121,6 +121,8 @@ VENDOR_SECURITY_PATCH := 2019-06-05
 
 BOARD_SEPOLICY_DIRS += device/google/dragon/sepolicy
 
+SELINUX_IGNORE_NEVERALLOWS := true
+
 # add firmware update to the updater binary
 TARGET_RECOVERY_UPDATER_LIBS += librecovery_updater_dragon
 TARGET_RECOVERY_UPDATER_EXTRA_LIBS +=
