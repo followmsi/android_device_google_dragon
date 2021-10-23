@@ -84,6 +84,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.configstore@1.1-service
 
+# VNDK
+PRODUCT_PACKAGES += \
+    vndk-sp
+
 # HIDL
 PRODUCT_PACKAGES += \
     libhidltransport \
