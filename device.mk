@@ -206,9 +206,9 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 
 # set default USB and ADB configuration
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    persist.sys.usb.config=adb \
-    ro.adb.secure=0 \
-    service.adb.root=1
+    persist.sys.usb.config=none \
+    ro.adb.secure=1 \
+    ro.secure=1
 
 # Update the recovery image only if the option is enabled
 # under Developer options
