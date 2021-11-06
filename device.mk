@@ -356,6 +356,9 @@ PRODUCT_PACKAGES += \
     rmi4update \
     rmihidtool
 
+PRODUCT_COPY_FILES += \
+    device/google/dragon/public.libraries.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt
+
 PRODUCT_PACKAGES += \
     libprotobuf-cpp-lite-vendorcompat
 
