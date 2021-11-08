@@ -16,8 +16,6 @@
 
 $(shell mkdir -p out/target/product/dragon/root/vendor/firmware)
 
-PRODUCT_SOONG_NAMESPACES += external/mesa3d
-
 # Build a separate vendor.img
 TARGET_COPY_OUT_VENDOR := vendor
 
