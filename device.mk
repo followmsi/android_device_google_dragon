@@ -340,11 +340,6 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.surface_flinger.vsync_event_phase_offset_ns=7500000 \
     ro.surface_flinger.vsync_sf_event_phase_offset_ns=5000000
 
-$(call inherit-product-if-exists, hardware/nvidia/tegra132/tegra132.mk)
-$(call inherit-product-if-exists, vendor/google/dragon/device-vendor.mk)
-$(call inherit-product-if-exists, vendor/google/dragon-common/device-vendor.mk)
-$(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/config/config-bcm.mk)
-
 ENABLE_LIBDRM := true
 BOARD_GPU_DRIVERS := tegra
 USE_XML_AUDIO_POLICY_CONF := 1
@@ -367,4 +362,4 @@ PRODUCT_COPY_FILES += \
     device/google/dragon/seccomp_policy/mediacodec.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy \
     device/google/dragon/seccomp_policy/mediaextractor.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaextractor.policy
 
-$(call inherit-product-if-exists, vendor/nvidia/dragon/dragon-vendor.mk)
+$(call inherit-product, vendor/google/dragon/dragon-vendor.mk)
