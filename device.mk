@@ -328,7 +328,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.lmk.downgrade_pressure=100 \
     ro.lmk.kill_heaviest_task=true \
     ro.lmk.kill_timeout_ms=100 \
-    ro.lmk.use_minfree_levels=true
+    ro.lmk.use_minfree_levels=true \
+    ro.lmk.use_psi=false
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.bionic.ld.warning=0
