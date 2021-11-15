@@ -86,8 +86,6 @@ BOARD_USES_ALSA_AUDIO := true
 
 BOARD_VENDOR_USE_SENSOR_HAL := sensor_hub
 
-BOARD_WIDEVINE_OEMCRYPTO_LEVEL := 1
-
 TARGET_FS_CONFIG_GEN += device/google/dragon/config.fs
 
 # Bluetooth
