@@ -270,7 +270,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.sf.latch_unsignaled=1 \
     debug.egl.hw=1 \
     debug.gralloc.enable_fb_ubwc=1 \
-    dalvik.vm.heapsize=36m \
     dalvik.vm.dex2oat64.enabled=true \
     dev.pm.dyn_samplingrate=1 \
     persist.demo.hdmirotationlock=false \
