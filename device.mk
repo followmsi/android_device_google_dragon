@@ -330,7 +330,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # ConfigStore HAL has been deprecated in presence of these props
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    ro.surface_flinger.max_frame_buffer_acquired_buffers=1 \
+    ro.surface_flinger.max_frame_buffer_acquired_buffers=3 \
     ro.surface_flinger.present_time_offset_from_vsync_ns=0 \
     ro.surface_flinger.vsync_event_phase_offset_ns=7500000 \
     ro.surface_flinger.vsync_sf_event_phase_offset_ns=5000000
