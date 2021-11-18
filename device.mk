@@ -194,14 +194,14 @@ PRODUCT_SYSTEM_PROPERTY_BLACKLIST := \
     ro.product.locale
 
 # OEM Unlock reporting
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+PRODUCT_PROPERTY_OVERRIDES += \
     ro.oem_unlock_supported=1
 
 # setup dalvik vm configs.
 $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
 
 # OpenGL ES
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+PRODUCT_PROPERTY_OVERRIDES += \
     ro.opengles.version=196610
 
 # set default USB and ADB configuration
@@ -282,7 +282,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := true
 
 # Allows healthd to boot directly from charger mode rather than initiating a reboot.
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+PRODUCT_PROPERTY_OVERRIDES += \
     ro.enable_boot_charger_mode=1
 
 # TODO(dgreid) - Add back verity dependencies like flounder has.
@@ -335,7 +335,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.binary_xml=false
 
 # ConfigStore HAL has been deprecated in presence of these props
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+PRODUCT_PROPERTY_OVERRIDES += \
     ro.surface_flinger.max_frame_buffer_acquired_buffers=3 \
     ro.surface_flinger.present_time_offset_from_vsync_ns=0 \
     ro.surface_flinger.vsync_event_phase_offset_ns=7500000 \
