@@ -35,10 +35,10 @@ fi
 
 if [ -z "$CURRENT_BOOT_CC" ]; then
   setprop ro.boot.wificountrycode "${COUNTRY}"
-elif [ "$CURRENT_BOOT_CC" != "${COUNTRY}" -a -x /sbin/resetprop ]; then
+elif [ "$CURRENT_BOOT_CC" != "${COUNTRY}" -a -x /system/bin/resetprop ]; then
   # Preferred country code changed during boot? Likely Magisk
   # changed the boot procedure and we have already been called once
   # with props missing. Now use Magisk's tool to settle the problem
   # it causes.
-  /sbin/resetprop ro.boot.wificountrycode "${COUNTRY}"
+  /system/bin/resetprop ro.boot.wificountrycode "${COUNTRY}"
 fi
