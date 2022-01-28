@@ -172,8 +172,8 @@ PRODUCT_PACKAGES += \
     DragonKeyboard
 
 # Wi-Fi country code setting
-# PRODUCT_PACKAGES += \
-#    DragonParts
+PRODUCT_PACKAGES += \
+    DragonParts
 
 # Face Unlock
 PRODUCT_PACKAGES += \
