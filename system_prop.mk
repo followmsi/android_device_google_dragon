@@ -125,8 +125,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # set default USB and ADB configuration
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    persist.sys.usb.config=adb \
-    ro.adb.secure=0 \
     service.adb.root=1
 
 # Charger
