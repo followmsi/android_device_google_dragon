@@ -158,6 +158,15 @@ on boot
     chown system system /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
     chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
     chown system system /sys/devices/57000000.gpu/pstate
+    
+    chown system system /sys/module/input_cfboost/parameters/boost_freq
+    chown system system /sys/module/input_cfboost/parameters/boost_gpu
+    chown system system /sys/module/input_cfboost/parameters/boost_enabled
+    write /sys/module/input_cfboost/parameters/boost_freq 1200000
+    write /sys/module/input_cfboost/parameters/boost_emc 300000
+    write /sys/module/input_cfboost/parameters/boost_gpu 537000
+    write /sys/module/input_cfboost/parameters/boost_time 2000
+    write /sys/module/input_cfboost/parameters/boost_cpus 3
 
     # update foreground cpuset now that processors are up
     # reserve CPU 3 for the top app
