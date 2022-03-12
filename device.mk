@@ -29,6 +29,8 @@ $(call inherit-product, device/google/dragon/hidl/hidl.mk)
 
 $(call inherit-product, device/google/dragon/permissions.mk)
 
+$(call inherit-product, device/google/dragon/vendor/common-by-flags.mk) 
+
 # Properties
 $(call inherit-product, device/google/dragon/system_prop.mk)
 

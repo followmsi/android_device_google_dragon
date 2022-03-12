@@ -69,6 +69,8 @@ on post-fs-data
     mkdir /data/nvcam 0700 media camera
     mkdir /data/misc/camera 0700 media camera
 
+    mkdir /data/vendor/nvphs 0775 system system
+
     # secure os storage
     mkdir /data/ss 0700 system system
     mkdir /data/ss/tlk 0700 system system
@@ -126,42 +128,25 @@ on boot
     write /sys/kernel/debug/tracing/tracing_on 0
 
     # Power management settings
+    write /sys/module/tegra3_emc/parameters/emc_enable 0
     #write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 1000000
     #write /sys/module/cpu_tegra/parameters/cpu_user_cap 700000
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor schedutil
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor schedutil
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor schedutil
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor schedutil
 
-    # (crosbug.com/p/46057) : Limit min frequency to 204Mhz for audio latency
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 204000
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 204000
-    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 204000
-    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 204000
-    write /sys/devices/system/cpu/cpu0/cpufreq/cpufreq_min_freq 204000
+    #write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 510000
+    #write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 510000
+    #write /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed 700000
+    #write /sys/devices/system/cpu/cpu1/cpufreq/scaling_setspeed 700000
 
-    restorecon_recursive /sys/devices/system/cpu/cpufreq/interactive
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_rate
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/timer_rate
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_slack
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/timer_slack
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/target_loads
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/target_loads
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/boost
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/boost
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/boostpulse
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/input_boost
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/input_boost
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/boostpulse_duration
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
-    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
-    chown system system /sys/devices/57000000.gpu/pstate
-    
+    write /sys/kernel/debug/cpuidle_t210/fast_cluster_states_enable 2
+    write /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/enable 1
+    write /sys/devices/system/cpu/cpuquiet/current_governor runnable
+
+    write /sys/module/tegra21_emc/parameters/pasr_enable 1
+
     chown system system /sys/module/input_cfboost/parameters/boost_freq
     chown system system /sys/module/input_cfboost/parameters/boost_gpu
     chown system system /sys/module/input_cfboost/parameters/boost_enabled

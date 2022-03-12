@@ -1,4 +1,4 @@
-# Copyright (C) 2014 The Android Open Source Project
+# Copyright (C) 2020 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,18 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 LOCAL_PATH := $(call my-dir)
+COMMON_BUILD_PATH := device/google/dragon/vendor/build
 
-# HAL module implemenation stored in
-# hw/<POWERS_HARDWARE_MODULE_ID>.<ro.hardware>.so
-include $(CLEAR_VARS)
-
-LOCAL_MODULE_RELATIVE_PATH := hw
-LOCAL_SHARED_LIBRARIES := liblog libcutils libutils
-LOCAL_SRC_FILES := power_dragon.cpp \
-                   timed_qos_manager.cpp
-LOCAL_MODULE := power.dragon
-LOCAL_MODULE_TAGS := optional
-LOCAL_PROPRIETARY_MODULE := true
-include $(BUILD_SHARED_LIBRARY)
+include $(COMMON_BUILD_PATH)/macros.mk
+include $(call all-makefiles-under,$(LOCAL_PATH))

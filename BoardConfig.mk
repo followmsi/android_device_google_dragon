@@ -48,8 +48,9 @@ TARGET_KERNEL_ADDITIONAL_FLAGS := \
 # Disable emulator for "make dist" until there is a 64-bit qemu kernel
 BUILD_EMULATOR := false
 
-TARGET_BOARD_PLATFORM := tegra210_dragon
-TARGET_BOARD_INFO_FILE ?= device/google/dragon/board-info.txt
+TARGET_TEGRA_VERSION    ?= t210
+TARGET_BOARD_PLATFORM   := tegra210_dragon
+TARGET_BOARD_INFO_FILE  ?= device/google/dragon/board-info.txt
 
 TARGET_BOOTLOADER_BOARD_NAME := dragon
 TARGET_RELEASETOOLS_EXTENSIONS := device/google/dragon

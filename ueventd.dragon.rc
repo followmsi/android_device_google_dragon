@@ -25,6 +25,18 @@
 # Backlight
 /sys/devices/50000000.host1x/54400000.dsi/54400000.dsi.0/backlight/lpm102a188a-backlight	brightness	0660	system	system
 
+# pmqos
+/dev/constraint_cpu_freq 0660 system system
+/dev/constraint_gpu_freq 0660 system system
+/dev/constraint_online_cpus 0660 root system
+
+# cpu cores
+/sys/devices/system/cpu/cpu* cpuquiet/active 0664 system system
+/sys/devices/system/cpu/cpu* cpufreq/scaling_governor 0664 system system
+/sys/devices/system/cpu/cpu* cpufreq/scaling_setspeed 0664 system system
+/sys/devices/system/cpu/cpu* cpufreq/scaling_available_frequencies 0444 system system
+/sys/devices/system/cpu/cpu* cpufreq/cpuinfo_cur_freq 0444 system system
+
 # Sensors
 
 # Sensor ring.

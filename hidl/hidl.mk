@@ -69,9 +69,15 @@ PRODUCT_PACKAGES += \
 
 # Power
 PRODUCT_PACKAGES += \
-    android.hardware.power@1.0-impl \
-    android.hardware.power.stats@1.0-service.mock \
-    power.dragon
+    vendor.nvidia.hardware.power@1.0-service
+
+# PHS
+PRODUCT_PACKAGES += \
+    nvphsd.conf \
+    init.nvphsd_setup.rc \
+    nvphsd.rc \
+    nvphsd_common.conf \
+    nvphsd_setup.sh
 
 # Sensors
 PRODUCT_PACKAGES += \
