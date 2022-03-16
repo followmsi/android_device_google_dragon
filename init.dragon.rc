@@ -284,10 +284,6 @@ service netmgrd /vendor/bin/netmgrd
     disabled
     group system radio
 
-service init_renderer /system/bin/init_renderer.sh
-    user root
-    oneshot
-
 service tlk_daemon /vendor/bin/tlk_daemon --storagedir /data/ss --rpmbdev /dev/block/mmcblk0rpmb
     class main
     group system
@@ -303,5 +299,3 @@ on property:dev.bootcomplete=1
     write /dev/cpuset/background/cpus 0
     write /dev/cpuset/system-background/cpus 0-2
     write /dev/cpuset/restricted/cpus 0-1
-    
-    start init_renderer
