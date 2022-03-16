@@ -70,7 +70,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/init.dragon.usb.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.dragon.usb.rc \
     $(LOCAL_PATH)/init.recovery.dragon.rc:recovery/root/init.recovery.dragon.rc \
     $(LOCAL_PATH)/init_regions.sh:system/bin/init_regions.sh \
-    $(LOCAL_PATH)/init_renderer.sh:system/bin/init_renderer.sh \
     $(LOCAL_PATH)/tune-thermal-gov.sh:system/bin/tune-thermal-gov.sh \
     $(LOCAL_PATH)/ueventd.dragon.rc:$(TARGET_COPY_OUT_VENDOR)/etc/ueventd.rc \
     $(LOCAL_PATH)/speakerdsp.ini:system/etc/cras/speakerdsp.ini \
