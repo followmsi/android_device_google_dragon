@@ -1,3 +1,11 @@
+/dev/cpu_freq_min	0660	system	system
+/dev/cpu_freq_max	0660	system	system
+/dev/gpu_freq_min	0660	system	system
+/dev/gpu_freq_max	0660	system	system
+/dev/emc_freq_min	0660	system	system
+/dev/min_online_cpus	0660	system	system
+/dev/max_online_cpus	0660	system	system
+
 /dev/block/mmcblk0rpmb 0600 system drmrpc
 /dev/block/platform/700b0600.sdhci/by-name/recovery 0600 system system
 /dev/block/platform/700b0600.sdhci/by-name/PST 0600 system system
@@ -39,6 +47,9 @@
 /sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-gyro*/iio:device* in_anglvel_x_calibbias  0660 system system
 /sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-gyro*/iio:device* in_anglvel_y_calibbias  0660 system system
 /sys/devices/7000c400.i2c/i2c-1/1-001e/cros-ec-dev.0/cros-ec-gyro*/iio:device* in_anglvel_z_calibbias  0660 system system
+
+# sysfs properties
+/sys/devices/system/cpu*   online   0664  system system
 
 # Camera
 /dev/focuser    0660    media   camera
