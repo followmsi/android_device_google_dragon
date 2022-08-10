@@ -152,6 +152,9 @@ PRODUCT_PACKAGES += \
     librs_jni \
     com.android.future.usb.accessory
 
+# Dexpreopt
+PRODUCT_DEXPREOPT_SPEED_APPS += SystemUI
+
 #TODO(dgreid) is this right?
 
 # setup dalvik vm configs.
