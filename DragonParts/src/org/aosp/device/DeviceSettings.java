@@ -15,7 +15,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 */
-package org.lineageos.device;
+package org.aosp.device;
 
 import android.app.Activity;
 import android.content.Context;

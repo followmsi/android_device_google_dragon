@@ -17,15 +17,15 @@ TARGET_SCREEN_HEIGHT := 2560
 TARGET_SCREEN_WIDTH := 1800
 TARGET_BOOTANIMATION_HALF_RES := true
 
-# Inherit some common LineageOS stuff.
-$(call inherit-product, vendor/lineage/config/common_full_tablet_wifionly.mk)
+# Inherit some common Arrow stuff.
+$(call inherit-product, vendor/arrow/config/common.mk)
 
 # Inherit from hardware-specific part of the product configuration
 $(call inherit-product, device/google/dragon/aosp_dragon.mk)
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := dragon
-PRODUCT_NAME := lineage_dragon
+PRODUCT_NAME := arrow_dragon
 PRODUCT_BRAND := Google
 PRODUCT_MODEL := Pixel C
 PRODUCT_MANUFACTURER := google
