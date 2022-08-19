@@ -125,7 +125,7 @@ BOARD_HAL_STATIC_LIBRARIES := libdumpstate.dragon libhealthd.dragon
 # TWRP settings
 RECOVERY_VARIANT := twrp
 TW_THEME := landscape_hdpi
-TW_INCLUDE_MTP := true
+TW_EXCLUDE_MTP := true
 BOARD_HAS_NO_REAL_SDCARD := true
 RECOVERY_SDCARD_ON_DATA := true
 TW_BRIGHTNESS_PATH := /sys/class/backlight/lpm102a188a-backlight/brightness
