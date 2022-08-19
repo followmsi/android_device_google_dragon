@@ -125,7 +125,6 @@ BOARD_HAL_STATIC_LIBRARIES := libdumpstate.dragon libhealthd.dragon
 # TWRP settings
 RECOVERY_VARIANT := twrp
 TW_THEME := landscape_hdpi
-TW_NO_SCREEN_TIMEOUT := true
 TW_INCLUDE_MTP := true
 BOARD_HAS_NO_REAL_SDCARD := true
 RECOVERY_SDCARD_ON_DATA := true
