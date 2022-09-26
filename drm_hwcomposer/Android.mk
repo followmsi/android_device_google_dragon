@@ -14,45 +14,19 @@
 
 ifeq ($(strip $(BOARD_USES_DRM_HWCOMPOSER)),true)
 
-__this_dir := $(call my-dir)
+LOCAL_PATH := $(call my-dir)
+
+common_drm_hwcomposer_cflags := \
+    -Wall \
+    -Werror \
+    -Wno-unused-function \
+    -Wno-unused-label \
+    -Wno-unused-parameter \
+    -Wno-unused-private-field \
+    -Wno-unused-variable \
 
 # =====================
-# libdrmhwc_sync.a
-# =====================
-include $(CLEAR_VARS)
-
-LOCAL_PATH := system/core/libsync
-
-LOCAL_SRC_FILES := sync.c
-
-LOCAL_CFLAGS := -Wno-unused-variable
-
-LOCAL_MODULE := libdrmhwc_sync_dragon
-LOCAL_VENDOR_MODULE := true
-
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
-
-LOCAL_EXPORT_C_INCLUDE_DIRS := \
-	$(LOCAL_PATH) $(LOCAL_PATH)/include
-
-include $(BUILD_STATIC_LIBRARY)
-
-# =====================
-# libdrmhwc_utils.a
-# =====================
-include $(CLEAR_VARS)
- 
-LOCAL_PATH := $(__this_dir)
-
-LOCAL_SRC_FILES := worker.cpp
- 
-LOCAL_MODULE := libdrmhwc_utils_dragon
-LOCAL_VENDOR_MODULE := true
-
-include $(BUILD_STATIC_LIBRARY)
-
-# =====================
-# hwcomposer.drm.so
+# hwcomposer.dragon.so
 # =====================
 include $(CLEAR_VARS)
 
@@ -63,23 +37,24 @@ LOCAL_SHARED_LIBRARIES := \
 	libGLESv2 \
 	libhardware \
 	liblog \
+	libsync \
 	libui \
 	libutils
 
-LOCAL_STATIC_LIBRARIES := libdrmhwc_utils_dragon libdrmhwc_sync_dragon
+LOCAL_STATIC_LIBRARIES := libdrmhwc_utils
 
 LOCAL_C_INCLUDES := \
-        external/drm_gralloc \
+	external/drm_gralloc \
 	external/libdrm \
 	external/libdrm/include/drm \
 	system/core/include/utils \
+	system/core/libsync \
+	system/core/libsync/include \
 
 LOCAL_SRC_FILES := \
-	autolock.cpp \
 	drmresources.cpp \
 	drmcomposition.cpp \
 	drmcompositor.cpp \
-	drmcompositorworker.cpp \
 	drmconnector.cpp \
 	drmcrtc.cpp \
 	drmdisplaycomposition.cpp \
@@ -90,19 +65,30 @@ LOCAL_SRC_FILES := \
 	drmplane.cpp \
 	drmproperty.cpp \
 	glworker.cpp \
-	hwcomposer.cpp \
-        hwcutils.cpp \
-        platform.cpp \
-        platformdrmgeneric.cpp \
-        platformnv.cpp \
+	hwcutils.cpp \
+	platform.cpp \
 	separate_rects.cpp \
 	virtualcompositorworker.cpp \
 	vsyncworker.cpp
 
+ifeq ($(TARGET_FORCES_DRM_HWC1),true)
+LOCAL_SRC_FILES += hwcomposer.cpp
+else
+LOCAL_SRC_FILES += drmhwctwo.cpp
+endif
+
+LOCAL_CFLAGS := $(common_drm_hwcomposer_cflags)
+
+LOCAL_CPPFLAGS += \
+	-DHWC2_USE_CPP11 \
+	-DHWC2_INCLUDE_STRINGIFICATION
+
 ifeq ($(strip $(BOARD_DRM_HWCOMPOSER_BUFFER_IMPORTER)),nvidia-gralloc)
 LOCAL_CPPFLAGS += -DUSE_NVIDIA_IMPORTER
+LOCAL_SRC_FILES += platformnv.cpp
 else
 LOCAL_CPPFLAGS += -DUSE_DRM_GENERIC_IMPORTER
+LOCAL_SRC_FILES += platformdrmgeneric.cpp
 endif
 
 LOCAL_MODULE := hwcomposer.dragon
@@ -111,8 +97,6 @@ LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 LOCAL_MODULE_SUFFIX := $(TARGET_SHLIB_SUFFIX)
 LOCAL_VENDOR_MODULE := true
-LOCAL_HEADER_LIBRARIES += libhardware_headers
-
 include $(BUILD_SHARED_LIBRARY)
 
 include $(call all-makefiles-under,$(LOCAL_PATH))
