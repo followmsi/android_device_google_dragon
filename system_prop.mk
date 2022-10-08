@@ -127,6 +127,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     service.adb.root=1
 
+# Use legacy ADB USB support
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.adb.nonblocking_ffs=false
+
 # Charger
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.charger.enable_suspend=true
