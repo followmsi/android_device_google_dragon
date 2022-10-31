@@ -22,7 +22,7 @@ def FullOTA_InstallEnd(info):
     bootloader_img = info.input_zip.read("RADIO/bootloader.img")
     ec_img = info.input_zip.read("RADIO/ec.bin")
   except KeyError:
-    print "no firmware images in target_files; skipping install"
+    print ("no firmware images in target_files; skipping install")
     return
   # copy the data into the package.
   common.ZipWriteStr(info.output_zip, "bootloader.img", bootloader_img)
@@ -37,7 +37,7 @@ def IncrementalOTA_InstallEnd(info):
     target_bootloader_img = info.target_zip.read("RADIO/bootloader.img")
     target_ec_img = info.target_zip.read("RADIO/ec.bin")
   except KeyError:
-    print "no firmware images in target target_files; skipping install"
+    print ("no firmware images in target target_files; skipping install")
     return
 
   # copy the data into the package irrespective of source and target versions.
