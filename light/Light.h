@@ -15,7 +15,7 @@ namespace V2_0 {
 namespace implementation {
 
 struct Light : public ILight {
-    Light(std::ofstream&& backlight);
+    Light();
 
     // Methods from ::android::hardware::light::V2_0::ILight follow.
     Return<Status> setLight(Type type, const LightState& state)  override;
@@ -23,8 +23,14 @@ struct Light : public ILight {
 
 private:
     void setBacklight(const LightState& state);
+    void setButtonsLight(const LightState& state);
 
     std::ofstream mBacklight;
+    std::fstream mPowerLed;
+    std::ofstream mPowerLedState;
+    std::ofstream mButtonLeds;
+    std::ofstream mButtonLedsState;
+    int8_t mLedBrightness;
 
     std::unordered_map<Type, std::function<void(const LightState&)>> mLights;
     std::mutex mLock;

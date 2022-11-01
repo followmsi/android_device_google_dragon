@@ -1,5 +1,6 @@
 /*
- * Copyright 2018 The LineageOS Project
+ * Copyright (C) 2017 The Android Open Source Project
+ * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +15,13 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "android.hardware.light@2.0-service.dragon"
+#define LOG_TAG "android.hardware.light@2.0-service-nvidia"
 
-#include <android-base/logging.h>
+// #define LOG_NDEBUG 0
+
+#include <android/log.h>
 #include <hidl/HidlTransportSupport.h>
-#include <utils/Errors.h>
-
+#include <hardware/lights.h>
 #include "Light.h"
 
 using android::sp;
@@ -31,53 +33,37 @@ using android::hardware::configureRpcThreadpool;
 using android::hardware::joinRpcThreadpool;
 
 // Generated HIDL files
-using android::hardware::light::V2_0::ILight;
 using android::hardware::light::V2_0::implementation::Light;
 
-const static std::string kBacklightPath = "/sys/class/backlight/lpm102a188a-backlight/brightness";
-const static std::string kMaxBacklightPath = "/sys/class/backlight/lpm102a188a-backlight/max_brightness";
-
 int main() {
+
     status_t status;
-    android::sp<ILight> service = nullptr;
+    android::sp<Light> service = nullptr;
 
-    LOG(INFO) << "Light HAL Service 2.0 is starting.";
+    ALOGI("Light HAL Service 2.0 for Nvidia is starting.");
 
-    std::ofstream backlight(kBacklightPath);
-    if (!backlight) {
-        int error = errno;
-        LOG(ERROR) << "Failed to open " << kBacklightPath << ", error=" << errno
-                   << " (" << strerror(errno) << ")";
-        return -error;
-    }
-
-    std::ifstream max_backlight(kMaxBacklightPath);
-    if (!max_backlight) {
-        int error = errno;
-        LOG(ERROR) << "Failed to open " << kMaxBacklightPath << ", error=" << errno
-                   << " (" << strerror(errno) << ")";
-        return -error;
-    }
-
-    service = new Light(std::move(backlight));
+    service = new Light();
     if (service == nullptr) {
-        LOG(ERROR) << "Can not create an instance of Light HAL Iface, exiting.";
+        ALOGE("Can not create an instance of Light HAL Iface, exiting.");
+
         goto shutdown;
     }
 
-    configureRpcThreadpool(1, true);
+    configureRpcThreadpool(1, true /*callerWillJoin*/);
 
     status = service->registerAsService();
     if (status != OK) {
-        LOG(ERROR) << "Could not register service for Light HAL Iface (" << status << ")";
+        ALOGE("Could not register service for Light HAL Iface (%d).", status);
         goto shutdown;
     }
 
-    LOG(INFO) << "Light HAL Service is ready.";
+    ALOGI("Light Service is ready");
     joinRpcThreadpool();
+    //Should not pass this line
 
 shutdown:
-    // Under normal cases, execution will not reach this line.
-    LOG(ERROR) << "Light HAL Service is shutting down.";
+    // In normal operation, we don't expect the thread pool to exit
+
+    ALOGE("Light Service is shutting down");
     return 1;
 }
