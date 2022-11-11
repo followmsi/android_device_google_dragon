@@ -42,6 +42,11 @@ std::map<NvCPLHintData,interactive_data_t> interactive_data_array;
 // CPU/EMC ratio table source sysfs
 #define CPU_EMC_RATIO_SRC_NODE "/sys/kernel/tegra_cpu_emc/table_src"
 
+// GPU Boost
+#define GPU_BOOST_PATH "/sys/devices/57000000.gpu/pstate"
+#define GPU_BOOST_ENTER_CMD "0a,0d"
+#define GPU_BOOST_EXIT_CMD "auto"
+
 static void find_input_device_ids(struct powerhal_info *pInfo)
 {
     int i = 0;
@@ -603,6 +608,12 @@ void common_power_set_interactive(struct powerhal_info *pInfo, int on)
         if(pInfo->switch_cpu_emc_limit_enabled) {
             sysfs_write_int(CPU_EMC_RATIO_SRC_NODE, on);
         }
+    }
+
+    if (on) {
+        sysfs_write(GPU_BOOST_PATH, GPU_BOOST_ENTER_CMD);
+        } else {
+	sysfs_write(GPU_BOOST_PATH, GPU_BOOST_EXIT_CMD);
     }
 
     if (pInfo->no_cpufreq_interactive)

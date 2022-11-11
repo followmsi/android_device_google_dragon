@@ -101,6 +101,9 @@ on post-fs-data
 
     # backlight
     chown system system /sys/class/backlight/lp8557-backlight/brightness
+    
+    # gpu
+    chown system system /sys/class/drm/card0/device/pstate
 
     setprop vold.post_fs_data_done 1
 
@@ -198,9 +201,6 @@ on boot
     write /proc/sys/kernel/core_pattern "|/system/bin/crash_dispatcher %p %u %g %s %t %e"
     write /proc/sys/kernel/core_pipe_limit 4
     write /proc/self/coredump_filter 0x1
-
-    # enable GPU dvfs
-    write /sys/class/drm/card0/device/pstate auto
 
     # set GPU auto suspend
     write /sys/devices/57000000.gpu/power/autosuspend_delay_ms 520
