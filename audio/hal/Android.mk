@@ -49,7 +49,6 @@ LOCAL_MODULE_TAGS := optional
 
 LOCAL_PROPRIETARY_MODULE := true
 
-# b/26236653, dsp_util.c inline assembly code does not compile with llvm yet.
-LOCAL_CLANG_CFLAGS += -no-integrated-as -fno-addrsig
+LOCAL_HEADER_LIBRARIES := libhardware_headers
 
 include $(BUILD_SHARED_LIBRARY)
