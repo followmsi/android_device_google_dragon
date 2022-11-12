@@ -1,0 +1,173 @@
+#Copyright (c) 2011-2021, NVIDIA Corporation.  All Rights Reserved.
+#
+#NVIDIA Corporation and its licensors retain all intellectual property and
+#proprietary rights in and to this software and related documentation.  Any
+#use, reproduction, disclosure or distribution of this software and related
+#documentation without an express license agreement from NVIDIA Corporation
+#is strictly prohibited.
+
+on boot
+    # power up/down interface
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+    chmod 0660 /sys/class/rfkill/rfkill0/type
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
+
+    chown bluetooth bluetooth ro.bt.bdaddr_path
+    chown bluetooth bluetooth /system/etc/bluetooth
+    chown bluetooth bluetooth /mnt/vendor/factory/bluetooth/bt_mac.txt
+
+    chown system bluetooth /mnt/vendor/wifi_config/ts_config.conf
+    chown system bluetooth /mnt/vendor/wifi_config/jarvis_config.conf
+
+    chown wifi wifi /mnt/vendor/factory/wifi/wifi_mac.txt
+    chmod 0644 /mnt/vendor/factory/wifi/wifi_mac.txt
+
+    # Wifi firmware reload path
+    chown wifi wifi /sys/module/bcmdhd/parameters/firmware_path
+    chown wifi wifi /sys/module/bcmdhd_pcie/parameters/firmware_path
+
+    # Wifi op mode reload path
+    chmod 0660 /sys/module/bcmdhd/parameters/op_mode
+    chmod 0660 /sys/module/bcmdhd_pcie/parameters/op_mode
+    chown wifi wifi /sys/module/bcmdhd/parameters/op_mode
+    chown wifi wifi /sys/module/bcmdhd_pcie/parameters/op_mode
+
+on property:init.svc.vendor.lkm_loader=stopped
+    # Finish loading wifi loadable modules
+    start vendor.wifiloader
+
+    # power up/down interface
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+    chmod 0660 /sys/class/rfkill/rfkill0/type
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
+
+    # Wifi firmware reload path
+    chown wifi wifi /sys/module/bcmdhd/parameters/firmware_path
+    chown wifi wifi /sys/module/bcmdhd_pcie/parameters/firmware_path
+
+    # Wifi op mode reload path
+    chmod 0660 /sys/module/bcmdhd/parameters/op_mode
+    chmod 0660 /sys/module/bcmdhd_pcie/parameters/op_mode
+    chown wifi wifi /sys/module/bcmdhd/parameters/op_mode
+    chown wifi wifi /sys/module/bcmdhd_pcie/parameters/op_mode
+
+    # nvcap feature
+    chown system /sys/class/net/wlan0/histogram/tcpdump
+    chown system /sys/class/net/wlan0/histogram/scan
+
+    # wifi_product path
+    chown system /sys/class/net/wlan0/wifi_product
+
+    chmod 0660 /sys/module/brcmfmac/parameters/alternative_fw_path
+    chown wifi wifi /sys/module/brcmfmac/parameters/alternative_fw_path
+on fs
+    # limit size of BT snoop logs
+    setprop persist.bluetooth.btsnoopsize 0x7D00
+
+    # Increase rmem_max for 4k GS
+    write /proc/sys/net/core/rmem_max 1048576
+    write /proc/sys/net/ipv4/neigh/default/ucast_solicit 6
+    write /proc/sys/net/ipv4/neigh/default/retrans_time_ms 1500
+
+    # set p2p interface
+    setprop wifi.direct.interface p2p-dev-wlan0
+
+on post-fs-data
+# Create the directories used by the Wireless subsystem
+    mkdir /data/vendor/wifi 0771 wifi wifi
+    mkdir /data/vendor/wifi/wpa 0770 wifi wifi
+    mkdir /data/vendor/wifi/wpa/sockets 0770 wifi wifi
+
+    start supplicant_log
+
+# bluetooth mac address programming
+service vendor.bt_loader /vendor/bin/bt_loader.sh
+    class main
+    user root
+    group root
+    oneshot
+
+on property:ro.vendor.bt.bdaddr_path=*
+    setprop ro.bt.bdaddr_path ${ro.vendor.bt.bdaddr_path}
+
+# vendor.wifiloader - set the wifi commchip_id accordingly
+service vendor.wifiloader /vendor/bin/wifi_loader.sh
+    class main
+    user root
+    group root wifi
+    oneshot
+    disabled
+
+service dhcpcd_p2p_wlan0 /system/bin/dhcpcd p2p-wlan0-0
+    class main
+    disabled
+    oneshot
+
+service dhcpcd_p2p_p2p0 /system/bin/dhcpcd p2p-p2p0-0
+    class main
+    disabled
+    oneshot
+
+service dhcpcd_wlan0 /system/bin/dhcpcd -aABKL -y 0
+    class main
+    disabled
+    oneshot
+
+service dhcpcd_p2p /system/bin/dhcpcd -aABKL
+    class main
+    disabled
+    oneshot
+
+service dhcpcd_eth0 /system/bin/dhcpcd -ABKL -f/system/etc/dhcpcd/dhcpcd.conf
+     class main
+     disabled
+     oneshot
+
+service dhcpcd_hv1 /system/bin/dhcpcd -ABKL -f/system/etc/dhcpcd/dhcpcd.conf
+     class main
+     disabled
+     oneshot
+
+service dhcpcd_bt-pan /system/bin/dhcpcd -ABKL
+    class main
+    disabled
+    oneshot
+
+service iprenew_bt-pan /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+service iprenew_wlan0 /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+service iprenew_p2p /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+service iprenew_eth0 /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+service iprenew_hv1 /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+service supplicant_log /vendor/bin/supplicant_log_monitor.sh
+    class main
+    user system
+    group system wifi
+
+service dns_masq /system/bin/dnsmasq --no-daemon --no-resolv --no-poll --dhcp-option-force=43,ANDROID_METERED --dhcp-range=192.168.42.2,192.168.42.254,1h &
+    class main
+    user dhcp
+    group dhcp wifi system
+    disabled
+    oneshot

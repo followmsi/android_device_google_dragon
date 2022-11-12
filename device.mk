@@ -33,6 +33,7 @@ $(call inherit-product, device/google/dragon/vendor/common-by-flags.mk)
 
 # Properties
 $(call inherit-product, device/google/dragon/system_prop.mk)
+$(call inherit-product, device/google/dragon/vendor_prop.mk)
 
 # By default build TLK from source if it is available, otherwise use
 # prebuilts.  To force using the prebuilt while having the source, set:
@@ -68,32 +69,25 @@ PRODUCT_BUILD_BOOT_IMAGE := true
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/dump_bq25892.sh:system/bin/dump_bq25892.sh \
     $(LOCAL_PATH)/touchfwup.sh:system/bin/touchfwup.sh \
-    $(LOCAL_PATH)/init.dragon.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.dragon.rc \
-    $(LOCAL_PATH)/init.dragon.usb.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.dragon.usb.rc \
-    $(LOCAL_PATH)/init.recovery.dragon.rc:recovery/root/init.recovery.dragon.rc \
     $(LOCAL_PATH)/init_regions.sh:system/bin/init_regions.sh \
     $(LOCAL_PATH)/init_renderer.sh:system/bin/init_renderer.sh \
     $(LOCAL_PATH)/tune-thermal-gov.sh:system/bin/tune-thermal-gov.sh \
     $(LOCAL_PATH)/ueventd.dragon.rc:$(TARGET_COPY_OUT_VENDOR)/etc/ueventd.rc \
     $(LOCAL_PATH)/speakerdsp.ini:system/etc/cras/speakerdsp.ini \
-    $(LOCAL_PATH)/bcmdhd.cal:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/bcmdhd.cal \
     $(LOCAL_FSTAB):$(TARGET_COPY_OUT_RAMDISK)/fstab.dragon \
     $(LOCAL_FSTAB):$(TARGET_COPY_OUT_VENDOR)/etc/fstab.dragon
 
+# Ramdisk
 PRODUCT_PACKAGES += \
-    libwpa_client \
-    hostapd \
-    wificond \
-    wifilogd \
-    wpa_supplicant \
-    wpa_supplicant.conf \
-    libwifikeystorehal \
+    init.dragon.rc \
+    init.dragon.usb.rc \
+    init.comms.rc \
+    bt_loader \
+    wifi_loader
+
+PRODUCT_PACKAGES += \
     fs_config_files \
     fwtool
-
-PRODUCT_COPY_FILES += \
-    device/google/dragon/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf \
-    device/google/dragon/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf
 
 PRODUCT_COPY_FILES += \
     device/google/dragon/dragon-keypad.kl:system/usr/keylayout/dragon-keypad.kl
@@ -113,7 +107,6 @@ PRODUCT_COPY_FILES += \
     frameworks/av/services/audiopolicy/config/r_submix_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/r_submix_audio_policy_configuration.xml \
     frameworks/av/services/audiopolicy/config/default_volume_tables.xml:$(TARGET_COPY_OUT_VENDOR)/etc/default_volume_tables.xml \
     $(LOCAL_PATH)/audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_configuration.xml \
-    $(LOCAL_PATH)/audio_policy_configuration_bluetooth_legacy_hal.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_configuration_bluetooth_legacy_hal.xml \
     $(LOCAL_PATH)/audio_policy_volumes_drc.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_volumes_drc.xml \
     $(LOCAL_PATH)/audio_effects.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_effects.xml \
     $(LOCAL_PATH)/mixer_paths_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/mixer_paths_0.xml
@@ -124,9 +117,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/media_codecs.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs.xml \
     $(LOCAL_PATH)/media_codecs_performance.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_performance.xml \
     $(LOCAL_PATH)/media_profiles_V1_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles_V1_0.xml
-
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/bluetooth/BCM4354_003.001.012.0443.0863.hcd:$(TARGET_COPY_OUT_VENDOR)/firmware/bcm4350c0.hcd
 
 # Bluetooth HAL
 PRODUCT_PACKAGES += \
@@ -231,6 +221,17 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     device/google/dragon/seccomp_policy/mediacodec.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy \
     device/google/dragon/seccomp_policy/mediaextractor.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaextractor.policy
+
+# Wifi
+PRODUCT_PACKAGES += \
+    hostapd \
+    wificond \
+    libwpa_client \
+    wpa_supplicant \
+    p2p_supplicant.conf \
+    wpa_supplicant.conf \
+    p2p_supplicant_overlay.conf \
+    wpa_supplicant_overlay.conf
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \

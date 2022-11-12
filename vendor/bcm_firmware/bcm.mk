@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LOCAL_PATH := device/google/dragon/vendor
+COMMON_BCM_PATH := device/google/dragon/vendor/bcm_firmware
 
-$(call inherit-product, $(LOCAL_PATH)/bcm_firmware/bcm.mk)
-$(call inherit-product, $(LOCAL_PATH)/bcm_firmware/nvram.mk)
-$(call inherit-product, $(LOCAL_PATH)/nvphs/nvphs.mk)
-$(call inherit-product, $(LOCAL_PATH)/nvcpl/nvcpl.mk)
+PRODUCT_PACKAGES += \
+    bcm4350c0 \
+    fw_bcmdhd \
+    fw_bcmdhd_apsta
