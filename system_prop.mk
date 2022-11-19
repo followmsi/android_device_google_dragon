@@ -55,9 +55,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.audio.monitorRotation=true \
     ro.frp.pst=/dev/block/platform/700b0600.sdhci/by-name/PST
 
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.bt.bdaddr_path=/sys/devices/700b0200.sdhci/mmc_host/mmc0/mmc0:0001/mmc0:0001:2/net/wlan0/address
-
 # DRM Mappings
 PRODUCT_PROPERTY_OVERRIDES += \
     camera.flash_off=0 \
