@@ -94,6 +94,9 @@ BOARD_HAVE_BLUETOOTH_BCM := true
 BOARD_CUSTOM_BT_CONFIG := device/google/dragon/comms/vnd_dragon.txt
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/google/dragon/comms
 
+# Camera
+USE_DEVICE_SPECIFIC_CAMERA := true
+
 # Enable dex-preoptimization to speed up first boot sequence
 ifeq ($(HOST_OS),linux)
   ifneq ($(TARGET_BUILD_VARIANT),userdebug)
@@ -130,9 +133,10 @@ BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
 WITH_LINEAGE_CHARGER := false
 
 # Shims
-TARGET_LD_SHIM_LIBS += \
-    /vendor/lib/hw/camera.dragon.so|libshim_camera.so \
-    /vendor/lib/libnvmm_camera_v3.so|libshim_sensor.so
+TARGET_LD_SHIM_LIBS := \
+    /vendor/lib/hw/camera.dragon.so|camera.dragon_shim.so \
+    /vendor/lib/hw/camera.dragon.so|libshims_postproc.so \
+    /vendor/lib/libnvmm_camera_v3.so|libshim_sensors.so
 
 # Testing related defines
 BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/dragon-setup.sh

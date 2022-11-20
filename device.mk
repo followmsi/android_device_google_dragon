@@ -165,6 +165,12 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     DragonKeyboard
 
+# Libshims
+PRODUCT_PACKAGES += \
+    camera.dragon_shim \
+    libshim_sensors \
+    libshims_postproc
+
 # Wi-Fi country code setting
 PRODUCT_PACKAGES += \
     DragonParts

@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2017 The LineageOS Project
+# Copyright (C) 2015 The CyanogenMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,27 +11,45 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := \
-    Fence.cpp
+    camera.dragon_shim.cpp \
+    graphic-buffer.cpp
 
-LOCAL_MODULE := libshim_camera
-LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_SHARED_LIBRARIES := \
+    libbinder \
+    libgui \
+    liblog \
+    libui \
+    libutils
+
+LOCAL_C_INCLUDES := \
+    frameworks/native/include
+
+LOCAL_MODULE := camera.dragon_shim
 LOCAL_MODULE_TAGS := optional
-LOCAL_VENDOR_MODULE := true
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_32_BIT_ONLY := true
+LOCAL_PROPRIETARY_MODULE := true
 
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_SRC_FILES := SensorManager.cpp
+LOCAL_SRC_FILES := libshim_sensors.cpp
+LOCAL_MODULE := libshim_sensors
+LOCAL_SHARED_LIBRARIES := libsensor libutils
+LOCAL_MODULE_TAGS := optional
+LOCAL_MULTILIB := both
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES := libshims_postproc.cpp
 LOCAL_CFLAGS := -Wno-unused-parameter
-LOCAL_SHARED_LIBRARIES := libutils libsensor
-LOCAL_MODULE := libshim_sensor
+LOCAL_MODULE := libshims_postproc
 LOCAL_MODULE_TAGS := optional
 LOCAL_VENDOR_MODULE := true
 include $(BUILD_SHARED_LIBRARY)
