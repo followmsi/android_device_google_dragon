@@ -14,6 +14,5 @@
 
 LOCAL_PATH := device/google/dragon/vendor
 
-$(call inherit-product, $(LOCAL_PATH)/power/power.mk)
 $(call inherit-product, $(LOCAL_PATH)/nvphs/nvphs.mk)
 $(call inherit-product, $(LOCAL_PATH)/nvcpl/nvcpl.mk)

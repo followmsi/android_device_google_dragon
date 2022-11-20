@@ -284,6 +284,7 @@ on property:debug.bq25892=dump
     exec - root root system -- /system/bin/dump_bq25892.sh
 
 on property:dev.bootcomplete=1
+    start init_renderer
          
     # Update cpusets now that boot is complete and we want better load balancing
     write /dev/cpuset/top-app/cpus 0-3
@@ -292,4 +293,3 @@ on property:dev.bootcomplete=1
     write /dev/cpuset/system-background/cpus 0-2
     write /dev/cpuset/restricted/cpus 0-1
 
-    start init_renderer
