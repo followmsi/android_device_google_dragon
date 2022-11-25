@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 The Android Open-Source Project
+# Copyright (C) 2020 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,18 +14,10 @@
 # limitations under the License.
 #
 
-# WARNING: Everything listed here will be built on ALL platforms,
-# including x86, the emulator, and the SDK.  Modules must be uniquely
-# named (liblights.panda), and must build everywhere, or limit themselves
-# to only building on ARM if they include assembly. Individual makefiles
-# are responsible for having their own logic, for fine-grained control.
-
-ifneq ($(filter dragon, $(TARGET_DEVICE)),)
+ifeq ($(TARGET_REFERENCE_DEVICE), dragon)
 
 LOCAL_PATH := $(call my-dir)
 
-# if some modules are built directly from this directory (not subdirectories),
-# their rules should be written here.
-
 include $(call all-makefiles-under,$(LOCAL_PATH))
+
 endif

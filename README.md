@@ -1,3 +1,17 @@
+# Device configuration for Google Pixel C
+
+## Spec Sheet
+| Feature                 | Specification                     |
+| :---------------------- | :-------------------------------- |
+| Chipset                 | NVIDIA® Tegra X1 T210             |
+| Memory                  | 3GB RAM                           |
+| Storage                 | 32/64 GB                          |
+| Dimensions              | 242 x 179 x 7 mm                  |
+| Release Date            | December 8, 2015                  |
+
+## Copyright
+
+```
 #
 # Copyright (C) 2020 The LineageOS Project
 #
@@ -13,8 +27,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-MY_LOCAL_PATH := $(call my-dir)
-
-include $(MY_LOCAL_PATH)/hal/Android.mk
-include $(MY_LOCAL_PATH)/soundtrigger/Android.mk
+```

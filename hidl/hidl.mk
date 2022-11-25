@@ -8,8 +8,10 @@ PRODUCT_PACKAGES += \
 
 # Bluetooth
 PRODUCT_PACKAGES += \
+    libbt-vendor \
     android.hardware.bluetooth@1.1-service \
-    android.hardware.bluetooth.audio@2.0-impl
+    android.hardware.bluetooth.audio@2.0-impl \
+    libbt-vendor
 
 # Camera
 PRODUCT_PACKAGES += \

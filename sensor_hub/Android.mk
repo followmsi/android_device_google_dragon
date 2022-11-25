@@ -1,4 +1,3 @@
-ifeq ($(BOARD_VENDOR_USE_SENSOR_HAL), sensor_hub)
 # Copyright (C) 2008-2014 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,16 +12,11 @@ ifeq ($(BOARD_VENDOR_USE_SENSOR_HAL), sensor_hub)
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 LOCAL_PATH := $(call my-dir)
 
-
-# HAL module implemenation, not prelinked, and stored in
-# hw/<SENSORS_HARDWARE_MODULE_ID>.<ro.hardware.sensor>.so
-# hw/<SENSORS_HARDWARE_MODULE_ID>.<ro.product.board>.so
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := sensors.$(TARGET_BOOTLOADER_BOARD_NAME)
+LOCAL_MODULE := sensors.dragon
 
 LOCAL_MODULE_RELATIVE_PATH := hw
 
@@ -41,4 +35,3 @@ LOCAL_VENDOR_MODULE := true
 LOCAL_HEADER_LIBRARIES :=  libhardware_headers
 
 include $(BUILD_SHARED_LIBRARY)
-endif  #($(BOARD_VENDOR_USE_SENSOR_HAL), sensor_hub)

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 The Android Open-Source Project
+# Copyright (C) 2020 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,66 +14,33 @@
 # limitations under the License.
 #
 
-# There are three modes for TLK components, controlled by SECURE_OS_BUILD:
-#
-# "SECURE_OS_BUILD = tlk" will build everything from source.
-# "SECURE_OS_BUILD = client_only" will build TLK client components from
-#                    source but use a prebuilt version of the secure OS.
-# "SECURE_OS_BUILD = false" will will use prebuilts for TLK and client
-#                    components.
+TARGET_REFERENCE_DEVICE  := dragon
 
-# Device was launched with M
-$(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_m.mk)
+PRODUCT_CHARACTERISTICS  := tablet,nosdcard
+PRODUCT_AAPT_CONFIG      := normal large xlarge
+PRODUCT_AAPT_PREF_CONFIG := xhdpi
 
-$(call inherit-product, device/google/dragon/hidl/hidl.mk)
+$(call inherit-product, $(LOCAL_PATH)/hidl/hidl.mk)
+$(call inherit-product, $(LOCAL_PATH)/system_prop.mk)
+$(call inherit-product, $(LOCAL_PATH)/vendor_prop.mk)
+$(call inherit-product, $(LOCAL_PATH)/permissions/permissions.mk)
+$(call inherit-product, $(LOCAL_PATH)/vendor/common-by-flags.mk) 
 
-$(call inherit-product, device/google/dragon/permissions/permissions.mk)
+$(call inherit-product, build/target/product/product_launched_with_m.mk)
+$(call inherit-product, build/target/product/vboot.mk)
 
-$(call inherit-product, device/google/dragon/vendor/common-by-flags.mk) 
+$(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
 
-# Properties
-$(call inherit-product, device/google/dragon/system_prop.mk)
-$(call inherit-product, device/google/dragon/vendor_prop.mk)
+$(call inherit-product, vendor/google/dragon/dragon-vendor.mk)
 
-# By default build TLK from source if it is available, otherwise use
-# prebuilts.  To force using the prebuilt while having the source, set:
-# SECURE_OS_BUILD=false
-ifeq ($(wildcard vendor/nvidia/dragon-tlk/tlk),vendor/nvidia/dragon-tlk/tlk)
-    SECURE_OS_BUILD ?= tlk
-endif
-
-# prebuilt kernel config
-#
-#ifeq ($(TARGET_PREBUILT_KERNEL),)
-#LOCAL_KERNEL := device/google/dragon/Image.fit
-#else
-#LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
-#endif
-#
-#PRODUCT_COPY_FILES := \
-#    $(LOCAL_KERNEL):kernel \
-#
-
-LOCAL_FSTAB := $(LOCAL_PATH)/initfiles/fstab.dragon
-
-TARGET_RECOVERY_FSTAB = $(LOCAL_FSTAB)
-
-PRODUCT_BUILD_RECOVERY_IMAGE := true
-
-PRODUCT_BUILD_BOOT_IMAGE := true
-
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/speakerdsp.ini:system/etc/cras/speakerdsp.ini \
-    $(LOCAL_FSTAB):$(TARGET_COPY_OUT_RAMDISK)/fstab.dragon
-
-# Ramdisk
+# Init related
 PRODUCT_PACKAGES += \
     fstab.dragon \
+    ueventd.dragon.rc \
     init.dragon.rc \
     init.dragon.usb.rc \
-    init.comms.rc \
     init.recovery.dragon.rc \
-    ueventd.dragon.rc \
+    init.comms.rc \
     bt_loader \
     dump_bq25892 \
     init_regions \
@@ -81,70 +48,11 @@ PRODUCT_PACKAGES += \
     touchfwup \
     tune-thermal-gov \
     wifi_loader
-
-PRODUCT_PACKAGES += \
-    fs_config_files \
-    fwtool
-
+	
 PRODUCT_COPY_FILES += \
-    device/google/dragon/dragon_keyboard/dragon-keypad.kl:system/usr/keylayout/dragon-keypad.kl
+    $(LOCAL_PATH)/initfiles/fstab.dragon:$(TARGET_COPY_OUT_RAMDISK)/fstab.dragon
 
-ifeq ($(TARGET_BUILD_VARIANT),eng)
-PRODUCT_PACKAGES += \
-    tinyplay \
-    tinycap \
-    tinymix
-endif
-
-PRODUCT_COPY_FILES += \
-    frameworks/av/services/audiopolicy/config/a2dp_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/a2dp_audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/a2dp_in_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/a2dp_in_audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/bluetooth_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/bluetooth_audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/usb_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/usb_audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/r_submix_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/r_submix_audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/default_volume_tables.xml:$(TARGET_COPY_OUT_VENDOR)/etc/default_volume_tables.xml
-
-PRODUCT_COPY_FILES += \
-    frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:$(TARGET_COPY_OUT_ODM)/etc/media_codecs_google_audio.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:$(TARGET_COPY_OUT_ODM)/etc/media_codecs_google_video.xml
-
-PRODUCT_COPY_FILES += \
-    system/core/libprocessgroup/profiles/cgroups_28.json:$(TARGET_COPY_OUT_VENDOR)/etc/cgroups.json \
-    system/core/libprocessgroup/profiles/task_profiles_28.json:$(TARGET_COPY_OUT_VENDOR)/etc/task_profiles.json
-
-# Bluetooth HAL
-PRODUCT_PACKAGES += \
-    libbt-vendor
-
-# Copy dsp firmware to the vendor parition so it is available when hotwording
-# starts
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/audio/rt5677_elf_vad:vendor/firmware/rt5677_elf_vad
-
-PRODUCT_AAPT_CONFIG := normal large xlarge hdpi xhdpi xxhdpi
-PRODUCT_AAPT_PREF_CONFIG := xhdpi
-
-PRODUCT_CHARACTERISTICS := tablet,nosdcard
-
-DEVICE_PACKAGE_OVERLAYS := \
-    $(LOCAL_PATH)/overlay
-
-PRODUCT_TAGS += dalvik.gc.type-precise
-
-PRODUCT_PACKAGES += \
-    librs_jni \
-    com.android.future.usb.accessory
-
-# Dexpreopt
-PRODUCT_DEXPREOPT_SPEED_APPS += SystemUI
-
-#TODO(dgreid) is this right?
-
-# setup dalvik vm configs.
-$(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
-
-# for audio
-#TODO(dgreid) do we need libnvvisualizer?
+# Audio
 PRODUCT_PACKAGES += \
     audio.primary.dragon \
     sound_trigger.primary.dragon \
@@ -153,61 +61,40 @@ PRODUCT_PACKAGES += \
     audio.r_submix.default \
     audio_effects.xml \
     audio_policy_configuration.xml \
-    audio_policy_volumes_drc.xml \
-    media_codecs.xml \
-    media_codecs_performance.xml \
-    media_profiles_V1_0.xml \
-    mixer_paths_0.xml \
-    enctune.conf
+    audio_policy_volumes_drc.xml
 
-# for keyboard key mappings
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/audio/speakerdsp.ini:system/etc/cras/speakerdsp.ini
+
+# Cgroup and task_profiles
+PRODUCT_COPY_FILES += \
+    system/core/libprocessgroup/profiles/cgroups_28.json:$(TARGET_COPY_OUT_VENDOR)/etc/cgroups.json \
+    system/core/libprocessgroup/profiles/task_profiles_28.json:$(TARGET_COPY_OUT_VENDOR)/etc/task_profiles.json
+
+# Config.fs
+PRODUCT_PACKAGES += \
+    fs_config_files
+
+# Dexpreopt
+PRODUCT_DEXPREOPT_SPEED_APPS += \
+    SystemUI
+
+# Dragon
 PRODUCT_PACKAGES += \
     DragonKeyboard
 
-# Libshims
-PRODUCT_PACKAGES += \
-    camera.dragon_shim \
-    libshim_sensors \
-    libshims_postproc
+# DSP
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/audio/rt5677_elf_vad:vendor/firmware/rt5677_elf_vad
 
-# Wi-Fi country code setting
-PRODUCT_PACKAGES += \
-    DragonParts
-
-# Face Unlock
-PRODUCT_PACKAGES += \
-    libprotobuf-cpp-full
-
-# HIDL
-PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := true
-
-# TODO(dgreid) - Add back verity dependencies like flounder has.
-
-$(call inherit-product, build/target/product/vboot.mk)
-
-# only include verity on user builds
-ifeq ($(TARGET_BUILD_VARIANT),user)
-$(call inherit-product, build/target/product/verity.mk)
-# including verity.mk automatically enabled boot signer which conflicts with
-# vboot
-PRODUCT_SUPPORTS_BOOT_SIGNER := false
-PRODUCT_SUPPORTS_VERITY_FEC := false
-PRODUCT_SYSTEM_VERITY_PARTITION := /dev/block/platform/700b0600.sdhci/by-name/APP
-PRODUCT_VENDOR_VERITY_PARTITION := /dev/block/platform/700b0600.sdhci/by-name/VNR
-endif
-
-# The following group is necessary to support building the NVIDIA vendor
-# HALs and prebuilts.
-BOARD_SUPPORT_NVOICE := true
-BOARD_SUPPORT_NVAUDIOFX :=true
-BOARD_USES_LIBDRM := true
+# Graphics
+BOARD_GPU_DRIVERS        := tegra
+BOARD_USES_LIBDRM        := true
+ENABLE_LIBDRM            := true
 NVRM_GPU_SUPPORT_NOUVEAU := 1
-NV_GPU_USE_SYNC_FD := 1
-USE_DRM_HWCOMPOSER := 1
+NV_GPU_USE_SYNC_FD       := 1
+USE_DRM_HWCOMPOSER       := 1
 
-ENABLE_LIBDRM := true
-BOARD_GPU_DRIVERS := tegra
-USE_XML_AUDIO_POLICY_CONF := 1
 PRODUCT_PACKAGES += \
     f54test \
     libvulkan \
@@ -216,31 +103,79 @@ PRODUCT_PACKAGES += \
     rmi4update \
     rmihidtool
 
-PRODUCT_COPY_FILES += \
-    device/google/dragon/public.libraries.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt
+# HIDL
+PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := true
 
+# Keylayout
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl
+
+# Libshims
 PRODUCT_PACKAGES += \
+    camera.dragon_shim \
+    libshim_sensors \
+    libshims_postproc
+    
+# Libprotobuf
+PRODUCT_PACKAGES += \
+    libprotobuf-cpp-full \
     libprotobuf-cpp-lite-vendorcompat
 
-# Vendor seccomp policy files for media components:
-PRODUCT_COPY_FILES += \
-    device/google/dragon/seccomp_policy/mediacodec.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy \
-    device/google/dragon/seccomp_policy/mediaextractor.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaextractor.policy
+# Media
+PRODUCT_PACKAGES += \
+    media_codecs.xml \
+    media_codecs_performance.xml \
+    media_profiles_V1_0.xml \
+    mixer_paths_0.xml \
+    enctune.conf
 
-# Wifi
+PRODUCT_COPY_FILES += \
+    frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:$(TARGET_COPY_OUT_ODM)/etc/media_codecs_google_audio.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:$(TARGET_COPY_OUT_ODM)/etc/media_codecs_google_video.xml
+    
+PRODUCT_COPY_FILES += \
+    frameworks/av/services/audiopolicy/config/a2dp_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/a2dp_audio_policy_configuration.xml \
+    frameworks/av/services/audiopolicy/config/a2dp_in_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/a2dp_in_audio_policy_configuration.xml \
+    frameworks/av/services/audiopolicy/config/bluetooth_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/bluetooth_audio_policy_configuration.xml \
+    frameworks/av/services/audiopolicy/config/usb_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/usb_audio_policy_configuration.xml \
+    frameworks/av/services/audiopolicy/config/r_submix_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/r_submix_audio_policy_configuration.xml \
+    frameworks/av/services/audiopolicy/config/default_volume_tables.xml:$(TARGET_COPY_OUT_VENDOR)/etc/default_volume_tables.xml
+    
+# Overlays
+DEVICE_PACKAGE_OVERLAYS += \
+    $(LOCAL_PATH)/overlay
+
+# Public libraries
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/public.libraries.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt    
+
+# Recovery
+PRODUCT_PACKAGES += \
+    fwtool
+    
+# Soong namespaces
+PRODUCT_SOONG_NAMESPACES += \
+    device/google/dragon \
+    external/mesa3d \
+    hardware/nvidia
+
+# USB
+PRODUCT_PACKAGES += \
+    com.android.future.usb.accessory
+    
+# Vendor seccomp policy files for media components
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/seccomp_policy/mediacodec.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy \
+    $(LOCAL_PATH)/seccomp_policy/mediaextractor.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaextractor.policy
+
+# WiFi
 PRODUCT_PACKAGES += \
     hostapd \
     wificond \
     libwpa_client \
     wpa_supplicant \
-    p2p_supplicant.conf \
     wpa_supplicant.conf \
+    p2p_supplicant.conf \
     p2p_supplicant_overlay.conf \
-    wpa_supplicant_overlay.conf
-
-# Soong namespaces
-PRODUCT_SOONG_NAMESPACES += \
-    $(LOCAL_PATH) \
-    external/mesa3d
-
-$(call inherit-product, vendor/google/dragon/dragon-vendor.mk)
+    wpa_supplicant_overlay.conf \
+    wifi_scan_config.conf

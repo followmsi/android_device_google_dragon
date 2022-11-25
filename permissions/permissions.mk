@@ -45,4 +45,4 @@ PRODUCT_COPY_FILES += \
 
 # NVIDIA
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/com.nvidia.nvsi.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/com.nvidia.nvsi.xml
+    device/google/dragon/permissions/com.nvidia.nvsi.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/com.nvidia.nvsi.xml

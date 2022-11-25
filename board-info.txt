@@ -1,1 +1,1 @@
-require board=dragon
+require version-bootloader=Google_Smaug.7900.139.0|Google_Smaug.7132.226.0
