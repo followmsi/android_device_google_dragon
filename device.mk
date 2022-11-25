@@ -27,7 +27,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_m.mk)
 
 $(call inherit-product, device/google/dragon/hidl/hidl.mk)
 
-$(call inherit-product, device/google/dragon/permissions.mk)
+$(call inherit-product, device/google/dragon/permissions/permissions.mk)
 
 $(call inherit-product, device/google/dragon/vendor/common-by-flags.mk) 
 
@@ -87,7 +87,7 @@ PRODUCT_PACKAGES += \
     fwtool
 
 PRODUCT_COPY_FILES += \
-    device/google/dragon/dragon-keypad.kl:system/usr/keylayout/dragon-keypad.kl
+    device/google/dragon/dragon_keyboard/dragon-keypad.kl:system/usr/keylayout/dragon-keypad.kl
 
 ifeq ($(TARGET_BUILD_VARIANT),eng)
 PRODUCT_PACKAGES += \
