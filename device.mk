@@ -54,11 +54,7 @@ endif
 #    $(LOCAL_KERNEL):kernel \
 #
 
-ifeq ($(TARGET_PRODUCT), ryu_kasan)
-LOCAL_FSTAB := $(LOCAL_PATH)/fstab.dragon.nocrypt
-else
-LOCAL_FSTAB := $(LOCAL_PATH)/fstab.dragon
-endif
+LOCAL_FSTAB := $(LOCAL_PATH)/initfiles/fstab.dragon
 
 TARGET_RECOVERY_FSTAB = $(LOCAL_FSTAB)
 
@@ -67,22 +63,23 @@ PRODUCT_BUILD_RECOVERY_IMAGE := true
 PRODUCT_BUILD_BOOT_IMAGE := true
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/dump_bq25892.sh:system/bin/dump_bq25892.sh \
-    $(LOCAL_PATH)/touchfwup.sh:system/bin/touchfwup.sh \
-    $(LOCAL_PATH)/init_regions.sh:system/bin/init_regions.sh \
-    $(LOCAL_PATH)/init_renderer.sh:system/bin/init_renderer.sh \
-    $(LOCAL_PATH)/tune-thermal-gov.sh:system/bin/tune-thermal-gov.sh \
-    $(LOCAL_PATH)/ueventd.dragon.rc:$(TARGET_COPY_OUT_VENDOR)/etc/ueventd.rc \
     $(LOCAL_PATH)/speakerdsp.ini:system/etc/cras/speakerdsp.ini \
-    $(LOCAL_FSTAB):$(TARGET_COPY_OUT_RAMDISK)/fstab.dragon \
-    $(LOCAL_FSTAB):$(TARGET_COPY_OUT_VENDOR)/etc/fstab.dragon
+    $(LOCAL_FSTAB):$(TARGET_COPY_OUT_RAMDISK)/fstab.dragon
 
 # Ramdisk
 PRODUCT_PACKAGES += \
+    fstab.dragon \
     init.dragon.rc \
     init.dragon.usb.rc \
     init.comms.rc \
+    init.recovery.dragon.rc \
+    ueventd.dragon.rc \
     bt_loader \
+    dump_bq25892 \
+    init_regions \
+    init_renderer \
+    touchfwup \
+    tune-thermal-gov \
     wifi_loader
 
 PRODUCT_PACKAGES += \
