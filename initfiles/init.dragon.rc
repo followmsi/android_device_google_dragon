@@ -110,13 +110,13 @@ on post-fs-data
 
 on property:ro.persistent_properties.ready=true
     # initialize region info
-    exec -- /system/bin/init_regions.sh
+    exec -- /vendor/bin/init_regions.sh
 
 on property:persist.sys.wifi.country_code=*
     # If Magisk is installed, it can alternate boot process
     # so the code here may be different from the one when
     # ro.persistent_properties.ready=true.
-    exec -- /system/bin/init_regions.sh
+    exec -- /vendor/bin/init_regions.sh
 
 on boot
 
@@ -225,15 +225,15 @@ on fs
 
 # run the touch firmware update script as soon as non-tmpfs /data is ready
 on property:vold.decrypt=trigger_restart_framework
-    exec -- /system/bin/touchfwup.sh
+    exec -- /vendor/bin/touchfwup.sh
 
 # tune thermal governor
-service tune_therm_gov /system/bin/tune-thermal-gov.sh skin-therm pd_thermal_gov \
+service tune_therm_gov /vendor/bin/tune-thermal-gov.sh skin-therm pd_thermal_gov \
     max_err_temp 5000
     class main
     oneshot
 
-service battery_charger /system/bin/charger
+service battery_charger /vendor/bin/charger
     class charger
     capabilities SYS_BOOT
     seclabel u:r:healthd:s0
@@ -244,13 +244,13 @@ on property:ro.debuggable=1
     write /sys/module/fiq_debugger/parameters/kgdb_enable 1
 
 # bugreport is triggered by holding down volume down, volume up and power
-service bugreport /system/bin/dumpstate -d -p -B -z \
+service bugreport /vendor/bin/dumpstate -d -p -B -z \
         -o /data/user_de/0/com.android.shell/files/bugreports/bugreport
     class late_start
     disabled
     oneshot
 
-service fwtool /system/bin/fwtool mark_boot success
+service fwtool /vendor/bin/fwtool mark_boot success
     class late_start
     user root
     oneshot
@@ -273,7 +273,7 @@ service netmgrd /vendor/bin/netmgrd
     disabled
     group system radio
 
-service init_renderer /system/bin/init_renderer.sh
+service init_renderer /vendor/bin/init_renderer.sh
     user root
     oneshot
 
@@ -282,7 +282,7 @@ service tlk_daemon /vendor/bin/tlk_daemon --storagedir /data/ss --rpmbdev /dev/b
     group system
 
 on property:debug.bq25892=dump
-    exec - root root system -- /system/bin/dump_bq25892.sh
+    exec - root root system -- /vendor/bin/dump_bq25892.sh
 
 on property:dev.bootcomplete=1
     start init_renderer
