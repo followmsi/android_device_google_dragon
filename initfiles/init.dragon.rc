@@ -179,6 +179,10 @@ on boot
     chmod 0660 /sys/class/chromeos/cros_ec/lightbar/userspace_control
     chown system system /sys/class/chromeos/cros_ec/lightbar/sequence
     chmod 0660 /sys/class/chromeos/cros_ec/lightbar/sequence
+    chown system system /sys/class/chromeos/cros_ec/lightbar/brightness
+    chmod 0660 /sys/class/chromeos/cros_ec/lightbar/brightness
+    
+    write /sys/class/chromeos/cros_ec/lightbar/userspace_control 1
 
     # for external power limits
     chown system system /sys/class/chromeos/cros_ec/usb-pd-charger/ext_voltage_lim

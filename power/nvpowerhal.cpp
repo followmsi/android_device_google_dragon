@@ -47,6 +47,11 @@ std::map<NvCPLHintData,interactive_data_t> interactive_data_array;
 #define GPU_BOOST_ENTER_CMD "0a,0d"
 #define GPU_BOOST_EXIT_CMD "auto"
 
+// Lightbar
+#define LIGHTBAR_BRIGHTNESS_PATH "/sys/class/chromeos/cros_ec/lightbar/brightness"
+#define LIGHTBAR_MIN_BRIGHTNESS "0"
+#define LIGHTBAR_MAX_BRIGHTNESS "60"
+
 static void find_input_device_ids(struct powerhal_info *pInfo)
 {
     int i = 0;
@@ -612,8 +617,10 @@ void common_power_set_interactive(struct powerhal_info *pInfo, int on)
 
     if (on) {
         sysfs_write(GPU_BOOST_PATH, GPU_BOOST_ENTER_CMD);
+        sysfs_write(LIGHTBAR_BRIGHTNESS_PATH, LIGHTBAR_MAX_BRIGHTNESS);
         } else {
 	sysfs_write(GPU_BOOST_PATH, GPU_BOOST_EXIT_CMD);
+	sysfs_write(LIGHTBAR_BRIGHTNESS_PATH, LIGHTBAR_MIN_BRIGHTNESS);
     }
 
     if (pInfo->no_cpufreq_interactive)
