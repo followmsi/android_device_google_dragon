@@ -55,7 +55,6 @@ PRODUCT_COPY_FILES += \
 # Audio
 PRODUCT_PACKAGES += \
     audio.primary.dragon \
-    sound_trigger.primary.dragon \
     audio.bluetooth.default \
     audio.usb.default \
     audio.r_submix.default \
