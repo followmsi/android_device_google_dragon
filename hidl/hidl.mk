@@ -6,7 +6,6 @@ PRODUCT_PACKAGES += \
 
 # Bluetooth
 PRODUCT_PACKAGES += \
-    libbt-vendor \
     android.hardware.bluetooth@1.1-service \
     android.hardware.bluetooth.audio@2.0-impl \
     libbt-vendor
@@ -78,15 +77,11 @@ PRODUCT_PACKAGES += \
 
 # USB
 PRODUCT_PACKAGES += \
-    android.hardware.usb@1.0-service
+    android.hardware.usb@1.0-service.basic
 
 # Configstore
 PRODUCT_PACKAGES += \
     android.hardware.configstore@1.1-service
-
-# VNDK
-PRODUCT_PACKAGES += \
-    vndk-sp
 
 # HIDL
 PRODUCT_PACKAGES += \
@@ -97,4 +92,5 @@ PRODUCT_PACKAGES += \
 
 # WiFi
 PRODUCT_PACKAGES += \
-    android.hardware.wifi@1.0-service
+    android.hardware.wifi@1.0-service \
+    android.hardware.wifi.supplicant-V1-ndk

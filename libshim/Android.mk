@@ -22,7 +22,7 @@ LOCAL_SRC_FILES := \
 
 LOCAL_SHARED_LIBRARIES := \
     libbinder \
-    libgui \
+    libgui_vendor \
     liblog \
     libui \
     libutils

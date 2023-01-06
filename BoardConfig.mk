@@ -106,7 +106,10 @@ TARGET_LD_SHIM_LIBS := \
     /vendor/lib/hw/camera.dragon.so|camera.dragon_shim.so \
     /vendor/lib/hw/camera.dragon.so|libshims_postproc.so \
     /vendor/lib/libnvmm_camera_v3.so|libshim_sensors.so
-	
+
+# Treble
+BOARD_VNDK_VERSION := current
+
 # Wifi
 BOARD_WPA_SUPPLICANT_DRIVER      := NL80211
 WPA_SUPPLICANT_VERSION           := VER_0_8_X
