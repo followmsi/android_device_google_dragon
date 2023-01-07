@@ -8,14 +8,6 @@ LOCAL_VENDOR_MODULE := true
 include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE               := init.comms.rc
-LOCAL_MODULE_CLASS         := ETC
-LOCAL_SRC_FILES            := init.comms.rc
-LOCAL_VENDOR_MODULE        := true
-LOCAL_MODULE_RELATIVE_PATH := init/hw
-include $(BUILD_PREBUILT)
-
-include $(CLEAR_VARS)
 LOCAL_MODULE               := init.dragon.rc
 LOCAL_MODULE_CLASS         := ETC
 LOCAL_SRC_FILES            := init.dragon.rc
@@ -24,17 +16,33 @@ LOCAL_MODULE_RELATIVE_PATH := init/hw
 include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE               := init.dragon.usb.rc
+LOCAL_MODULE               := init.comms.rc
 LOCAL_MODULE_CLASS         := ETC
-LOCAL_SRC_FILES            := init.dragon.usb.rc
+LOCAL_SRC_FILES            := init.comms.rc
 LOCAL_VENDOR_MODULE        := true
 LOCAL_MODULE_RELATIVE_PATH := init/hw
 include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE               := init.recovery.dragon.rc
+LOCAL_MODULE               := init.usb.rc
 LOCAL_MODULE_CLASS         := ETC
-LOCAL_SRC_FILES            := init.recovery.dragon.rc
+LOCAL_SRC_FILES            := init.usb.rc
+LOCAL_VENDOR_MODULE        := true
+LOCAL_MODULE_RELATIVE_PATH := init/hw
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE               := init.tlk.rc
+LOCAL_MODULE_CLASS         := ETC
+LOCAL_SRC_FILES            := init.tlk.rc
+LOCAL_VENDOR_MODULE        := true
+LOCAL_MODULE_RELATIVE_PATH := init/hw
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE               := init.recovery.rc
+LOCAL_MODULE_CLASS         := ETC
+LOCAL_SRC_FILES            := init.recovery.rc
 LOCAL_VENDOR_MODULE        := true
 LOCAL_MODULE_RELATIVE_PATH := init/hw
 include $(BUILD_PREBUILT)

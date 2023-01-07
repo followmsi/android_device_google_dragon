@@ -92,7 +92,7 @@ TARGET_USES_HWC1 := true                       := true
 TARGET_FS_CONFIG_GEN += device/google/dragon/config.fs
 
 # Recovery
-TARGET_RECOVERY_FSTAB        := device/google/dragon/initfiles/fstab.dragon
+TARGET_RECOVERY_FSTAB        := device/google/dragon/rootdir/fstab.dragon
 TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 
 # Security Patch Level

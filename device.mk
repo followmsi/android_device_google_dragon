@@ -38,9 +38,10 @@ PRODUCT_PACKAGES += \
     fstab.dragon \
     ueventd.dragon.rc \
     init.dragon.rc \
-    init.dragon.usb.rc \
-    init.recovery.dragon.rc \
+    init.usb.rc \
+    init.recovery.rc \
     init.comms.rc \
+    init.tlk.rc \
     bt_loader \
     dump_bq25892 \
     init_regions \
@@ -50,7 +51,7 @@ PRODUCT_PACKAGES += \
     wifi_loader
 	
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/initfiles/fstab.dragon:$(TARGET_COPY_OUT_RAMDISK)/fstab.dragon
+    $(LOCAL_PATH)/rootdir/fstab.dragon:$(TARGET_COPY_OUT_RAMDISK)/fstab.dragon
 
 # Audio
 PRODUCT_PACKAGES += \
