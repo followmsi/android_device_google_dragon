@@ -81,7 +81,7 @@ vendor/lib/egl/libGLESv1_CM_tegra.so
 vendor/lib/egl/libGLESv2_tegra.so
 vendor/lib/hw/gralloc.tegra.so
 vendor/lib/hw/memtrack.dragon.so
-vendor/lib/hw/vulkan.tegra.so|e80ff3d6d428a440127bef1e51c9c9e55dfe6c5e
+vendor/lib/hw/vulkan.tegra.so|e80ff3d6d428a440127bef1e51c9c9e55dfe6c5e:vendor/lib/vulkan.tegra.so
 vendor/lib/libglcore.so
 vendor/lib/libnvglsi.so
 vendor/lib/libnvgr.so
@@ -96,7 +96,7 @@ vendor/lib64/egl/libGLESv1_CM_tegra.so
 vendor/lib64/egl/libGLESv2_tegra.so
 vendor/lib64/hw/gralloc.tegra.so
 vendor/lib64/hw/memtrack.dragon.so
-vendor/lib64/hw/vulkan.tegra.so|aefb6707c902429765e4b7618e69ed65bd9aec35
+vendor/lib64/hw/vulkan.tegra.so|aefb6707c902429765e4b7618e69ed65bd9aec35:vendor/lib64/vulkan.tegra.so
 vendor/lib64/libglcore.so
 vendor/lib64/libnvglsi.so
 vendor/lib64/libnvgr.so
