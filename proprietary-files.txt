@@ -75,13 +75,13 @@ vendor/firmware/nvidia/tegra210/vic.bin
 vendor/firmware/nvidia/tegra210/xusb.bin
 vendor/firmware/synaptics.img
 
-# Graphics, Vulkan HALs from nv-recovery-image-shield-atv-2017-8.0.0-dev_rooted.zip
+# Graphics, Vulkan HALs from rel-shield-r
 vendor/lib/egl/libEGL_tegra.so
 vendor/lib/egl/libGLESv1_CM_tegra.so
 vendor/lib/egl/libGLESv2_tegra.so
 vendor/lib/hw/gralloc.tegra.so
 vendor/lib/hw/memtrack.dragon.so
-vendor/lib/hw/vulkan.tegra.so|e80ff3d6d428a440127bef1e51c9c9e55dfe6c5e:vendor/lib/vulkan.tegra.so
+vendor/lib/hw/vulkan.tegra.so|27b193a136f33956aceb6d2131e07b050261c0a5:vendor/lib/vulkan.tegra.so
 vendor/lib/libglcore.so
 vendor/lib/libnvglsi.so
 vendor/lib/libnvgr.so
@@ -96,7 +96,7 @@ vendor/lib64/egl/libGLESv1_CM_tegra.so
 vendor/lib64/egl/libGLESv2_tegra.so
 vendor/lib64/hw/gralloc.tegra.so
 vendor/lib64/hw/memtrack.dragon.so
-vendor/lib64/hw/vulkan.tegra.so|aefb6707c902429765e4b7618e69ed65bd9aec35:vendor/lib64/vulkan.tegra.so
+vendor/lib64/hw/vulkan.tegra.so|a42c5c667fb4e4b8d3cb3242c5a71453700e9b46:vendor/lib64/vulkan.tegra.so
 vendor/lib64/libglcore.so
 vendor/lib64/libnvglsi.so
 vendor/lib64/libnvgr.so
