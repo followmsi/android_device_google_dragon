@@ -209,7 +209,7 @@ std::unique_ptr<Planner> Planner::CreateInstance(DrmResources *) {
 }
 #endif
 
-/*static DrmPlane *GetCrtcPrimaryPlane(DrmCrtc *crtc,
+static DrmPlane *GetCrtcPrimaryPlane(DrmCrtc *crtc,
                                      std::vector<DrmPlane *> *planes) {
   for (auto i = planes->begin(); i != planes->end(); ++i) {
     if ((*i)->GetCrtcSupported(*crtc)) {
@@ -219,12 +219,13 @@ std::unique_ptr<Planner> Planner::CreateInstance(DrmResources *) {
     }
   }
   return NULL;
-}*/
+}
 
 int PlanStageProtectedRotated::ProvisionPlanes(
     std::vector<DrmCompositionPlane> *composition,
     std::map<size_t, DrmHwcLayer *> &layers, DrmCrtc *crtc,
     std::vector<DrmPlane *> *planes) {
+  int ret;
   int protected_zorder = -1;
   for (auto i = layers.begin(); i != layers.end();) {
     if (!i->second->protected_usage() || !i->second->transform) {
@@ -337,6 +338,7 @@ int PlanStageNvLimits::ProvisionPlanes(
     std::vector<DrmCompositionPlane> *composition,
     std::map<size_t, DrmHwcLayer *> &layers, DrmCrtc *crtc,
     std::vector<DrmPlane *> *planes) {
+  int ret;
 
   for (auto i = layers.begin(); i != layers.end();) {
     // Skip layer if supported
