@@ -1,0 +1,54 @@
+cc_library_shared {    
+
+    arch: {
+        arm: {
+            instruction_set: "arm",
+        },
+    },
+
+    srcs: [
+        "audio_hw.c",
+        "dsp/biquad.c",
+        "dsp/crossover.c",
+        "dsp/crossover2.c",
+        "dsp/drc.c",
+        "dsp/drc_kernel.c",
+        "dsp/drc_math.c",
+        "dsp/dsp_util.c",
+        "dsp/eq2.c",
+        "dsp/eq.c",
+        "cras_dsp.c",
+        "cras_dsp_ini.c",
+        "cras_dsp_mod_builtin.c",
+        "cras_dsp_pipeline.c",
+        "cras_expr.c",
+        "iniparser.c",
+        "dictionary.c",
+    ],
+
+    shared_libs: [
+        "liblog",
+        "libcutils",
+        "libaudioutils",
+        "libtinyalsa",
+        "libtinycompress",
+        "libaudioroute",
+        "libdl",
+    ],
+
+    include_dirs: [
+        "device/google/dragon/audio/hal/dsp",
+        "external/tinyalsa/include",
+        "external/tinycompress/include",
+        "system/media/audio_utils/include",
+        "system/media/audio_route/include",
+        "system/media/audio_effects/include",
+    ],
+
+    header_libs: ["libhardware_headers"],
+
+    name: "audio.primary.dragon",
+    relative_install_path: "hw",
+    proprietary: true,
+
+}
