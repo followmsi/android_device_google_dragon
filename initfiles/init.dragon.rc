@@ -91,9 +91,6 @@ on post-fs-data
     mkdir /data/vendor/wifi/wpa 0770 wifi wifi
     mkdir /data/vendor/wifi/wpa/sockets 0770 wifi wifi
 
-    # crash_collector
-    mkdir /data/system/crash_reports 0700 system system
-
     # EC/charger logs
     mkdir /data/misc/fw_logs 0755 root root
 
@@ -201,11 +198,6 @@ on boot
 
     write /proc/sys/net/core/rmem_max 1048576
     write /proc/sys/net/core/wmem_max 1048576
-
-    # Execute crash_collector when a process is crashing.
-    write /proc/sys/kernel/core_pattern "|/system/bin/crash_dispatcher %p %u %g %s %t %e"
-    write /proc/sys/kernel/core_pipe_limit 4
-    write /proc/self/coredump_filter 0x1
 
     # set GPU auto suspend
     write /sys/devices/57000000.gpu/power/autosuspend_delay_ms 520

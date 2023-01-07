@@ -49,12 +49,6 @@
 /(vendor|system/vendor)/bin/hw/android\.hardware\.drm@1\.3-service\.widevine		u:object_r:hal_drm_widevine_exec:s0
 /(vendor|system/vendor)/bin/hw/android\.hardware\.power\.stats@1\.0-service\.mock	u:object_r:hal_power_stats_default_exec:s0
 
-# crash_collector
-/system/bin/crash_dispatcher                    u:object_r:crash_collector_exec:s0
-/system/bin/crash_collector32                   u:object_r:crash_collector_exec:s0
-/system/bin/crash_collector64                   u:object_r:crash_collector_exec:s0
-/data/system/crash_reports(/.*)?                u:object_r:crash_reports_data_file:s0
-
 # camera
 /dev/imx219                                     u:object_r:camera_device:s0
 /dev/imx208                                     u:object_r:camera_device:s0
