@@ -67,7 +67,7 @@ PRODUCT_COPY_FILES += \
 
 # Bluetooth
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/comms/vnd_dragon.txt:$(TARGET_COPY_OUT_SYSTEM)/etc/bluetooth/bt_vendor.conf
+    $(LOCAL_PATH)/comms/vnd_dragon.txt:$(TARGET_COPY_OUT_VENDOR)/etc/bluetooth/bt_vendor.conf
 
 # Cgroup and task_profiles
 PRODUCT_COPY_FILES += \
