@@ -247,13 +247,6 @@ on property:ro.debuggable=1
     write /sys/module/kgdboc/parameters/kgdboc ttyFIQ0
     write /sys/module/fiq_debugger/parameters/kgdb_enable 1
 
-# bugreport is triggered by holding down volume down, volume up and power
-service bugreport /vendor/bin/dumpstate -d -p -B -z \
-        -o /data/user_de/0/com.android.shell/files/bugreports/bugreport
-    class late_start
-    disabled
-    oneshot
-
 service fwtool /vendor/bin/fwtool mark_boot success
     class late_start
     user root
