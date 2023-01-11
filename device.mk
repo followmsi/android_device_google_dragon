@@ -21,8 +21,6 @@ PRODUCT_AAPT_CONFIG      := normal large xlarge
 PRODUCT_AAPT_PREF_CONFIG := xhdpi
 
 $(call inherit-product, $(LOCAL_PATH)/hidl/hidl.mk)
-$(call inherit-product, $(LOCAL_PATH)/system_prop.mk)
-$(call inherit-product, $(LOCAL_PATH)/vendor_prop.mk)
 $(call inherit-product, $(LOCAL_PATH)/permissions/permissions.mk)
 $(call inherit-product, $(LOCAL_PATH)/vendor/common-by-flags.mk) 
 
@@ -200,3 +198,8 @@ PRODUCT_PACKAGES += \
     p2p_supplicant_overlay.conf \
     wpa_supplicant_overlay.conf \
     wifi_scan_config.conf
+    
+PRODUCT_PROPERTY_OVERRIDES += \
+    wifi.interface=wlan0 \
+    wifi.direct.interface=p2p-dev-wlan0 \
+    wifi.direct.non-concurrent=true
