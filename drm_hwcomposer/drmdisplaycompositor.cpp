@@ -674,14 +674,14 @@ int DrmDisplayCompositor::CommitFrame(DrmDisplayComposition *display_comp,
 
     // TODO: Once we have atomic test, this should fall back to GL
     if (rotation && plane->rotation_property().id() == 0) {
-      ALOGE("Rotation is not supported on plane %d", plane->id());
+      ALOGV("Rotation is not supported on plane %d", plane->id());
       ret = -EINVAL;
       break;
     }
 
     // TODO: Once we have atomic test, this should fall back to GL
     if (alpha != 0xFF && plane->alpha_property().id() == 0) {
-      ALOGE("Alpha is not supported on plane %d", plane->id());
+      ALOGV("Alpha is not supported on plane %d", plane->id());
       ret = -EINVAL;
       break;
     }
@@ -750,9 +750,7 @@ out:
 
     ret = drmModeAtomicCommit(drm_->fd(), pset, flags, drm_);
     if (ret) {
-      if (test_only)
-        ALOGI("Commit test pset failed ret=%d\n", ret);
-      else
+      if (!test_only)
         ALOGE("Failed to commit pset ret=%d\n", ret);
       drmModeAtomicFree(pset);
       return ret;

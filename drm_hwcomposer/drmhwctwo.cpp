@@ -559,7 +559,7 @@ HWC2::Error DrmHwcTwo::HwcDisplay::PresentDisplay(int32_t *retire_fence) {
 
   ret = compositor_.QueueComposition(std::move(composition));
   if (ret) {
-    ALOGE("Failed to apply the frame composition ret=%d", ret);
+      ALOGE("Failed to apply the frame composition ret=%d", ret);
     return HWC2::Error::BadParameter;
   }
 
