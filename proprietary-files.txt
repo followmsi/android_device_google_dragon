@@ -134,9 +134,7 @@ vendor/lib64/libtsechdcp.so
 # Security
 vendor/bin/tlk_daemon
 vendor/lib/hw/gatekeeper.dragon.so
-vendor/lib/hw/keystore.dragon.so
 vendor/lib64/hw/gatekeeper.dragon.so
-vendor/lib64/hw/keystore.dragon.so
 
 # Shared libraries
 vendor/lib64/libnvos.so
