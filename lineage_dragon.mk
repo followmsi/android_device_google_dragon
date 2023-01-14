@@ -29,7 +29,7 @@ TARGET_GAPPS_ARCH             := arm64
 # Boot animation
 TARGET_SCREEN_HEIGHT          := 2560
 TARGET_SCREEN_WIDTH           := 1800
-TARGET_BOOT_ANIMATION_RES     := 1440
+TARGET_BOOTANIMATION_HALF_RES := true
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE                := dragon
