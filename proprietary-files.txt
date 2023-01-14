@@ -124,7 +124,6 @@ vendor/lib/libnvmmlite_utils.so
 vendor/lib/libnvmmlite_video.so
 vendor/lib/libnvomx.so
 vendor/lib/libnvomxilclient.so
-vendor/lib/liboemcrypto.so
 vendor/lib/libtlk_secure_hdcp_up.so
 vendor/lib/libstagefrighthw.so
 vendor/lib/libtsechdcp.so
