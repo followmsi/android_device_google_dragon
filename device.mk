@@ -83,6 +83,7 @@ PRODUCT_DEXPREOPT_SPEED_APPS += \
 
 # Dragon
 PRODUCT_PACKAGES += \
+    DragonParts \
     DragonKeyboard
 
 # DSP
