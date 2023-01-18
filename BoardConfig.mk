@@ -70,7 +70,6 @@ TARGET_EXCLUDES_AUDIOFX  := true
 
 # Bluetooth
 BOARD_CUSTOM_BT_CONFIG := device/google/dragon/comms/vnd_dragon.txt
-BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/google/dragon/comms
 BOARD_HAVE_BLUETOOTH_BCM := true
 
 # Camera
