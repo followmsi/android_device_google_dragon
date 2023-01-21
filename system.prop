@@ -78,5 +78,9 @@ debug.stagefright.omx_default_rank.sw-audio=1
 persist.vendor.recovery_update=false
 persist.sys.binary_xml=false
 
+# SoC
+ro.soc.manufacturer=NVIDIA
+ro.soc.model=Tegra X1
+
 # Surfaceflinger
 ro.surface_flinger.max_frame_buffer_acquired_buffers=3
