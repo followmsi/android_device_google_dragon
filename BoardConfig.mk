@@ -92,7 +92,7 @@ TARGET_FS_CONFIG_GEN += device/google/dragon/config.fs
 
 # Properties
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
-TARGET_SYSTEM_PROP += device/google/dragon/system.prop
+TARGET_VENDOR_PROP += device/google/dragon/vendor.prop
 
 # Recovery
 TARGET_RECOVERY_FSTAB        := device/google/dragon/rootdir/fstab.dragon
