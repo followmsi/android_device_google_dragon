@@ -91,8 +91,7 @@ TARGET_USES_HWC1 := true                       := true
 TARGET_FS_CONFIG_GEN += device/google/dragon/config.fs
 
 # Properties
-BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
-TARGET_VENDOR_PROP += device/google/dragon/vendor.prop
+TARGET_VENDOR_PROP := device/google/dragon/vendor.prop
 
 # Recovery
 TARGET_RECOVERY_FSTAB        := device/google/dragon/rootdir/fstab.dragon
@@ -109,9 +108,6 @@ TARGET_LD_SHIM_LIBS := \
     /vendor/lib/hw/camera.dragon.so|camera.dragon_shim.so \
     /vendor/lib/hw/camera.dragon.so|libshims_postproc.so \
     /vendor/lib/libnvmm_camera_v3.so|libshim_sensors.so
-
-# Treble
-BOARD_VNDK_VERSION := current
 
 # Wifi
 BOARD_WPA_SUPPLICANT_DRIVER      := NL80211

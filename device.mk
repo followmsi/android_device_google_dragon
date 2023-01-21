@@ -22,7 +22,7 @@ PRODUCT_AAPT_PREF_CONFIG := xhdpi
 
 $(call inherit-product, $(LOCAL_PATH)/hidl/hidl.mk)
 $(call inherit-product, $(LOCAL_PATH)/permissions/permissions.mk)
-$(call inherit-product, $(LOCAL_PATH)/vendor/common-by-flags.mk) 
+$(call inherit-product, $(LOCAL_PATH)/vendor/common-by-flags.mk)
 
 $(call inherit-product, build/target/product/product_launched_with_m.mk)
 $(call inherit-product, build/target/product/vboot.mk)
@@ -47,7 +47,7 @@ PRODUCT_PACKAGES += \
     touchfwup \
     tune-thermal-gov \
     wifi_loader
-	
+
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/fstab.dragon:$(TARGET_COPY_OUT_RAMDISK)/fstab.dragon
 
@@ -123,7 +123,7 @@ PRODUCT_PACKAGES += \
     camera.dragon_shim \
     libshim_sensors \
     libshims_postproc
-    
+
 # Libprotobuf
 PRODUCT_PACKAGES += \
     libprotobuf-cpp-full \
@@ -145,25 +145,25 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:$(TARGET_COPY_OUT_ODM)/etc/media_codecs_google_audio.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:$(TARGET_COPY_OUT_ODM)/etc/media_codecs_google_video.xml
-    
+
 PRODUCT_COPY_FILES += \
     frameworks/av/services/audiopolicy/config/bluetooth_audio_policy_configuration_7_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/bluetooth_audio_policy_configuration_7_0.xml \
     frameworks/av/services/audiopolicy/config/usb_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/usb_audio_policy_configuration.xml \
     frameworks/av/services/audiopolicy/config/r_submix_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/r_submix_audio_policy_configuration.xml \
     frameworks/av/services/audiopolicy/config/default_volume_tables.xml:$(TARGET_COPY_OUT_VENDOR)/etc/default_volume_tables.xml
-    
+
 # Overlays
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay
 
 # Public libraries
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/public.libraries.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt    
+    $(LOCAL_PATH)/public.libraries.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt
 
 # Recovery
 PRODUCT_PACKAGES += \
     fwtool
-    
+
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
     device/google/dragon \
@@ -173,16 +173,12 @@ PRODUCT_SOONG_NAMESPACES += \
 # USB
 PRODUCT_PACKAGES += \
     com.android.future.usb.accessory
-    
+
 # Vendor seccomp policy files for media components
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/seccomp_policy/mediacodec.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy \
     $(LOCAL_PATH)/seccomp_policy/mediaextractor.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaextractor.policy
 
-# VNDK
-PRODUCT_PACKAGES += \
-    vndk_package
-    
 # VNDK prebuilts
 PRODUCT_COPY_FILES += \
     prebuilts/vndk/v29/arm64/arch-arm64-armv8-a/shared/vndk-core/libprotobuf-cpp-lite.so:$(TARGET_COPY_OUT_VENDOR)/lib64/libprotobuf-cpp-lite-v29.so \
@@ -207,7 +203,7 @@ PRODUCT_PACKAGES += \
     p2p_supplicant_overlay.conf \
     wpa_supplicant_overlay.conf \
     wifi_scan_config.conf
-    
+
 PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
     wifi.direct.interface=p2p-dev-wlan0 \
