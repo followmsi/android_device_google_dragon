@@ -17,7 +17,7 @@ COMMON_BCM_PATH := ../../../../../vendor/google/dragon/proprietary/vendor/firmwa
 
 include $(CLEAR_VARS)
 LOCAL_MODULE               := bcm4350c0
-LOCAL_SRC_FILES            := BCM4350C0.hcd
+LOCAL_SRC_FILES            := $(COMMON_BCM_PATH)/bcm4350c0.hcd
 LOCAL_MODULE_SUFFIX        := .hcd
 LOCAL_MODULE_CLASS         := ETC
 LOCAL_MODULE_PATH          := $(TARGET_OUT_VENDOR)/firmware
