@@ -58,6 +58,7 @@ PRODUCT_SYSTEM_SERVER_COMPILER_FILTER := speed-profile
 # Audio
 PRODUCT_PACKAGES += \
     audio.primary.dragon \
+    sound_trigger.primary.dragon \
     audio.bluetooth.default \
     audio.usb.default \
     audio.r_submix.default \
