@@ -91,10 +91,6 @@ PRODUCT_PACKAGES += \
     DragonParts \
     DragonKeyboard
 
-# DSP
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/audio/rt5677_elf_vad:vendor/firmware/rt5677_elf_vad
-
 # Graphics
 BOARD_GPU_DRIVERS        := tegra
 BOARD_USES_LIBDRM        := true
