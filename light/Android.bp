@@ -27,9 +27,6 @@ cc_binary {
         "libhardware",
         "libutils",
         "android.hardware.light@2.0",
-    ],
-
-    static_libs: [
         "libc++fs",
     ],
 
