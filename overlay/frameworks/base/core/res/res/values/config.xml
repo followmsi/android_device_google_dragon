@@ -30,15 +30,13 @@
 
     <!-- Whether a software navigation bar should be shown. NOTE: in the future this may be
          autodetected from the Configuration. -->
-    <bool name="config_showNavigationBar">true</bool>
+    <bool name="config_showNavigationBar">false</bool>
 
     <!--  Maximum number of supported users -->
     <integer name="config_multiuserMaximumUsers">8</integer>
 
     <!-- Whether UI for multi user should be shown -->
     <bool name="config_enableMultiUserUI">true</bool>
-
-    <bool name="config_ui_enableFadingMarquee">true</bool>
 
     <!-- Indicate whether closing the lid causes the device to go to sleep
          and opening it causes the device to wake up. The default is false. -->
@@ -48,14 +46,9 @@
          rather than the uevent framework. -->
     <bool name="config_useDevInputEventForAudioJack">true</bool>
 
-    <!-- Enable device idle mode -->
-    <bool name="config_enableAutoPowerModes">true</bool>
-
     <!-- If true, enables verification of the lockscreen credential in the factory reset protection
         flow. This should be true if gatekeeper / weaver credentials can still be checked after a
-        factory reset.
-
-        dragon's gatekeeper does not preserve credentials across factory resets. -->
+        factory reset. -->
     <bool name="config_enableCredentialFactoryResetProtection">false</bool>
 
     <!-- Flag indicating whether the we should enable the automatic brightness in Settings.
@@ -70,9 +63,6 @@
     <integer name="config_autoBrightnessBrighteningLightDebounce">2000</integer>
     <integer name="config_autoBrightnessDarkeningLightDebounce">4000</integer>
     
-    <!-- Enable Night display, which requires HWC 2.0. -->
-    <bool name="config_nightDisplayAvailable">true</bool>    
-
     <!-- Array of light sensor LUX values to define our levels for auto backlight brightness support.
          The N entries of this array define N + 1 control points as follows:
          (1-based arrays)
@@ -136,28 +126,9 @@
         <item>241</item>   <!-- 500 nit -->
     </integer-array>
 
-    <!-- Minimum screen brightness setting allowed by the power manager.
-          The user is forbidden from setting the brightness below this level. -->
-    <integer name="config_screenBrightnessSettingMinimum">1</integer>
-
-    <!-- Screen brightness used to dim the screen when the user activity
-         timeout expires.  May be less than the minimum allowed brightness setting
-         that can be set by the user. -->
-    <integer name="config_screenBrightnessDim">1</integer>
-
+    <!-- The BT name of the keyboard packaged with the device. If this is defined, SystemUI will
+         automatically try to pair with it when the device exits tablet mode. -->
     <string translatable="false" name="config_packagedKeyboardName">Pixel C Keyboard</string>
-
-    <!-- Controls how we deal with externally connected physical keyboards.
-         0 - When using this device, it is not clear for users to recognize when the physical
-             keyboard is (should be) connected and when it is (should be) disconnected.  Most of
-             phones and tablets with Bluetooth keyboard would fall into this category because the
-             connected Bluetooth keyboard may or may not be nearby the host device.
-         1 - When using this device, it is clear for users to recognize when the physical
-             keyboard is (should be) connected and when it is (should be) disconnected.
-             Devices with wired USB keyboard is one clear example.  Some 2-in-1 convertible
-             tablets with dedicated keyboards may have the same affordance to wired USB keyboard.
-    -->
-    <integer translatable="false" name="config_externalHardKeyboardBehavior">1</integer>
 
     <!-- Whether WiFi display is supported by this device.
              There are many prerequisites for this feature to work correctly.
@@ -173,7 +144,9 @@
     -->
     <bool name="config_enableWifiDisplay">true</bool>
 
-    <!-- True if the device supports persisting security logs across reboots. -->
+    <!-- True if the device supports persisting security logs across reboots.
+         This requires the device's kernel to have pstore and pmsg enabled,
+         and DRAM to be powered and refreshed through all stages of reboot. -->
     <bool name="config_supportPreRebootSecurityLogs">true</bool>
 
     <!-- Enable doze mode
@@ -189,9 +162,6 @@
     <!-- If true, the doze component is not started until after the screen has been turned off
          and the screen off animation has been performed. -->
     <bool name="config_dozeAfterScreenOffByDefault">true</bool>
-
-    <!-- Specifies whether to decouple the interactive state of the device from the display on/off state. -->
-    <bool name="config_powerDecoupleInteractiveModeFromDisplay">true</bool>
 
     <!-- Screen brightness used to dim the screen while dozing in a very low power state.
          May be less than the minimum allowed brightness setting
@@ -214,30 +184,62 @@
      backlight values -->
     <bool name="config_displayBrightnessBucketsInDoze">true</bool>
 
-    <!-- Fix for Lineage LiveDisplay -->
-    <!-- Boolean indicating whether the HWC setColorTransform function can be performed efficiently
-         in hardware. -->
-    <bool name="config_setColorTransformAccelerated">true</bool>
+    <!-- Power Management: Specifies whether to decouple the auto-suspend state of the
+         device from the display on/off state.
+         When false, autosuspend_disable() will be called before the display is turned on
+         and autosuspend_enable() will be called after the display is turned off.
+         This mode provides best compatibility for devices using legacy power management
+         features such as early suspend / late resume.
+         When true, autosuspend_display() and autosuspend_enable() will be called
+         independently of whether the display is being turned on or off.  This mode
+         enables the power manager to suspend the application processor while the
+         display is on.
+         This resource should be set to "true" when a doze component has been specified
+         to maximize power savings but not all devices support it.
+         Refer to autosuspend.h for details.
+    -->
+    <bool name="config_powerDecoupleAutoSuspendModeFromDisplay">true</bool>
 
-    <!-- Whether the device supports Smart Pixels
-    <bool name="config_enableSmartPixels">true</bool> -->
+    <!-- Power Management: Specifies whether to decouple the interactive state of the
+         device from the display on/off state.
+         When false, setInteractive(..., true) will be called before the display is turned on
+         and setInteractive(..., false) will be called after the display is turned off.
+         This mode provides best compatibility for devices that expect the interactive
+         state to be tied to the display state.
+         When true, setInteractive(...) will be called independently of whether the display
+         is being turned on or off.  This mode enables the power manager to reduce
+         clocks and disable the touch controller while the display is on.
+         This resource should be set to "true" when a doze component has been specified
+         to maximize power savings but not all devices support it.
+         Refer to power.h for details.
+    -->
+    <bool name="config_powerDecoupleInteractiveModeFromDisplay">true</bool>
+
+    <!-- Set this to true to enable the platform's auto-power-save modes like doze and
+         app standby.  These are not enabled by default because they require a standard
+         cloud-to-device messaging service for apps to interact correctly with the modes
+         (such as to be able to deliver an instant message to the device even when it is
+         dozing).  This should be enabled if you have such services and expect apps to
+         correctly use them when installed on your device.  Otherwise, keep this disabled
+         so that applications can still use their own mechanisms. -->
+    <bool name="config_enableAutoPowerModes">true</bool>
 
     <!-- Default list of files pinned by the Pinner Service -->
     <string-array translatable="false" name="config_defaultPinnerServiceFiles">
+        <item>"/system/framework/arm64/boot-framework.oat"</item>
         <item>"/system/framework/framework.jar"</item>
+        <item>"/system/framework/oat/arm64/services.odex"</item>
         <item>"/system/framework/services.jar"</item>
         <item>"/apex/com.android.art/javalib/core-oj.jar"</item>
         <item>"/apex/com.android.art/javalib/core-libart.jar"</item>
         <item>"/apex/com.android.media/javalib/updatable-media.jar"</item>
         <item>"/system_ext/priv-app/SystemUI/SystemUI.apk"</item>
+        <item>"/system_ext/priv-app/SystemUI/oat/arm64/SystemUI.odex"</item>
         <item>"/system/bin/surfaceflinger"</item>
     </string-array>
 
     <!-- True if home app should be pinned via Pinner Service -->
     <bool name="config_pinnerHomeApp">true</bool>
-
-    <!-- Whether or not swipe up gesture is enabled by default -->
-    <bool name="config_swipe_up_gesture_default">true</bool>
 
     <!-- Whether or not swipe up gesture's opt-in setting is available on this device -->
     <bool name="config_swipe_up_gesture_setting_available">true</bool>
@@ -271,7 +273,8 @@
 
     <!-- The list of components which should be automatically disabled for a specific device. -->
     <string-array name="config_deviceDisabledComponents" translatable="false">
-        <item>com.google.android.gms/com.google.android.gms.nearby.messages.service.NearbyMessagesService</item>
+	<item>com.google.android.gms/com.google.android.gms.nearby.messages.service.NearbyMessagesService</item>
+        <item>com.google.android.gms/com.google.android.gms.nearby.discovery.service.DiscoveryService</item>
     </string-array>
 
 </resources>
