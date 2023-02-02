@@ -129,6 +129,11 @@ PRODUCT_PACKAGES += \
     libprotobuf-cpp-full \
     libprotobuf-cpp-lite-vendorcompat
 
+# Locale
+# The default locale should be determined from VPD, not from build.prop.
+PRODUCT_SYSTEM_PROPERTY_BLACKLIST += \
+    ro.product.locale
+
 # Media
 PRODUCT_PACKAGES += \
     media_codecs.xml \
