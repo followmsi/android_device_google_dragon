@@ -113,10 +113,6 @@ TARGET_LD_SHIM_LIBS := \
 # Treble
 BOARD_VNDK_VERSION := current
 
-# VNDK
-# Dedupe VNDK libraries with identical core variants.
-TARGET_VNDK_USE_CORE_VARIANT := true
-
 # Wifi
 BOARD_WPA_SUPPLICANT_DRIVER      := NL80211
 WPA_SUPPLICANT_VERSION           := VER_0_8_X
