@@ -34,6 +34,11 @@
                              samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000"
                              channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO"/>
                 </mixPort>
+                <mixPort name="hotword input" role="sink" flags="AUDIO_INPUT_FLAG_HW_HOTWORD" maxActiveCount="0" >
+                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
+                             samplingRates="8000 11025 12000 16000 22050 24000 32000 44100 48000"
+                             channelMasks="AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO"/>
+                </mixPort>
             </mixPorts>
             <devicePorts>
                 <devicePort tagName="Speaker" type="AUDIO_DEVICE_OUT_SPEAKER" role="sink">
@@ -73,8 +78,9 @@
                        sources="primary output"/>
                 <route type="mix" sink="HDMI Out"
                        sources="primary output"/>
-
                 <route type="mix" sink="primary input"
+                       sources="Built-In Mic,Wired Headset Mic,BT SCO Headset Mic"/>
+                <route type="mix" sink="hotword input"
                        sources="Built-In Mic,Wired Headset Mic,BT SCO Headset Mic"/>
             </routes>
         </module>
