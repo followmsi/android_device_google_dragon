@@ -85,7 +85,7 @@ BOARD_USES_DRM_HWCOMPOSER                      := true
 BOARD_DRM_HWCOMPOSER_BUFFER_IMPORTER           := nvidia-gralloc
 BOARD_USES_LIBDRM                              := true
 TARGET_RECOVERY_PIXEL_FORMAT                   := BGRA_8888
-TARGET_USES_HWC1 := true                       := true
+TARGET_USES_HWC1                               := true
 
 # Permissions
 TARGET_FS_CONFIG_GEN += device/google/dragon/config.fs
